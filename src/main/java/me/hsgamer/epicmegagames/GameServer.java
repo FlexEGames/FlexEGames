@@ -46,10 +46,10 @@ public class GameServer {
         mainConfig.setup();
         lobbyConfig.setup();
         chatConfig.setup();
-        templateManager.init();
     }
 
     public void enable() {
+        templateManager.init();
         gameArenaManager.init();
         gameArenaManager.postInit();
     }

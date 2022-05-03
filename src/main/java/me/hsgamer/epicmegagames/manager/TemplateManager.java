@@ -8,6 +8,7 @@ import me.hsgamer.hscore.config.simplixstorage.YamlProvider;
 import net.minestom.server.MinecraftServer;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -41,5 +42,13 @@ public class TemplateManager {
                 MinecraftServer.LOGGER.warn("Template {} is not a valid template", name);
             }
         }
+    }
+
+    public Optional<TemplateProvider> getTemplate(String name) {
+        return Optional.ofNullable(templateMap.get(name));
+    }
+
+    public Map<String, TemplateProvider> getTemplateMap() {
+        return Collections.unmodifiableMap(templateMap);
     }
 }
