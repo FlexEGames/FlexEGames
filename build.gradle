@@ -19,6 +19,8 @@ dependencies {
     implementation "me.hsgamer:hscore-config-path:$core"
     implementation "me.hsgamer:hscore-config-annotated:$core"
     implementation "me.hsgamer:hscore-builder:$core"
+    implementation "me.hsgamer:hscore-common:$core"
+    implementation "me.hsgamer:hscore-collections:$core"
 
     def minigameCore = "1.0.0"
     implementation "me.hsgamer:minigamecore-base:$minigameCore"

@@ -8,6 +8,7 @@ import me.hsgamer.epicmegagames.hook.ChatHook;
 import me.hsgamer.epicmegagames.hook.ServerListHook;
 import me.hsgamer.epicmegagames.lobby.Lobby;
 import me.hsgamer.epicmegagames.manager.GameArenaManager;
+import me.hsgamer.epicmegagames.manager.TemplateManager;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.event.Event;
@@ -20,6 +21,7 @@ public class GameServer {
     private final LobbyConfig lobbyConfig = new LobbyConfig();
     private final ChatConfig chatConfig = new ChatConfig();
     private final GameArenaManager gameArenaManager = new GameArenaManager();
+    private final TemplateManager templateManager = new TemplateManager();
     private final MinecraftServer minecraftServer = MinecraftServer.init();
 
     public GameServer() {
@@ -44,6 +46,7 @@ public class GameServer {
         mainConfig.setup();
         lobbyConfig.setup();
         chatConfig.setup();
+        templateManager.init();
     }
 
     public void enable() {
@@ -68,5 +71,9 @@ public class GameServer {
 
     public GameArenaManager getGameArenaManager() {
         return gameArenaManager;
+    }
+
+    public TemplateManager getTemplateManager() {
+        return templateManager;
     }
 }
