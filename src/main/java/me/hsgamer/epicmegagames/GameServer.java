@@ -23,15 +23,19 @@ public class GameServer {
     private final MinecraftServer minecraftServer = MinecraftServer.init();
 
     public GameServer() {
+        // COMMAND
         CommandManager manager = MinecraftServer.getCommandManager();
         manager.setUnknownCommandCallback((sender, c) -> sender.sendMessage("Unknown command: " + c));
         manager.register(new StopCommand());
 
+        // GLOBAL EVENT
         EventNode<Event> globalNode = MinecraftServer.getGlobalEventHandler();
         globalNode.addListener(PlayerLoginEvent.class, event -> {
             event.setSpawningInstance(Lobby.INSTANCE);
             event.getPlayer().setRespawnPoint(Lobby.INSTANCE.getPosition());
         });
+
+        // HOOK
         ChatHook.hook(globalNode);
         ServerListHook.hook(globalNode);
     }
