@@ -1,4 +1,4 @@
-package me.hsgamer.epicmegagames;
+package me.hsgamer.epicmegagames.lobby;
 
 import me.hsgamer.epicmegagames.config.LobbyConfig;
 import me.hsgamer.epicmegagames.util.FullBrightDimension;
