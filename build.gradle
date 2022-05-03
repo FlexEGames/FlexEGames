@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+group 'me.hsgamer'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+    maven { url 'https://repo.codemc.io/repository/maven-public/'}
+}
+
+dependencies {
+    def core = "4.0.4"
+    implementation "me.hsgamer:hscore-config-simplixstorage:$core"
+    implementation "me.hsgamer:hscore-config-proxy:$core"
+    implementation "me.hsgamer:hscore-config-path:$core"
+    implementation "me.hsgamer:hscore-config-annotated:$core"
+
+    def minigameCore = "1.0.0"
+    implementation "me.hsgamer:minigamecore-base:$minigameCore"
+    implementation "me.hsgamer:minigamecore-implementation:$minigameCore"
+
+    implementation 'com.github.Minestom:Minestom:1384bc0c18'
+    implementation "com.github.CatDevz:SlimeLoader:master-SNAPSHOT"
+    implementation 'com.github.sqcred:SBoards:1.2.0'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'me.hsgamer.epicmegagames.EpicMegaGames', "Multi-Release": true
+    }
+}
