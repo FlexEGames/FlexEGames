@@ -48,6 +48,7 @@ public class GameServer {
 
     public void enable() {
         gameArenaManager.init();
+        gameArenaManager.postInit();
     }
 
     public void disable() {

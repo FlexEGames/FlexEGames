@@ -1,5 +1,6 @@
 package me.hsgamer.epicmegagames.arena;
 
+import me.hsgamer.epicmegagames.state.ChoosingState;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaManager;
 import net.minestom.server.MinecraftServer;
@@ -12,6 +13,7 @@ public class GameArena extends Arena {
 
     public GameArena(String name, ArenaManager arenaManager) {
         super(name, arenaManager);
+        setNextState(ChoosingState.class);
     }
 
     @Override
