@@ -1,7 +1,6 @@
 package me.hsgamer.epicmegagames.command.argument;
 
 import me.hsgamer.epicmegagames.GameServer;
-import me.hsgamer.epicmegagames.api.Template;
 import me.hsgamer.minigamecore.base.Arena;
 import net.minestom.server.command.builder.NodeMaker;
 import net.minestom.server.command.builder.arguments.Argument;

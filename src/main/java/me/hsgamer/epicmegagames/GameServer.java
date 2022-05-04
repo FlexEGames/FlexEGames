@@ -6,6 +6,7 @@ import me.hsgamer.epicmegagames.command.StopCommand;
 import me.hsgamer.epicmegagames.config.ChatConfig;
 import me.hsgamer.epicmegagames.config.LobbyConfig;
 import me.hsgamer.epicmegagames.config.MainConfig;
+import me.hsgamer.epicmegagames.config.MessageConfig;
 import me.hsgamer.epicmegagames.hook.ServerListHook;
 import me.hsgamer.epicmegagames.lobby.Lobby;
 import me.hsgamer.epicmegagames.manager.GameArenaManager;
@@ -30,6 +31,7 @@ public class GameServer {
     private final MainConfig mainConfig = new MainConfig();
     private final LobbyConfig lobbyConfig = new LobbyConfig();
     private final ChatConfig chatConfig = new ChatConfig();
+    private final MessageConfig messageConfig = new MessageConfig();
     private final GameArenaManager gameArenaManager = new GameArenaManager(this);
     private final TemplateManager templateManager = new TemplateManager();
     private final Lobby lobby;
@@ -39,6 +41,7 @@ public class GameServer {
         mainConfig.setup();
         lobbyConfig.setup();
         chatConfig.setup();
+        messageConfig.setup();
 
         // LOBBY
         lobby = new Lobby();
@@ -118,5 +121,9 @@ public class GameServer {
 
     public LobbyConfig getLobbyConfig() {
         return lobbyConfig;
+    }
+
+    public MessageConfig getMessageConfig() {
+        return messageConfig;
     }
 }
