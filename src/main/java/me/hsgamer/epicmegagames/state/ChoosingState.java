@@ -11,4 +11,9 @@ public class ChoosingState implements GameState {
             arena.setNextState(WaitingState.class);
         }
     }
+
+    @Override
+    public void end(Arena arena) {
+        arena.getArenaFeature(TemplateFeature.class).getTemplate().init();
+    }
 }
