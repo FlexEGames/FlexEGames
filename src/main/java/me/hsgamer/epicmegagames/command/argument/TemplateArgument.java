@@ -41,9 +41,4 @@ public class TemplateArgument extends Argument<Template> {
         });
         nodeMaker.addNodes(list.toArray(new DeclareCommandsPacket.Node[0]));
     }
-
-    @Override
-    public String toString() {
-        return String.format("Template<%s>", getId());
-    }
 }
