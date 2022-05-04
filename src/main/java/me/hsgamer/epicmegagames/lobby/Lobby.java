@@ -23,7 +23,6 @@ import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskSchedule;
-import org.jglrxavpok.hephaistos.nbt.NBTCompound;
 
 import java.util.UUID;
 
@@ -97,7 +96,6 @@ public class Lobby extends InstanceContainer {
         player.refreshCommands();
         player.getInventory().clear();
         player.teleport(position);
-        player.tagHandler().updateContent(NBTCompound.EMPTY);
     }
 
     void onQuit(Player player) {
