@@ -1,5 +1,6 @@
 package me.hsgamer.epicmegagames;
 
+import me.hsgamer.epicmegagames.command.LeaveCommand;
 import me.hsgamer.epicmegagames.command.StopCommand;
 import me.hsgamer.epicmegagames.config.ChatConfig;
 import me.hsgamer.epicmegagames.config.LobbyConfig;
@@ -23,15 +24,23 @@ public class GameServer {
     private final ChatConfig chatConfig = new ChatConfig();
     private final GameArenaManager gameArenaManager = new GameArenaManager();
     private final TemplateManager templateManager = new TemplateManager();
-    private final Lobby lobby = new Lobby();
+    private final Lobby lobby;
 
     public GameServer() {
+        // CONFIG
+        mainConfig.setup();
+        lobbyConfig.setup();
+        chatConfig.setup();
+
+        // LOBBY
+        lobby = new Lobby();
         MinecraftServer.getInstanceManager().registerInstance(lobby);
 
         // COMMAND
         CommandManager manager = MinecraftServer.getCommandManager();
         manager.setUnknownCommandCallback((sender, c) -> sender.sendMessage("Unknown command: " + c));
         manager.register(new StopCommand());
+        manager.register(new LeaveCommand(this));
 
         // GLOBAL EVENT
         EventNode<Event> globalNode = MinecraftServer.getGlobalEventHandler();
@@ -43,12 +52,6 @@ public class GameServer {
         // HOOK
         ChatHook.hook(globalNode);
         ServerListHook.hook(globalNode);
-    }
-
-    public void load() {
-        mainConfig.setup();
-        lobbyConfig.setup();
-        chatConfig.setup();
     }
 
     public void enable() {
@@ -82,5 +85,17 @@ public class GameServer {
 
     public TemplateManager getTemplateManager() {
         return templateManager;
+    }
+
+    public MainConfig getMainConfig() {
+        return mainConfig;
+    }
+
+    public ChatConfig getChatConfig() {
+        return chatConfig;
+    }
+
+    public LobbyConfig getLobbyConfig() {
+        return lobbyConfig;
     }
 }
