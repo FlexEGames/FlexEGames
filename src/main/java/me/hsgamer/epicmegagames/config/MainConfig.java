@@ -12,7 +12,7 @@ public class MainConfig extends PathableConfig {
     public static final ConfigPath<Integer> SERVER_PORT = Paths.integerPath("server.port", 25565);
     public static final ConfigPath<Boolean> SERVER_ONLINE_MODE = Paths.booleanPath("server.online-mode", true);
     public static final ConfigPath<Boolean> BUNGEE = Paths.booleanPath("server.bungee", false);
-    public static final ConfigPath<Integer> ARENA_PERIOD = Paths.integerPath("arena.period", 0);
+    public static final ConfigPath<Integer> ARENA_PERIOD = Paths.integerPath("arena.period", 1);
     public static final ConfigPath<Boolean> ARENA_ASYNC = Paths.booleanPath("arena.async", true);
 
     public MainConfig() {

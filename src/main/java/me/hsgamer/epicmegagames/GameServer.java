@@ -52,7 +52,7 @@ public class GameServer {
         // COMMAND
         CommandManager manager = MinecraftServer.getCommandManager();
         manager.setUnknownCommandCallback((sender, c) -> sender.sendMessage("Unknown command: " + c));
-        manager.register(new StopCommand());
+        manager.register(new StopCommand(this));
         manager.register(new LeaveCommand(this));
         manager.register(new CreateArenaCommand(this));
         manager.register(new JoinArenaCommand(this));
@@ -90,6 +90,7 @@ public class GameServer {
     }
 
     public void start() {
+        enable();
         if (Boolean.TRUE.equals(MainConfig.BUNGEE.getValue())) {
             BungeeCordProxy.enable();
         }
@@ -97,6 +98,11 @@ public class GameServer {
             MojangAuth.init();
         }
         minecraftServer.start(MainConfig.SERVER_IP.getValue(), MainConfig.SERVER_PORT.getValue());
+    }
+
+    public void stop() {
+        MinecraftServer.stopCleanly();
+        disable();
     }
 
     public MinecraftServer getMinecraftServer() {

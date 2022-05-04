@@ -145,7 +145,7 @@ public class DuelGame implements ArenaGame {
                 });
         task = MinecraftServer.getSchedulerManager()
                 .buildTask(board::updateAll)
-                .repeat(TaskSchedule.tick(0))
+                .repeat(TaskSchedule.tick(1))
                 .schedule();
     }
 
