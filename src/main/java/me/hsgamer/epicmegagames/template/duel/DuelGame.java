@@ -223,14 +223,10 @@ public class DuelGame implements ArenaGame {
     }
 
     @Override
-    public void onEndingOver() {
+    public void clear() {
         for (Player player : instance.getPlayers()) {
             arena.getFeature(LobbyFeature.class).backToLobby(player);
         }
-    }
-
-    @Override
-    public void clear() {
         if (task != null) {
             task.cancel();
         }
