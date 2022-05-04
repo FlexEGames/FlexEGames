@@ -83,7 +83,7 @@ public class Lobby extends InstanceContainer {
 
     private Component replaceText(Player player, Component component) {
         return component
-                .replaceText(builder -> builder.match("%%player").replacement(player.getName()));
+                .replaceText(builder -> builder.match("%player%").replacement(player.getName()));
     }
 
     void onFirstSpawn(Player player) {
