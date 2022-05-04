@@ -87,6 +87,7 @@ public class Lobby extends InstanceContainer {
 
     void onFirstSpawn(Player player) {
         board.addPlayer(player);
+        player.refreshCommands();
         player.setRespawnPoint(position);
         player.setEnableRespawnScreen(false);
     }
