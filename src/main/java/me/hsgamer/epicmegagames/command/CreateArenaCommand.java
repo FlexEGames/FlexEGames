@@ -16,7 +16,7 @@ import java.util.Map;
 public class CreateArenaCommand extends Command {
     public CreateArenaCommand(GameServer gameServer) {
         super("createarena");
-        setCondition((sender, commandString) -> sender instanceof Player player && player.getInstance() == gameServer.getLobby());
+        setCondition((sender, commandString) -> sender instanceof Player player && gameServer.getLobby().isInLobby(player));
         setDefaultExecutor((sender, context) -> sender.sendMessage("Usage: /createarena <template>"));
 
         var templateArgument = new TemplateArgument(gameServer, "template");

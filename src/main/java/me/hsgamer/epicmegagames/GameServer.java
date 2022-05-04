@@ -59,7 +59,10 @@ public class GameServer {
 
         // GLOBAL EVENT
         EventNode<Event> globalNode = MinecraftServer.getGlobalEventHandler();
-        globalNode.addListener(PlayerLoginEvent.class, event -> event.setSpawningInstance(lobby));
+        globalNode.addListener(PlayerLoginEvent.class, event -> {
+            event.setSpawningInstance(lobby);
+            event.getPlayer().setRespawnPoint(lobby.getPosition());
+        });
         globalNode.addListener(PlayerChatEvent.class, event -> {
             event.setChatFormat(e -> ReplacementManager.builder()
                     .replaceGlobal()

@@ -111,4 +111,8 @@ public class Lobby extends InstanceContainer {
     public void clear() {
         boardTask.cancel();
     }
+
+    public boolean isInLobby(Player player) {
+        return player.getInstance() == null || player.getInstance() == this;
+    }
 }

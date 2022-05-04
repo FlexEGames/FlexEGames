@@ -17,7 +17,7 @@ import java.util.Map;
 public class JoinArenaCommand extends Command {
     public JoinArenaCommand(GameServer gameServer) {
         super("joinarena", "join");
-        setCondition((sender, commandString) -> sender instanceof Player player && player.getInstance() == gameServer.getLobby());
+        setCondition((sender, commandString) -> sender instanceof Player player && gameServer.getLobby().isInLobby(player));
         setDefaultExecutor((sender, context) -> sender.sendMessage("Usage: /" + context.getCommandName() + " <arena>"));
         var arenaArgument = new ArenaArgument(gameServer, "arena");
         setArgumentCallback((sender, exception) -> {

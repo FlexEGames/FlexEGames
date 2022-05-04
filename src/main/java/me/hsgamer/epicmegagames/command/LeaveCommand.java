@@ -7,7 +7,7 @@ import net.minestom.server.entity.Player;
 public class LeaveCommand extends Command {
     public LeaveCommand(GameServer gameServer) {
         super("leave");
-        setCondition((sender, commandString) -> sender instanceof Player player && player.getInstance() != gameServer.getLobby());
+        setCondition((sender, commandString) -> sender instanceof Player player && !gameServer.getLobby().isInLobby(player));
         setDefaultExecutor((sender, commandString) -> ((Player) sender).setInstance(gameServer.getLobby()));
     }
 }
