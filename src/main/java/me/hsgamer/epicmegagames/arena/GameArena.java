@@ -1,5 +1,6 @@
 package me.hsgamer.epicmegagames.arena;
 
+import me.hsgamer.epicmegagames.config.MainConfig;
 import me.hsgamer.epicmegagames.state.ChoosingState;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaManager;
@@ -20,8 +21,8 @@ public class GameArena extends Arena {
     public void init() {
         task = MinecraftServer.getSchedulerManager()
                 .buildTask(this)
-                .repeat(TaskSchedule.tick(20))
-                .executionType(ExecutionType.SYNC)
+                .repeat(TaskSchedule.tick(MainConfig.ARENA_PERIOD.getValue()))
+                .executionType(Boolean.TRUE.equals(MainConfig.ARENA_ASYNC.getValue()) ? ExecutionType.ASYNC : ExecutionType.SYNC)
                 .schedule();
     }
 
