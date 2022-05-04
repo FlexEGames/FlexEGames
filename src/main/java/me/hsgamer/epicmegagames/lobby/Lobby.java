@@ -1,10 +1,10 @@
 package me.hsgamer.epicmegagames.lobby;
 
 import com.sqcred.sboards.SBoard;
+import me.hsgamer.epicmegagames.GameServer;
 import me.hsgamer.epicmegagames.config.LobbyConfig;
 import me.hsgamer.epicmegagames.util.FullBrightDimension;
 import me.hsgamer.epicmegagames.util.LoaderType;
-import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
@@ -31,13 +31,13 @@ public class Lobby extends InstanceContainer {
     private final SBoard board;
     private final Task boardTask;
 
-    public Lobby() {
+    public Lobby(GameServer gameServer) {
         super(UUID.randomUUID(), FullBrightDimension.INSTANCE);
         position = LobbyConfig.POSITION.getValue();
         board = new SBoard(
-                player -> replaceText(player, LobbyConfig.BOARD_TITLE.getValue()),
+                player -> gameServer.getReplacementManager().replace(LobbyConfig.BOARD_TITLE.getValue(), player),
                 player -> LobbyConfig.BOARD_LINES.getValue().stream()
-                        .map(line -> replaceText(player, line))
+                        .map(line -> gameServer.getReplacementManager().replace(line, player))
                         .toList()
         );
         setTimeRate(0);
@@ -79,11 +79,6 @@ public class Lobby extends InstanceContainer {
         boardTask = MinecraftServer.getSchedulerManager().buildTask(board::updateAll)
                 .repeat(TaskSchedule.tick(LobbyConfig.BOARD_UPDATE_TIME.getValue()))
                 .schedule();
-    }
-
-    private Component replaceText(Player player, Component component) {
-        return component
-                .replaceText(builder -> builder.match("%player%").replacement(player.getName()));
     }
 
     void onFirstSpawn(Player player) {
