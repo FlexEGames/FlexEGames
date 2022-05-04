@@ -20,11 +20,11 @@ public class CreateArenaCommand extends Command {
         setDefaultExecutor((sender, context) -> sender.sendMessage("Usage: /createarena <template>"));
 
         var templateArgument = new TemplateArgument(gameServer, "template");
-        templateArgument.setCallback((sender, exception) -> {
+        setArgumentCallback((sender, exception) -> {
             if (exception.getErrorCode() == TemplateArgument.TEMPLATE_NOT_FOUND) {
                 sender.sendMessage(ReplacementManager.replace(MessageConfig.ERROR_TEMPLATE_NOT_FOUND.getValue(), Map.of("input", Component.text(exception.getInput()))));
             }
-        });
+        }, templateArgument);
         addSyntax((sender, context) -> {
             Template template = context.get(templateArgument);
             Arena arena = gameServer.getGameArenaManager().createNewArena();
