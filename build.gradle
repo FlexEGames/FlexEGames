@@ -12,6 +12,12 @@ repositories {
     maven { url 'https://repo.codemc.io/repository/maven-public/'}
 }
 
+shadowJar {
+    minimize {
+        exclude(dependency('com.github.*:.*:.*'))
+    }
+}
+
 dependencies {
     def core = "4.0.4"
     implementation "me.hsgamer:hscore-config-simplixstorage:$core"
