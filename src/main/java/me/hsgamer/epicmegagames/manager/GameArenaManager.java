@@ -46,6 +46,8 @@ public class GameArenaManager extends ArenaManager {
         do {
             name = "Arena-" + UUID.randomUUID();
         } while (getArenaByName(name).isPresent());
-        return new GameArena(name, this);
+        Arena arena = new GameArena(name, this);
+        addArena(arena);
+        return arena;
     }
 }
