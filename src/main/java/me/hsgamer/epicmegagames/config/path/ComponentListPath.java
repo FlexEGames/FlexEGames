@@ -17,7 +17,12 @@ public class ComponentListPath extends AdvancedConfigPath<List<String>, List<Com
 
     @Override
     public @Nullable List<String> getFromConfig(@NotNull Config config) {
-        return CollectionUtils.createStringListFromObject(config.get(getPath()), false);
+        Object o = config.get(getPath());
+        if (o == null) {
+            return null;
+        } else {
+            return CollectionUtils.createStringListFromObject(o, true);
+        }
     }
 
     @Override

@@ -18,7 +18,12 @@ public class PosListPath extends AdvancedConfigPath<List<String>, List<Pos>> {
 
     @Override
     public @Nullable List<String> getFromConfig(@NotNull Config config) {
-        return CollectionUtils.createStringListFromObject(config.get(getPath()), true);
+        Object o = config.get(getPath());
+        if (o == null) {
+            return null;
+        } else {
+            return CollectionUtils.createStringListFromObject(o, true);
+        }
     }
 
     @Override
