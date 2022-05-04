@@ -5,9 +5,12 @@ import net.kyori.adventure.text.ComponentLike;
 import net.minestom.server.entity.Player;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 public final class ReplacementManager {
@@ -26,20 +29,48 @@ public final class ReplacementManager {
         for (Map.Entry<String, ComponentLike> entry : map.entrySet()) {
             component = component.replaceText(builder -> builder.match("%" + entry.getKey() + "%").replacement(entry.getValue()));
         }
-        return replace(component);
+        return component;
     }
 
-    public static Component replace(Component component) {
+    public static Component replaceGlobal(Component component) {
         return replace(component, globalMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().get())));
     }
 
-    public static Component replace(Component component, Player player) {
-        component = replace(component, playerMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().apply(player))));
-        return replace(component);
+    public static Component replacePlayer(Component component, Player player) {
+        return replace(component, playerMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().apply(player))));
     }
 
-    public static Component replace(Component component, Player player, Map<String, ComponentLike> map) {
-        component = replace(component, map);
-        return replace(component, player);
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private final List<UnaryOperator<Component>> replacements;
+
+        private Builder() {
+            replacements = new LinkedList<>();
+        }
+
+        public Builder replacePlayer(Player player) {
+            replacements.add(component -> ReplacementManager.replacePlayer(component, player));
+            return this;
+        }
+
+        public Builder replaceGlobal() {
+            replacements.add(ReplacementManager::replaceGlobal);
+            return this;
+        }
+
+        public Builder replace(Map<String, ComponentLike> map) {
+            replacements.add(component -> ReplacementManager.replace(component, map));
+            return this;
+        }
+
+        public Component build(Component component) {
+            for (UnaryOperator<Component> replacement : replacements) {
+                component = replacement.apply(component);
+            }
+            return component;
+        }
     }
 }

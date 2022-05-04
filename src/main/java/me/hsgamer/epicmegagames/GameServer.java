@@ -30,7 +30,6 @@ public class GameServer {
     private final ChatConfig chatConfig = new ChatConfig();
     private final GameArenaManager gameArenaManager = new GameArenaManager(this);
     private final TemplateManager templateManager = new TemplateManager();
-    private final ReplacementManager replacementManager = new ReplacementManager();
     private final Lobby lobby;
 
     public GameServer() {
@@ -40,7 +39,7 @@ public class GameServer {
         chatConfig.setup();
 
         // LOBBY
-        lobby = new Lobby(this);
+        lobby = new Lobby();
         MinecraftServer.getInstanceManager().registerInstance(lobby);
 
         // COMMAND
@@ -53,7 +52,12 @@ public class GameServer {
         EventNode<Event> globalNode = MinecraftServer.getGlobalEventHandler();
         globalNode.addListener(PlayerLoginEvent.class, event -> event.setSpawningInstance(lobby));
         globalNode.addListener(PlayerChatEvent.class, event -> {
-            event.setChatFormat(e -> ReplacementManager.replace(ChatConfig.CHAT_FORMAT.getValue(), e.getPlayer(), Map.of("message", Component.text(e.getMessage()))));
+            event.setChatFormat(e -> ReplacementManager.builder()
+                    .replaceGlobal()
+                    .replacePlayer(event.getPlayer())
+                    .replace(Map.of("message", Component.text(e.getMessage())))
+                    .build(ChatConfig.CHAT_FORMAT.getValue())
+            );
             event.getRecipients().removeIf(p -> !Objects.equals(p.getInstance(), event.getPlayer().getInstance()));
         });
 
@@ -96,10 +100,6 @@ public class GameServer {
 
     public TemplateManager getTemplateManager() {
         return templateManager;
-    }
-
-    public ReplacementManager getReplacementManager() {
-        return replacementManager;
     }
 
     public MainConfig getMainConfig() {

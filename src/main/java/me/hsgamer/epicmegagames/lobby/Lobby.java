@@ -1,7 +1,6 @@
 package me.hsgamer.epicmegagames.lobby;
 
 import com.sqcred.sboards.SBoard;
-import me.hsgamer.epicmegagames.GameServer;
 import me.hsgamer.epicmegagames.config.LobbyConfig;
 import me.hsgamer.epicmegagames.manager.ReplacementManager;
 import me.hsgamer.epicmegagames.util.FullBrightDimension;
@@ -32,14 +31,17 @@ public class Lobby extends InstanceContainer {
     private final SBoard board;
     private final Task boardTask;
 
-    public Lobby(GameServer gameServer) {
+    public Lobby() {
         super(UUID.randomUUID(), FullBrightDimension.INSTANCE);
         position = LobbyConfig.POSITION.getValue();
         board = new SBoard(
-                player -> ReplacementManager.replace(LobbyConfig.BOARD_TITLE.getValue(), player),
-                player -> LobbyConfig.BOARD_LINES.getValue().stream()
-                        .map(line -> ReplacementManager.replace(line, player))
-                        .toList()
+                player -> ReplacementManager.builder().replaceGlobal().replacePlayer(player).build(LobbyConfig.BOARD_TITLE.getValue()),
+                player -> {
+                    ReplacementManager.Builder builder = ReplacementManager.builder().replaceGlobal().replacePlayer(player);
+                    return LobbyConfig.BOARD_LINES.getValue().stream()
+                            .map(builder::build)
+                            .toList();
+                }
         );
         setTimeRate(0);
 
