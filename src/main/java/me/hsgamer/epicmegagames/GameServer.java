@@ -22,7 +22,7 @@ public class GameServer {
     private final MainConfig mainConfig = new MainConfig();
     private final LobbyConfig lobbyConfig = new LobbyConfig();
     private final ChatConfig chatConfig = new ChatConfig();
-    private final GameArenaManager gameArenaManager = new GameArenaManager();
+    private final GameArenaManager gameArenaManager = new GameArenaManager(this);
     private final TemplateManager templateManager = new TemplateManager();
     private final Lobby lobby;
 
@@ -59,6 +59,7 @@ public class GameServer {
 
     public void disable() {
         gameArenaManager.clear();
+        lobby.clear();
     }
 
     public void start() {

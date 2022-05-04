@@ -108,10 +108,6 @@ public class Lobby extends InstanceContainer {
         return position;
     }
 
-    public void addPlayer(Player player) {
-        player.setInstance(this);
-    }
-
     public void clear() {
         boardTask.cancel();
     }

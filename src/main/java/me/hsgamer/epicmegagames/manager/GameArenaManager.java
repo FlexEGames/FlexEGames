@@ -1,6 +1,8 @@
 package me.hsgamer.epicmegagames.manager;
 
+import me.hsgamer.epicmegagames.GameServer;
 import me.hsgamer.epicmegagames.arena.GameArena;
+import me.hsgamer.epicmegagames.feature.LobbyFeature;
 import me.hsgamer.epicmegagames.feature.TemplateFeature;
 import me.hsgamer.epicmegagames.state.*;
 import me.hsgamer.minigamecore.base.Arena;
@@ -13,6 +15,12 @@ import java.util.List;
 import java.util.UUID;
 
 public class GameArenaManager extends ArenaManager {
+    private final GameServer gameServer;
+
+    public GameArenaManager(GameServer gameServer) {
+        this.gameServer = gameServer;
+    }
+
     @Override
     protected List<GameState> loadGameStates() {
         return List.of(
@@ -28,7 +36,8 @@ public class GameArenaManager extends ArenaManager {
     protected List<Feature> loadFeatures() {
         return List.of(
                 new ArenaTimerFeature(),
-                new TemplateFeature()
+                new TemplateFeature(),
+                new LobbyFeature(gameServer)
         );
     }
 
