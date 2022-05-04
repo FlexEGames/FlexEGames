@@ -10,6 +10,8 @@ import java.io.File;
 
 public class MessageConfig extends PathableConfig {
     public static final ConfigPath<Component> ERROR_TEMPLATE_NOT_FOUND = new ComponentPath("error.template-not-found", Component.text("&cTemplate not found"));
+    public static final ConfigPath<Component> ERROR_ARENA_NOT_FOUND = new ComponentPath("error.arena-not-found", Component.text("&cArena not found"));
+    public static final ConfigPath<Component> ERROR_ARENA_NOT_SETUP = new ComponentPath("error.arena-not-setup", Component.text("&cArena not setup"));
     public static final ConfigPath<Component> RESPONSE_MAX_PLAYERS_REACH = new ComponentPath("response.max-players-reach", Component.text("&cMax players reached"));
     public static final ConfigPath<Component> RESPONSE_INCOMPLETE_SETUP = new ComponentPath("response.incomplete-setup", Component.text("&cIncomplete setup"));
 

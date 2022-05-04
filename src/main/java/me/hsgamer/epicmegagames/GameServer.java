@@ -1,6 +1,7 @@
 package me.hsgamer.epicmegagames;
 
 import me.hsgamer.epicmegagames.command.CreateArenaCommand;
+import me.hsgamer.epicmegagames.command.JoinArenaCommand;
 import me.hsgamer.epicmegagames.command.LeaveCommand;
 import me.hsgamer.epicmegagames.command.StopCommand;
 import me.hsgamer.epicmegagames.config.ChatConfig;
@@ -53,6 +54,7 @@ public class GameServer {
         manager.register(new StopCommand());
         manager.register(new LeaveCommand(this));
         manager.register(new CreateArenaCommand(this));
+        manager.register(new JoinArenaCommand(this));
 
         // GLOBAL EVENT
         EventNode<Event> globalNode = MinecraftServer.getGlobalEventHandler();
