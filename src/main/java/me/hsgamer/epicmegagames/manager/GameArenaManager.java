@@ -2,8 +2,8 @@ package me.hsgamer.epicmegagames.manager;
 
 import me.hsgamer.epicmegagames.GameServer;
 import me.hsgamer.epicmegagames.arena.GameArena;
+import me.hsgamer.epicmegagames.feature.GameFeature;
 import me.hsgamer.epicmegagames.feature.LobbyFeature;
-import me.hsgamer.epicmegagames.feature.TemplateFeature;
 import me.hsgamer.epicmegagames.state.*;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaManager;
@@ -36,7 +36,7 @@ public class GameArenaManager extends ArenaManager {
     protected List<Feature> loadFeatures() {
         return List.of(
                 new ArenaTimerFeature(),
-                new TemplateFeature(),
+                new GameFeature(),
                 new LobbyFeature(gameServer)
         );
     }
