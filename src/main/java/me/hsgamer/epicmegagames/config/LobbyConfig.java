@@ -1,10 +1,10 @@
 package me.hsgamer.epicmegagames.config;
 
+import me.hsgamer.epicmegagames.api.ChunkLoaderType;
 import me.hsgamer.epicmegagames.config.path.ChunkLoaderTypePath;
 import me.hsgamer.epicmegagames.config.path.ComponentListPath;
 import me.hsgamer.epicmegagames.config.path.ComponentPath;
 import me.hsgamer.epicmegagames.config.path.PosPath;
-import me.hsgamer.epicmegagames.util.ChunkLoaderType;
 import me.hsgamer.hscore.config.PathableConfig;
 import me.hsgamer.hscore.config.path.ConfigPath;
 import me.hsgamer.hscore.config.path.impl.Paths;

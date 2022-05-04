@@ -1,12 +1,11 @@
 package me.hsgamer.epicmegagames.api;
 
 import me.hsgamer.minigamecore.base.Initializer;
-import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.Player;
 
 public interface ArenaGame extends Initializer {
     default JoinResponse join(Player player) {
-        return new JoinResponse(false, Component.text("You can't join this game"));
+        return JoinResponse.INCOMPLETE_SETUP;
     }
 
     default void onWaitingStart() {

@@ -1,6 +1,6 @@
 package me.hsgamer.epicmegagames.config.path;
 
-import me.hsgamer.epicmegagames.util.ChunkLoaderType;
+import me.hsgamer.epicmegagames.api.ChunkLoaderType;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.path.AdvancedConfigPath;
 import org.jetbrains.annotations.NotNull;

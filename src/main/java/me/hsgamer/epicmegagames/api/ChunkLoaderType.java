@@ -1,4 +1,4 @@
-package me.hsgamer.epicmegagames.util;
+package me.hsgamer.epicmegagames.api;
 
 import gg.astromc.slimeloader.loader.SlimeLoader;
 import gg.astromc.slimeloader.source.FileSlimeSource;

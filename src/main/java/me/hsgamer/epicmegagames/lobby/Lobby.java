@@ -1,9 +1,9 @@
 package me.hsgamer.epicmegagames.lobby;
 
 import com.sqcred.sboards.SBoard;
+import me.hsgamer.epicmegagames.api.ChunkLoaderType;
 import me.hsgamer.epicmegagames.config.LobbyConfig;
 import me.hsgamer.epicmegagames.manager.ReplacementManager;
-import me.hsgamer.epicmegagames.util.ChunkLoaderType;
 import me.hsgamer.epicmegagames.util.FullBrightDimension;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
