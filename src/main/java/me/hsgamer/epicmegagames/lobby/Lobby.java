@@ -96,6 +96,7 @@ public class Lobby extends InstanceContainer {
         player.refreshCommands();
         player.getInventory().clear();
         player.teleport(position);
+        player.setRespawnPoint(position);
     }
 
     void onQuit(Player player) {

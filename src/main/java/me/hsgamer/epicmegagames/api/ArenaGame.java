@@ -12,7 +12,7 @@ public interface ArenaGame extends Initializer {
         // EMPTY
     }
 
-    default boolean isWaitingEnd() {
+    default boolean isWaitingOver() {
         return true;
     }
 

@@ -1,5 +1,6 @@
 package me.hsgamer.epicmegagames;
 
+import io.github.bloepiloepi.pvp.PvpExtension;
 import me.hsgamer.epicmegagames.command.CreateArenaCommand;
 import me.hsgamer.epicmegagames.command.JoinArenaCommand;
 import me.hsgamer.epicmegagames.command.LeaveCommand;
@@ -71,6 +72,7 @@ public class GameServer {
 
         // HOOK
         ServerListHook.hook(globalNode);
+        PvpExtension.init();
 
         // Replacement
         ReplacementManager.addPlayerReplacement("player", Player::getName);

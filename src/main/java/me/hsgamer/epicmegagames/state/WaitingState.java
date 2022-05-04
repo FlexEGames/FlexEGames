@@ -16,7 +16,7 @@ public class WaitingState implements GameState {
     @Override
     public void update(Arena arena) {
         ArenaGame arenaGame = arena.getArenaFeature(GameFeature.class).getGame();
-        if (arenaGame.isWaitingEnd()) {
+        if (arenaGame.isWaitingOver()) {
             if (arenaGame.canStart()) {
                 arena.setNextState(InGameState.class);
             } else {
