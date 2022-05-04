@@ -1,6 +1,6 @@
 package me.hsgamer.epicmegagames.config.path;
 
-import me.hsgamer.epicmegagames.util.LoaderType;
+import me.hsgamer.epicmegagames.util.ChunkLoaderType;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.path.AdvancedConfigPath;
 import org.jetbrains.annotations.NotNull;
@@ -8,8 +8,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class LoaderTypePath extends AdvancedConfigPath<String, LoaderType> {
-    public LoaderTypePath(@NotNull String path, @Nullable LoaderType def) {
+public class ChunkLoaderTypePath extends AdvancedConfigPath<String, ChunkLoaderType> {
+    public ChunkLoaderTypePath(@NotNull String path, @Nullable ChunkLoaderType def) {
         super(path, def);
     }
 
@@ -19,16 +19,16 @@ public class LoaderTypePath extends AdvancedConfigPath<String, LoaderType> {
     }
 
     @Override
-    public @Nullable LoaderType convert(@NotNull String rawValue) {
+    public @Nullable ChunkLoaderType convert(@NotNull String rawValue) {
         try {
-            return LoaderType.valueOf(rawValue.toUpperCase());
+            return ChunkLoaderType.valueOf(rawValue.toUpperCase());
         } catch (IllegalArgumentException ignored) {
             return null;
         }
     }
 
     @Override
-    public @Nullable String convertToRaw(@NotNull LoaderType value) {
+    public @Nullable String convertToRaw(@NotNull ChunkLoaderType value) {
         return value.name();
     }
 }

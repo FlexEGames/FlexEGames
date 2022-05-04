@@ -3,8 +3,8 @@ package me.hsgamer.epicmegagames.lobby;
 import com.sqcred.sboards.SBoard;
 import me.hsgamer.epicmegagames.config.LobbyConfig;
 import me.hsgamer.epicmegagames.manager.ReplacementManager;
+import me.hsgamer.epicmegagames.util.ChunkLoaderType;
 import me.hsgamer.epicmegagames.util.FullBrightDimension;
-import me.hsgamer.epicmegagames.util.LoaderType;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
@@ -45,7 +45,7 @@ public class Lobby extends InstanceContainer {
         );
         setTimeRate(0);
 
-        LoaderType worldType = LobbyConfig.WORLD_TYPE.getValue();
+        ChunkLoaderType worldType = LobbyConfig.WORLD_TYPE.getValue();
         setChunkLoader(worldType.getLoader(this, LobbyConfig.WORLD_NAME.getValue()));
 
         EventNode<InstanceEvent> eventNode = eventNode();

@@ -10,8 +10,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class LegacyComponentListPath extends AdvancedConfigPath<List<String>, List<Component>> {
-    public LegacyComponentListPath(@NotNull String path, @Nullable List<Component> def) {
+public class ComponentListPath extends AdvancedConfigPath<List<String>, List<Component>> {
+    public ComponentListPath(@NotNull String path, @Nullable List<Component> def) {
         super(path, def);
     }
 

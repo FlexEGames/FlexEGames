@@ -9,8 +9,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class LegacyComponentPath extends AdvancedConfigPath<String, Component> {
-    public LegacyComponentPath(@NotNull String path, @Nullable Component def) {
+public class ComponentPath extends AdvancedConfigPath<String, Component> {
+    public ComponentPath(@NotNull String path, @Nullable Component def) {
         super(path, def);
     }
 
