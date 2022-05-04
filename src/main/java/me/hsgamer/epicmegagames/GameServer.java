@@ -17,12 +17,12 @@ import net.minestom.server.event.player.PlayerLoginEvent;
 import net.minestom.server.extras.bungee.BungeeCordProxy;
 
 public class GameServer {
+    private final MinecraftServer minecraftServer = MinecraftServer.init();
     private final MainConfig mainConfig = new MainConfig();
     private final LobbyConfig lobbyConfig = new LobbyConfig();
     private final ChatConfig chatConfig = new ChatConfig();
     private final GameArenaManager gameArenaManager = new GameArenaManager();
     private final TemplateManager templateManager = new TemplateManager();
-    private final MinecraftServer minecraftServer = MinecraftServer.init();
     private final Lobby lobby = new Lobby();
 
     public GameServer() {
