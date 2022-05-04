@@ -23,8 +23,11 @@ public class GameServer {
     private final GameArenaManager gameArenaManager = new GameArenaManager();
     private final TemplateManager templateManager = new TemplateManager();
     private final MinecraftServer minecraftServer = MinecraftServer.init();
+    private final Lobby lobby = new Lobby();
 
     public GameServer() {
+        MinecraftServer.getInstanceManager().registerInstance(lobby);
+
         // COMMAND
         CommandManager manager = MinecraftServer.getCommandManager();
         manager.setUnknownCommandCallback((sender, c) -> sender.sendMessage("Unknown command: " + c));
@@ -33,8 +36,8 @@ public class GameServer {
         // GLOBAL EVENT
         EventNode<Event> globalNode = MinecraftServer.getGlobalEventHandler();
         globalNode.addListener(PlayerLoginEvent.class, event -> {
-            event.setSpawningInstance(Lobby.INSTANCE);
-            event.getPlayer().setRespawnPoint(Lobby.INSTANCE.getPosition());
+            event.setSpawningInstance(lobby);
+            event.getPlayer().setRespawnPoint(lobby.getPosition());
         });
 
         // HOOK
@@ -67,6 +70,10 @@ public class GameServer {
 
     public MinecraftServer getMinecraftServer() {
         return minecraftServer;
+    }
+
+    public Lobby getLobby() {
+        return lobby;
     }
 
     public GameArenaManager getGameArenaManager() {

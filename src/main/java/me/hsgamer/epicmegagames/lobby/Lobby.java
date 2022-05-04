@@ -3,7 +3,6 @@ package me.hsgamer.epicmegagames.lobby;
 import me.hsgamer.epicmegagames.config.LobbyConfig;
 import me.hsgamer.epicmegagames.util.FullBrightDimension;
 import me.hsgamer.epicmegagames.util.LoaderType;
-import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
@@ -20,15 +19,9 @@ import org.jglrxavpok.hephaistos.nbt.NBTCompound;
 import java.util.UUID;
 
 public class Lobby extends InstanceContainer {
-    public static final Lobby INSTANCE = new Lobby();
-
-    static {
-        MinecraftServer.getInstanceManager().registerInstance(INSTANCE);
-    }
-
     private final Pos position;
 
-    private Lobby() {
+    public Lobby() {
         super(UUID.randomUUID(), FullBrightDimension.INSTANCE);
         position = LobbyConfig.POSITION.getValue();
         setTimeRate(0);
