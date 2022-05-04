@@ -1,5 +1,6 @@
 package me.hsgamer.epicmegagames;
 
+import me.hsgamer.epicmegagames.command.CreateArenaCommand;
 import me.hsgamer.epicmegagames.command.LeaveCommand;
 import me.hsgamer.epicmegagames.command.StopCommand;
 import me.hsgamer.epicmegagames.config.ChatConfig;
@@ -48,6 +49,7 @@ public class GameServer {
         manager.setUnknownCommandCallback((sender, c) -> sender.sendMessage("Unknown command: " + c));
         manager.register(new StopCommand());
         manager.register(new LeaveCommand(this));
+        manager.register(new CreateArenaCommand(this));
 
         // GLOBAL EVENT
         EventNode<Event> globalNode = MinecraftServer.getGlobalEventHandler();

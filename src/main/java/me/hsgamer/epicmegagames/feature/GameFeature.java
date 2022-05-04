@@ -6,6 +6,8 @@ import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaFeature;
 import me.hsgamer.minigamecore.base.Feature;
 
+import java.util.UUID;
+
 public class GameFeature extends ArenaFeature<GameFeature.ArenaGameFeature> {
 
     @Override
@@ -16,6 +18,7 @@ public class GameFeature extends ArenaFeature<GameFeature.ArenaGameFeature> {
     public static class ArenaGameFeature implements Feature {
         private final Arena arena;
         private ArenaGame arenaGame;
+        private UUID owner;
 
         public ArenaGameFeature(Arena arena) {
             this.arena = arena;
@@ -27,6 +30,14 @@ public class GameFeature extends ArenaFeature<GameFeature.ArenaGameFeature> {
 
         public void setGame(Template template) {
             this.arenaGame = template.createGame(arena);
+        }
+
+        public UUID getOwner() {
+            return owner;
+        }
+
+        public void setOwner(UUID owner) {
+            this.owner = owner;
         }
     }
 }
