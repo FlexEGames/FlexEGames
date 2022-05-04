@@ -18,6 +18,7 @@ import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerChatEvent;
 import net.minestom.server.event.player.PlayerLoginEvent;
+import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.extras.bungee.BungeeCordProxy;
 
 import java.util.Map;
@@ -82,6 +83,9 @@ public class GameServer {
     public void start() {
         if (Boolean.TRUE.equals(MainConfig.BUNGEE.getValue())) {
             BungeeCordProxy.enable();
+        }
+        if (Boolean.TRUE.equals(MainConfig.SERVER_ONLINE_MODE.getValue())) {
+            MojangAuth.init();
         }
         minecraftServer.start(MainConfig.SERVER_IP.getValue(), MainConfig.SERVER_PORT.getValue());
     }
