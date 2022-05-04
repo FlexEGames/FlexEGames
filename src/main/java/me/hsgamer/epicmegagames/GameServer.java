@@ -44,10 +44,7 @@ public class GameServer {
 
         // GLOBAL EVENT
         EventNode<Event> globalNode = MinecraftServer.getGlobalEventHandler();
-        globalNode.addListener(PlayerLoginEvent.class, event -> {
-            event.setSpawningInstance(lobby);
-            event.getPlayer().setRespawnPoint(lobby.getPosition());
-        });
+        globalNode.addListener(PlayerLoginEvent.class, event -> event.setSpawningInstance(lobby));
 
         // HOOK
         ChatHook.hook(globalNode);

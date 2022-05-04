@@ -12,9 +12,11 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.instance.AddEntityToInstanceEvent;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
+import net.minestom.server.event.inventory.InventoryPreClickEvent;
 import net.minestom.server.event.item.ItemDropEvent;
 import net.minestom.server.event.player.PlayerBlockBreakEvent;
 import net.minestom.server.event.player.PlayerBlockPlaceEvent;
+import net.minestom.server.event.player.PlayerMoveEvent;
 import net.minestom.server.event.trait.InstanceEvent;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;
@@ -46,24 +48,34 @@ public class Lobby extends InstanceContainer {
         EventNode<InstanceEvent> eventNode = eventNode();
         eventNode
                 .addListener(AddEntityToInstanceEvent.class, event -> {
-                    final Entity entity = event.getEntity();
+                    Entity entity = event.getEntity();
                     if (entity instanceof Player player) {
-                        final Instance instance = player.getInstance();
+                        Instance instance = player.getInstance();
                         if (instance != null)
-                            player.scheduler().scheduleNextTick(() -> onArenaFinish(player));
+                            player.scheduler().scheduleNextTick(() -> onBackSpawn(player));
                         else
                             onFirstSpawn(player);
                     }
                 })
                 .addListener(RemoveEntityFromInstanceEvent.class, event -> {
-                    final Entity entity = event.getEntity();
+                    Entity entity = event.getEntity();
                     if (entity instanceof Player player) {
-                        board.removePlayer(player);
+                        onQuit(player);
+                    }
+                })
+                .addListener(PlayerMoveEvent.class, event -> {
+                    if (isInVoid(event.getNewPosition())) {
+                        event.setNewPosition(position);
                     }
                 })
                 .addListener(ItemDropEvent.class, event -> event.setCancelled(true))
                 .addListener(PlayerBlockBreakEvent.class, event -> event.setCancelled(true))
-                .addListener(PlayerBlockPlaceEvent.class, event -> event.setCancelled(true));
+                .addListener(PlayerBlockPlaceEvent.class, event -> event.setCancelled(true))
+                .addListener(InventoryPreClickEvent.class, event -> {
+                    if (event.getInventory() == null) {
+                        event.setCancelled(true);
+                    }
+                });
         boardTask = MinecraftServer.getSchedulerManager().buildTask(board::updateAll)
                 .repeat(TaskSchedule.tick(LobbyConfig.BOARD_UPDATE_TIME.getValue()))
                 .schedule();
@@ -76,14 +88,20 @@ public class Lobby extends InstanceContainer {
 
     void onFirstSpawn(Player player) {
         board.addPlayer(player);
+        player.setRespawnPoint(position);
+        player.setEnableRespawnScreen(false);
     }
 
-    void onArenaFinish(Player player) {
+    void onBackSpawn(Player player) {
         board.addPlayer(player);
         player.refreshCommands();
         player.getInventory().clear();
         player.teleport(position);
         player.tagHandler().updateContent(NBTCompound.EMPTY);
+    }
+
+    void onQuit(Player player) {
+        board.removePlayer(player);
     }
 
     public Pos getPosition() {
