@@ -53,7 +53,7 @@ public class GameServer {
         EventNode<Event> globalNode = MinecraftServer.getGlobalEventHandler();
         globalNode.addListener(PlayerLoginEvent.class, event -> event.setSpawningInstance(lobby));
         globalNode.addListener(PlayerChatEvent.class, event -> {
-            event.setChatFormat(e -> replacementManager.replace(ChatConfig.CHAT_FORMAT.getValue(), e.getPlayer(), Map.of("message", () -> Component.text(e.getMessage()))));
+            event.setChatFormat(e -> ReplacementManager.replace(ChatConfig.CHAT_FORMAT.getValue(), e.getPlayer(), Map.of("message", Component.text(e.getMessage()))));
             event.getRecipients().removeIf(p -> !Objects.equals(p.getInstance(), event.getPlayer().getInstance()));
         });
 
@@ -61,7 +61,7 @@ public class GameServer {
         ServerListHook.hook(globalNode);
 
         // Replacement
-        replacementManager.addPlayerReplacement("player", Player::getName);
+        ReplacementManager.addPlayerReplacement("player", Player::getName);
     }
 
     public void enable() {

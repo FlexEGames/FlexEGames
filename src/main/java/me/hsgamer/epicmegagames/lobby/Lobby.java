@@ -3,6 +3,7 @@ package me.hsgamer.epicmegagames.lobby;
 import com.sqcred.sboards.SBoard;
 import me.hsgamer.epicmegagames.GameServer;
 import me.hsgamer.epicmegagames.config.LobbyConfig;
+import me.hsgamer.epicmegagames.manager.ReplacementManager;
 import me.hsgamer.epicmegagames.util.FullBrightDimension;
 import me.hsgamer.epicmegagames.util.LoaderType;
 import net.minestom.server.MinecraftServer;
@@ -35,9 +36,9 @@ public class Lobby extends InstanceContainer {
         super(UUID.randomUUID(), FullBrightDimension.INSTANCE);
         position = LobbyConfig.POSITION.getValue();
         board = new SBoard(
-                player -> gameServer.getReplacementManager().replace(LobbyConfig.BOARD_TITLE.getValue(), player),
+                player -> ReplacementManager.replace(LobbyConfig.BOARD_TITLE.getValue(), player),
                 player -> LobbyConfig.BOARD_LINES.getValue().stream()
-                        .map(line -> gameServer.getReplacementManager().replace(line, player))
+                        .map(line -> ReplacementManager.replace(line, player))
                         .toList()
         );
         setTimeRate(0);
