@@ -144,17 +144,13 @@ public class GameServer {
             minecraftServer.start(MainConfig.SERVER_IP.getValue(), MainConfig.SERVER_PORT.getValue());
         } catch (Exception e) {
             MinecraftServer.LOGGER.error("Failed to start server", e);
-            stop();
+            System.exit(1);
         }
     }
 
     @ApiStatus.Internal
     public void stop() {
-        try {
-            MinecraftServer.stopCleanly();
-        } catch (Exception e) {
-            MinecraftServer.LOGGER.error("Failed to stop server", e);
-        }
+        MinecraftServer.stopCleanly();
         disable();
     }
 
