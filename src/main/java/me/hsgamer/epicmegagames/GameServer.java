@@ -1,6 +1,7 @@
 package me.hsgamer.epicmegagames;
 
 import io.github.bloepiloepi.pvp.PvpExtension;
+import me.hsgamer.epicmegagames.board.Board;
 import me.hsgamer.epicmegagames.command.CreateArenaCommand;
 import me.hsgamer.epicmegagames.command.JoinArenaCommand;
 import me.hsgamer.epicmegagames.command.LeaveCommand;
@@ -21,6 +22,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerChatEvent;
+import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerLoginEvent;
 import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.extras.bungee.BungeeCordProxy;
@@ -62,8 +64,7 @@ public class GameServer {
         globalNode.addListener(PlayerLoginEvent.class, event -> {
             event.setSpawningInstance(lobby);
             event.getPlayer().setRespawnPoint(lobby.getPosition());
-        });
-        globalNode.addListener(PlayerChatEvent.class, event -> {
+        }).addListener(PlayerChatEvent.class, event -> {
             event.setChatFormat(e -> ReplacementManager.builder()
                     .replaceGlobal()
                     .replacePlayer(event.getPlayer())
@@ -71,7 +72,7 @@ public class GameServer {
                     .build(ChatConfig.CHAT_FORMAT.getValue())
             );
             event.getRecipients().removeIf(p -> !Objects.equals(p.getInstance(), event.getPlayer().getInstance()));
-        });
+        }).addListener(PlayerDisconnectEvent.class, event -> Board.removeBoard(event.getPlayer()));
 
         // HOOK
         ServerListHook.hook(globalNode);
