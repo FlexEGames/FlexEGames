@@ -25,11 +25,15 @@ import net.minestom.server.event.player.PlayerChatEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerLoginEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
+import net.minestom.server.event.server.ServerTickMonitorEvent;
 import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.extras.bungee.BungeeCordProxy;
+import net.minestom.server.monitoring.TickMonitor;
+import net.minestom.server.utils.MathUtils;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class GameServer {
     private final MinecraftServer minecraftServer = MinecraftServer.init();
@@ -83,8 +87,24 @@ public class GameServer {
         ServerListHook.hook(globalNode);
         PvpExtension.init();
 
+        // Monitoring
+        AtomicReference<TickMonitor> lastTick = new AtomicReference<>();
+        globalNode.addListener(ServerTickMonitorEvent.class, event -> lastTick.set(event.getTickMonitor()));
+
         // Replacement
         ReplacementManager.addPlayerReplacement("player", Player::getName);
+        ReplacementManager.addGlobalReplacement("ram_usage", () -> {
+            Runtime runtime = Runtime.getRuntime();
+            return Component.text(Long.toString((runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024));
+        });
+        ReplacementManager.addGlobalReplacement("tick_time", () -> {
+            TickMonitor tickMonitor = lastTick.get();
+            if (tickMonitor == null) {
+                return Component.text("N/A");
+            }
+            double tick = MathUtils.round(tickMonitor.getTickTime(), 2);
+            return Component.text(Double.toString(tick));
+        });
     }
 
     public void enable() {
