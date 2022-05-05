@@ -25,6 +25,7 @@ import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.instance.AddEntityToInstanceEvent;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
+import net.minestom.server.event.player.PlayerBlockBreakEvent;
 import net.minestom.server.event.player.PlayerMoveEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.trait.EntityEvent;
@@ -141,7 +142,8 @@ public class DuelGame implements ArenaGame {
                         player.removeTag(deadTag);
                         board.removePlayer(player);
                     }
-                });
+                })
+                .addListener(PlayerBlockBreakEvent.class, event -> event.setCancelled(true));
         task = MinecraftServer.getSchedulerManager()
                 .buildTask(board::updateAll)
                 .repeat(TaskSchedule.tick(1))

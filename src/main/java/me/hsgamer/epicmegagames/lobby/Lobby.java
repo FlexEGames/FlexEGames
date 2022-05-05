@@ -24,7 +24,6 @@ import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.network.packet.server.play.TeamsPacket;
 import net.minestom.server.scoreboard.Team;
-import net.minestom.server.scoreboard.TeamBuilder;
 import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskSchedule;
 
@@ -97,13 +96,13 @@ public class Lobby extends InstanceContainer {
         board.addPlayer(player);
         player.setRespawnPoint(position);
         player.setEnableRespawnScreen(false);
-        player.setGameMode(GameMode.SURVIVAL);
+        player.setGameMode(GameMode.ADVENTURE);
         player.setTeam(lobbyTeam);
     }
 
     void onBackSpawn(Player player) {
         board.addPlayer(player);
-        player.setGameMode(GameMode.SURVIVAL);
+        player.setGameMode(GameMode.ADVENTURE);
         player.heal();
         player.setFood(20);
         player.setLevel(0);
