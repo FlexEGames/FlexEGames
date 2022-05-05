@@ -93,7 +93,6 @@ public class Lobby extends InstanceContainer {
 
     void onBackSpawn(Player player) {
         board.addPlayer(player);
-        player.refreshCommands();
         player.getInventory().clear();
         player.teleport(position);
         player.setRespawnPoint(position);

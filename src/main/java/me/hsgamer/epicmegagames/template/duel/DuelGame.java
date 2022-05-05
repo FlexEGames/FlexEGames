@@ -26,6 +26,7 @@ import net.minestom.server.event.EventNode;
 import net.minestom.server.event.instance.AddEntityToInstanceEvent;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
 import net.minestom.server.event.player.PlayerMoveEvent;
+import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.trait.EntityEvent;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.block.Block;
@@ -98,6 +99,7 @@ public class DuelGame implements ArenaGame {
                         }
                     }
                 })
+                .addListener(PlayerSpawnEvent.class, event -> event.getPlayer().teleport(template.joinPos))
                 .addListener(FinalDamageEvent.class, event -> {
                     if (isFinished.get() || arena.getState() == WaitingState.class || arena.getState() == EndingState.class || Boolean.TRUE.equals(event.getEntity().getTag(deadTag))) {
                         event.setCancelled(true);
@@ -125,7 +127,6 @@ public class DuelGame implements ArenaGame {
                 .addListener(AddEntityToInstanceEvent.class, event -> {
                     if (event.getEntity() instanceof Player player) {
                         player.setRespawnPoint(template.joinPos);
-                        player.teleport(template.joinPos);
                         player.setGameMode(GameMode.SURVIVAL);
                         board.addPlayer(player);
                     }

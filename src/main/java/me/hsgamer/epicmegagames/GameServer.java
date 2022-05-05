@@ -21,6 +21,7 @@ import net.minestom.server.command.CommandManager;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
+import net.minestom.server.event.instance.AddEntityToInstanceEvent;
 import net.minestom.server.event.player.PlayerChatEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerLoginEvent;
@@ -61,18 +62,26 @@ public class GameServer {
 
         // GLOBAL EVENT
         EventNode<Event> globalNode = MinecraftServer.getGlobalEventHandler();
-        globalNode.addListener(PlayerLoginEvent.class, event -> {
-            event.setSpawningInstance(lobby);
-            event.getPlayer().setRespawnPoint(lobby.getPosition());
-        }).addListener(PlayerChatEvent.class, event -> {
-            event.setChatFormat(e -> ReplacementManager.builder()
-                    .replaceGlobal()
-                    .replacePlayer(event.getPlayer())
-                    .replace(Map.of("message", Component.text(e.getMessage())))
-                    .build(ChatConfig.CHAT_FORMAT.getValue())
-            );
-            event.getRecipients().removeIf(p -> !Objects.equals(p.getInstance(), event.getPlayer().getInstance()));
-        }).addListener(PlayerDisconnectEvent.class, event -> Board.removeBoard(event.getPlayer()));
+        globalNode
+                .addListener(PlayerLoginEvent.class, event -> {
+                    event.setSpawningInstance(lobby);
+                    event.getPlayer().setRespawnPoint(lobby.getPosition());
+                })
+                .addListener(PlayerChatEvent.class, event -> {
+                    event.setChatFormat(e -> ReplacementManager.builder()
+                            .replaceGlobal()
+                            .replacePlayer(event.getPlayer())
+                            .replace(Map.of("message", Component.text(e.getMessage())))
+                            .build(ChatConfig.CHAT_FORMAT.getValue())
+                    );
+                    event.getRecipients().removeIf(p -> !Objects.equals(p.getInstance(), event.getPlayer().getInstance()));
+                })
+                .addListener(PlayerDisconnectEvent.class, event -> Board.removeBoard(event.getPlayer()))
+                .addListener(AddEntityToInstanceEvent.class, event -> {
+                    if (event.getEntity() instanceof Player player) {
+                        player.refreshCommands();
+                    }
+                });
 
         // HOOK
         ServerListHook.hook(globalNode);
