@@ -11,11 +11,11 @@ import java.util.function.Predicate;
 
 public class PerInstanceInstanceViewHook {
     public static void hook(EventNode<Event> node) {
-        node.addListener(PlayerTickEvent.class, event -> {
-            Player player = event.getPlayer();
-            player.updateViewableRule(perInstancePlayerPredicate(player.getInstance()));
-            player.updateViewerRule(perInstancePredicate(player.getInstance()));
-        });
+//        node.addListener(PlayerTickEvent.class, event -> {
+//            Player player = event.getPlayer();
+//            player.updateViewableRule(perInstancePlayerPredicate(player.getInstance()));
+//            player.updateViewerRule(perInstancePredicate(player.getInstance()));
+//        });
     }
 
     private static Predicate<Entity> perInstancePredicate(Instance instance) {
