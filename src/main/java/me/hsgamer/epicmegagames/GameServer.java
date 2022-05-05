@@ -140,7 +140,12 @@ public class GameServer {
         }
         MinecraftServer.setCompressionThreshold(MainConfig.COMPRESSION_THRESHOLD.getValue());
         MinecraftServer.setBrandName(MainConfig.BRAND_NAME.getValue());
-        minecraftServer.start(MainConfig.SERVER_IP.getValue(), MainConfig.SERVER_PORT.getValue());
+        try {
+            minecraftServer.start(MainConfig.SERVER_IP.getValue(), MainConfig.SERVER_PORT.getValue());
+        } catch (Exception e) {
+            MinecraftServer.LOGGER.error("Failed to start server", e);
+            stop();
+        }
     }
 
     @ApiStatus.Internal
