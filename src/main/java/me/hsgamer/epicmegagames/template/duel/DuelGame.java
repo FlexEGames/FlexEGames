@@ -94,6 +94,7 @@ public class DuelGame implements ArenaGame {
                     if (event.getEntity() instanceof Player player) {
                         event.setCancelled(true);
                         player.heal();
+                        player.setFood(20);
                         if (!isFinished.get()) {
                             player.setTag(deadTag, true);
                             player.setGameMode(GameMode.SPECTATOR);

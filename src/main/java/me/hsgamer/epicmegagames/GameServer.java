@@ -28,11 +28,13 @@ import net.minestom.server.event.player.PlayerLoginEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.server.ServerTickMonitorEvent;
 import net.minestom.server.extras.MojangAuth;
+import net.minestom.server.extras.PlacementRules;
 import net.minestom.server.extras.bungee.BungeeCordProxy;
-import net.minestom.server.extras.lan.OpenToLAN;
-import net.minestom.server.extras.lan.OpenToLANConfig;
+import net.minestom.server.extras.optifine.OptifineSupport;
+import net.minestom.server.extras.velocity.VelocityProxy;
 import net.minestom.server.monitoring.TickMonitor;
 import net.minestom.server.utils.MathUtils;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
 import java.util.Objects;
@@ -90,6 +92,8 @@ public class GameServer {
         ServerListHook.hook(globalNode);
         PerInstanceInstanceViewHook.hook(globalNode);
         PvpExtension.init();
+        PlacementRules.init();
+        OptifineSupport.enable();
 
         // Monitoring
         AtomicReference<TickMonitor> lastTick = new AtomicReference<>();
@@ -122,22 +126,24 @@ public class GameServer {
         lobby.clear();
     }
 
+    @ApiStatus.Internal
     public void start() {
         enable();
-        if (Boolean.TRUE.equals(MainConfig.BUNGEE.getValue())) {
+        String secret = MainConfig.VELOCITY_SECRET.getValue();
+        if (!secret.isBlank()) {
+            VelocityProxy.enable(secret);
+        } else if (Boolean.TRUE.equals(MainConfig.BUNGEE.getValue())) {
             BungeeCordProxy.enable();
         }
         if (Boolean.TRUE.equals(MainConfig.SERVER_ONLINE_MODE.getValue())) {
             MojangAuth.init();
-        }
-        if (Boolean.TRUE.equals(MainConfig.LAN_ENABLE.getValue())) {
-            OpenToLAN.open(new OpenToLANConfig().port(MainConfig.LAN_PORT.getValue()));
         }
         MinecraftServer.setCompressionThreshold(MainConfig.COMPRESSION_THRESHOLD.getValue());
         MinecraftServer.setBrandName(MainConfig.BRAND_NAME.getValue());
         minecraftServer.start(MainConfig.SERVER_IP.getValue(), MainConfig.SERVER_PORT.getValue());
     }
 
+    @ApiStatus.Internal
     public void stop() {
         MinecraftServer.stopCleanly();
         disable();
