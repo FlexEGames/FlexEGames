@@ -150,7 +150,11 @@ public class GameServer {
 
     @ApiStatus.Internal
     public void stop() {
-        MinecraftServer.stopCleanly();
+        try {
+            MinecraftServer.stopCleanly();
+        } catch (Exception e) {
+            MinecraftServer.LOGGER.error("Failed to stop server", e);
+        }
         disable();
     }
 
