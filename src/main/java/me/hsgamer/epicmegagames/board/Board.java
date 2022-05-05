@@ -16,6 +16,7 @@ public class Board {
     private final List<Player> players = new ArrayList<>();
     private final Function<Player, Component> title;
     private final Function<Player, List<Component>> lines;
+
     public Board(Function<Player, Component> title, Function<Player, List<Component>> lines) {
         this.title = title;
         this.lines = lines;
