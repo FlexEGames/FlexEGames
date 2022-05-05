@@ -23,11 +23,13 @@ public class DuelTemplate implements Template {
     private static final ConfigPath<Integer> maxHeightPath = Paths.integerPath("max-height", 2);
     private static final ConfigPath<Integer> waitingTimePath = Paths.integerPath("waiting-time", 60);
     private static final ConfigPath<Integer> endingTimePath = Paths.integerPath("ending-time", 5);
+    private static final ConfigPath<Boolean> useLegacyPvpPath = Paths.booleanPath("use-legacy-pvp", false);
     final List<Pos> posList;
     final Pos joinPos;
     final int maxHeight;
     final int waitingTime;
     final int endingTime;
+    final boolean useLegacyPvp;
 
     public DuelTemplate(Config config) {
         posList = posPath.getValue(config);
@@ -35,6 +37,7 @@ public class DuelTemplate implements Template {
         maxHeight = maxHeightPath.getValue(config);
         waitingTime = waitingTimePath.getValue(config);
         endingTime = endingTimePath.getValue(config);
+        useLegacyPvp = useLegacyPvpPath.getValue(config);
     }
 
     @Override

@@ -88,7 +88,7 @@ public class DuelGame implements ArenaGame {
                 }
         );
         entityEventNode = EventNode.event("entityEvent-" + arena.getName(), EventFilter.ENTITY, entityEvent -> entityEvent.getEntity().getInstance() == instance);
-        entityEventNode.addChild(PvpExtension.events())
+        entityEventNode.addChild(template.useLegacyPvp ? PvpExtension.legacyEvents() : PvpExtension.events())
                 .addListener(EntityPreDeathEvent.class, event -> {
                     if (event.getEntity() instanceof Player player) {
                         event.setCancelled(true);
