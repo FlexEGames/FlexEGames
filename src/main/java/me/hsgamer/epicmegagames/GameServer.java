@@ -10,6 +10,7 @@ import me.hsgamer.epicmegagames.config.ChatConfig;
 import me.hsgamer.epicmegagames.config.LobbyConfig;
 import me.hsgamer.epicmegagames.config.MainConfig;
 import me.hsgamer.epicmegagames.config.MessageConfig;
+import me.hsgamer.epicmegagames.hook.PerInstanceInstanceViewHook;
 import me.hsgamer.epicmegagames.hook.ServerListHook;
 import me.hsgamer.epicmegagames.lobby.Lobby;
 import me.hsgamer.epicmegagames.manager.GameArenaManager;
@@ -28,6 +29,8 @@ import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.server.ServerTickMonitorEvent;
 import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.extras.bungee.BungeeCordProxy;
+import net.minestom.server.extras.lan.OpenToLAN;
+import net.minestom.server.extras.lan.OpenToLANConfig;
 import net.minestom.server.monitoring.TickMonitor;
 import net.minestom.server.utils.MathUtils;
 
@@ -85,6 +88,7 @@ public class GameServer {
 
         // HOOK
         ServerListHook.hook(globalNode);
+        PerInstanceInstanceViewHook.hook(globalNode);
         PvpExtension.init();
 
         // Monitoring
@@ -125,6 +129,9 @@ public class GameServer {
         }
         if (Boolean.TRUE.equals(MainConfig.SERVER_ONLINE_MODE.getValue())) {
             MojangAuth.init();
+        }
+        if (Boolean.TRUE.equals(MainConfig.LAN_ENABLE.getValue())) {
+            OpenToLAN.open(new OpenToLANConfig().port(MainConfig.LAN_PORT.getValue()));
         }
         MinecraftServer.setCompressionThreshold(MainConfig.COMPRESSION_THRESHOLD.getValue());
         MinecraftServer.setBrandName(MainConfig.BRAND_NAME.getValue());
