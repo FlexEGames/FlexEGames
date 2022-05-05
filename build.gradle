@@ -34,7 +34,6 @@ dependencies {
 
     implementation 'com.github.Minestom:Minestom:1384bc0c18'
     implementation "com.github.CatDevz:SlimeLoader:master-SNAPSHOT"
-    implementation 'com.github.sqcred:SBoards:1.2.0'
     implementation 'com.github.Bloepiloepi:MinestomPvP:529548362c'
 }
 

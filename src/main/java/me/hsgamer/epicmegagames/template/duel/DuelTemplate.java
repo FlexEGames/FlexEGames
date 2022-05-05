@@ -14,10 +14,10 @@ import java.util.List;
 
 public class DuelTemplate implements Template {
     private static final ConfigPath<List<Pos>> posPath = new PosListPath("pos", List.of(
-            new Pos(-2, 0, 0),
-            new Pos(2, 0, 0),
-            new Pos(0, 0, -2),
-            new Pos(0, 0, 2)
+            new Pos(-2, 4, 0),
+            new Pos(2, 4, 0),
+            new Pos(0, 4, -2),
+            new Pos(0, 4, 2)
     ));
     private static final ConfigPath<Pos> joinPosPath = new PosPath("join-pos", new Pos(0, 3, 0));
     private static final ConfigPath<Integer> maxHeightPath = Paths.integerPath("max-height", 2);

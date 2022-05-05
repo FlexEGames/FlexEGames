@@ -1,7 +1,7 @@
 package me.hsgamer.epicmegagames.lobby;
 
-import com.sqcred.sboards.SBoard;
 import me.hsgamer.epicmegagames.api.ChunkLoaderType;
+import me.hsgamer.epicmegagames.board.Board;
 import me.hsgamer.epicmegagames.config.LobbyConfig;
 import me.hsgamer.epicmegagames.manager.ReplacementManager;
 import me.hsgamer.epicmegagames.util.FullBrightDimension;
@@ -28,13 +28,13 @@ import java.util.UUID;
 
 public class Lobby extends InstanceContainer {
     private final Pos position;
-    private final SBoard board;
+    private final Board board;
     private final Task boardTask;
 
     public Lobby() {
         super(UUID.randomUUID(), FullBrightDimension.INSTANCE);
         position = LobbyConfig.POSITION.getValue();
-        board = new SBoard(
+        board = new Board(
                 player -> ReplacementManager.builder().replaceGlobal().replacePlayer(player).build(LobbyConfig.BOARD_TITLE.getValue()),
                 player -> {
                     ReplacementManager.Builder builder = ReplacementManager.builder().replaceGlobal().replacePlayer(player);

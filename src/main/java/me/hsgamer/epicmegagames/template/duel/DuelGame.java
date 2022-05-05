@@ -1,11 +1,11 @@
 package me.hsgamer.epicmegagames.template.duel;
 
-import com.sqcred.sboards.SBoard;
 import io.github.bloepiloepi.pvp.PvpExtension;
 import io.github.bloepiloepi.pvp.events.EntityPreDeathEvent;
 import io.github.bloepiloepi.pvp.events.FinalDamageEvent;
 import me.hsgamer.epicmegagames.api.ArenaGame;
 import me.hsgamer.epicmegagames.api.JoinResponse;
+import me.hsgamer.epicmegagames.board.Board;
 import me.hsgamer.epicmegagames.config.MessageConfig;
 import me.hsgamer.epicmegagames.feature.LobbyFeature;
 import me.hsgamer.epicmegagames.manager.ReplacementManager;
@@ -46,7 +46,8 @@ public class DuelGame implements ArenaGame {
     private final AtomicBoolean isFinished = new AtomicBoolean(false);
     private final Tag<Boolean> deadTag = Tag.Boolean("dead");
     private final AtomicReference<Player> winner = new AtomicReference<>();
-    private final SBoard board;
+    private final Board board;
+    private final EventNode<EntityEvent> entityEventNode;
     private Task task;
 
     public DuelGame(DuelTemplate template, Arena arena) {
@@ -54,7 +55,7 @@ public class DuelGame implements ArenaGame {
         this.arena = arena;
         this.timerFeature = arena.getArenaFeature(ArenaTimerFeature.class);
         this.instance = MinecraftServer.getInstanceManager().createInstanceContainer(FullBrightDimension.INSTANCE);
-        this.board = new SBoard(
+        this.board = new Board(
                 player -> ReplacementManager.builder()
                         .replaceGlobal()
                         .replacePlayer(player)
@@ -82,13 +83,26 @@ public class DuelGame implements ArenaGame {
                         ));
                         components = MessageConfig.GAME_DUEL_BOARD_LINES_ENDING.getValue();
                     }
-                    if (components.isEmpty()) {
-                        return Collections.emptyList();
-                    } else {
-                        return components.stream().map(builder::build).toList();
-                    }
+                    return components.stream().map(builder::build).toList();
                 }
         );
+        entityEventNode = EventNode.event("entityEvent-" + arena.getName(), EventFilter.ENTITY, entityEvent -> entityEvent.getEntity().getInstance() == instance);
+        entityEventNode.addChild(PvpExtension.events())
+                .addListener(EntityPreDeathEvent.class, event -> {
+                    if (event.getEntity() instanceof Player player) {
+                        event.setCancelled(true);
+                        player.heal();
+                        if (!isFinished.get()) {
+                            player.setTag(deadTag, true);
+                            player.setGameMode(GameMode.SPECTATOR);
+                        }
+                    }
+                })
+                .addListener(FinalDamageEvent.class, event -> {
+                    if (isFinished.get() || arena.getState() == WaitingState.class || arena.getState() == EndingState.class || Boolean.TRUE.equals(event.getEntity().getTag(deadTag))) {
+                        event.setCancelled(true);
+                    }
+                });
     }
 
     @Override
@@ -106,23 +120,7 @@ public class DuelGame implements ArenaGame {
     @Override
     public void init() {
         instance.setGenerator(unit -> unit.modifier().fillHeight(0, template.maxHeight, Block.GRASS_BLOCK));
-        EventNode<EntityEvent> eventNode = EventNode.event("entityEvent-" + arena.getName(), EventFilter.ENTITY, entityEvent -> entityEvent.getEntity().getInstance() == instance);
-        eventNode.addChild(PvpExtension.events())
-                .addListener(EntityPreDeathEvent.class, event -> {
-                    if (event.getEntity() instanceof Player player) {
-                        event.setCancelled(true);
-                        player.heal();
-                        if (!isFinished.get()) {
-                            player.setTag(deadTag, true);
-                            player.setGameMode(GameMode.SPECTATOR);
-                        }
-                    }
-                })
-                .addListener(FinalDamageEvent.class, event -> {
-                    if (isFinished.get() || arena.getState() == WaitingState.class || arena.getState() == EndingState.class || Boolean.TRUE.equals(event.getEntity().getTag(deadTag))) {
-                        event.setCancelled(true);
-                    }
-                });
+        MinecraftServer.getGlobalEventHandler().addChild(entityEventNode);
         instance.eventNode()
                 .addListener(AddEntityToInstanceEvent.class, event -> {
                     if (event.getEntity() instanceof Player player) {
@@ -230,6 +228,7 @@ public class DuelGame implements ArenaGame {
         if (task != null) {
             task.cancel();
         }
+        MinecraftServer.getGlobalEventHandler().removeChild(entityEventNode);
         MinecraftServer.getInstanceManager().unregisterInstance(instance);
     }
 }
