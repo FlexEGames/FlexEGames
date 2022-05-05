@@ -24,6 +24,10 @@ public interface ArenaGame extends Initializer {
         // EMPTY
     }
 
+    default void onFailedWaitingEnd() {
+        // EMPTY
+    }
+
     default void onInGameStart() {
         // EMPTY
     }

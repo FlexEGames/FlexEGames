@@ -169,6 +169,14 @@ public class DuelGame implements ArenaGame {
     }
 
     @Override
+    public void onFailedWaitingEnd() {
+        Component component = MessageConfig.GAME_DUEL_NOT_ENOUGH_PLAYERS.getValue();
+        for (Player player : instance.getPlayers()) {
+            player.sendMessage(component);
+        }
+    }
+
+    @Override
     public void onInGameStart() {
         List<Player> players = new ArrayList<>(instance.getPlayers());
         for (int i = 0; i < players.size(); i++) {

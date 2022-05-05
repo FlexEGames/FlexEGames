@@ -27,6 +27,11 @@ public class WaitingState implements GameState {
 
     @Override
     public void end(Arena arena) {
-        arena.getArenaFeature(GameFeature.class).getGame().onWaitingEnd();
+        ArenaGame arenaGame = arena.getArenaFeature(GameFeature.class).getGame();
+        if (arenaGame.canStart()) {
+            arenaGame.onWaitingEnd();
+        } else {
+            arenaGame.onFailedWaitingEnd();
+        }
     }
 }
