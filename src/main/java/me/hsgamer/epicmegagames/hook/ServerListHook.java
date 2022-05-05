@@ -17,14 +17,7 @@ public class ServerListHook {
     public static void hook(EventNode<Event> node) {
         node.addListener(ServerListPingEvent.class, event -> {
             ResponseData responseData = event.getResponseData();
-            Optional<Instance> optionalInstance = Optional.ofNullable(event.getConnection()).map(PlayerConnection::getPlayer).map(Entity::getInstance);
-            Collection<Player> players;
-            if (optionalInstance.isPresent()) {
-                Instance instance = optionalInstance.get();
-                players = instance.getPlayers();
-            } else {
-                players = MinecraftServer.getConnectionManager().getOnlinePlayers();
-            }
+            Collection<Player> players = MinecraftServer.getConnectionManager().getOnlinePlayers();
             responseData.addEntries(players);
             responseData.setMaxPlayer(players.size() + 1);
         });
