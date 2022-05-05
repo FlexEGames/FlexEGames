@@ -100,6 +100,8 @@ public class GameServer {
         if (Boolean.TRUE.equals(MainConfig.SERVER_ONLINE_MODE.getValue())) {
             MojangAuth.init();
         }
+        MinecraftServer.setCompressionThreshold(MainConfig.COMPRESSION_THRESHOLD.getValue());
+        MinecraftServer.setBrandName(MainConfig.BRAND_NAME.getValue());
         minecraftServer.start(MainConfig.SERVER_IP.getValue(), MainConfig.SERVER_PORT.getValue());
     }
 
