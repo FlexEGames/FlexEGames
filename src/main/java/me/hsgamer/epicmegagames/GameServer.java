@@ -1,6 +1,7 @@
 package me.hsgamer.epicmegagames;
 
 import io.github.bloepiloepi.pvp.PvpExtension;
+import lombok.Getter;
 import me.hsgamer.epicmegagames.board.Board;
 import me.hsgamer.epicmegagames.command.CreateArenaCommand;
 import me.hsgamer.epicmegagames.command.JoinArenaCommand;
@@ -40,6 +41,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
+@Getter
 public class GameServer {
     private final MinecraftServer minecraftServer = MinecraftServer.init();
     private final MainConfig mainConfig = new MainConfig();
@@ -152,37 +154,5 @@ public class GameServer {
     public void stop() {
         MinecraftServer.stopCleanly();
         disable();
-    }
-
-    public MinecraftServer getMinecraftServer() {
-        return minecraftServer;
-    }
-
-    public Lobby getLobby() {
-        return lobby;
-    }
-
-    public GameArenaManager getGameArenaManager() {
-        return gameArenaManager;
-    }
-
-    public TemplateManager getTemplateManager() {
-        return templateManager;
-    }
-
-    public MainConfig getMainConfig() {
-        return mainConfig;
-    }
-
-    public ChatConfig getChatConfig() {
-        return chatConfig;
-    }
-
-    public LobbyConfig getLobbyConfig() {
-        return lobbyConfig;
-    }
-
-    public MessageConfig getMessageConfig() {
-        return messageConfig;
     }
 }

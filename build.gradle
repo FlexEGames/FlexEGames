@@ -32,9 +32,15 @@ dependencies {
     implementation "me.hsgamer:minigamecore-base:$minigameCore"
     implementation "me.hsgamer:minigamecore-implementation:$minigameCore"
 
-    implementation 'com.github.Minestom:Minestom:1384bc0c18'
-    implementation "com.github.CatDevz:SlimeLoader:master-SNAPSHOT"
+    implementation 'com.github.Minestom:Minestom:cef824bc16'
+    implementation "com.github.CatDevz:SlimeLoader:a8e533636c"
     implementation 'com.github.Bloepiloepi:MinestomPvP:529548362c'
+
+    def lombok = "1.18.24"
+    compileOnly "org.projectlombok:lombok:$lombok"
+    annotationProcessor "org.projectlombok:lombok:$lombok"
+    testCompileOnly "org.projectlombok:lombok:$lombok"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombok"
 }
 
 jar {
