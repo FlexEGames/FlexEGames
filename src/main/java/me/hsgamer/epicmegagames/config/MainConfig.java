@@ -15,7 +15,7 @@ public class MainConfig extends PathableConfig {
     public static final ConfigPath<String> VELOCITY_SECRET = Paths.stringPath("server.velocity-secret", "");
     public static final ConfigPath<String> BRAND_NAME = Paths.stringPath("server.brand-name", "EpicMegaGames");
     public static final ConfigPath<Integer> COMPRESSION_THRESHOLD = Paths.integerPath("server.compression-threshold", 0);
-    public static final ConfigPath<Integer> ARENA_PERIOD = Paths.integerPath("arena.period", 1);
+    public static final ConfigPath<Integer> ARENA_PERIOD = Paths.integerPath("arena.period", 0);
     public static final ConfigPath<Boolean> ARENA_ASYNC = Paths.booleanPath("arena.async", true);
 
     public MainConfig() {

@@ -5,6 +5,7 @@ import me.hsgamer.epicmegagames.board.Board;
 import me.hsgamer.epicmegagames.config.LobbyConfig;
 import me.hsgamer.epicmegagames.manager.ReplacementManager;
 import me.hsgamer.epicmegagames.util.FullBrightDimension;
+import me.hsgamer.epicmegagames.util.TaskUtil;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
@@ -25,7 +26,6 @@ import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.network.packet.server.play.TeamsPacket;
 import net.minestom.server.scoreboard.Team;
 import net.minestom.server.timer.Task;
-import net.minestom.server.timer.TaskSchedule;
 
 import java.util.UUID;
 
@@ -85,7 +85,7 @@ public class Lobby extends InstanceContainer {
                     }
                 });
         boardTask = MinecraftServer.getSchedulerManager().buildTask(board::updateAll)
-                .repeat(TaskSchedule.tick(LobbyConfig.BOARD_UPDATE_TIME.getValue()))
+                .repeat(TaskUtil.tick(LobbyConfig.BOARD_UPDATE_TIME.getValue()))
                 .schedule();
         lobbyTeam = MinecraftServer.getTeamManager().createBuilder("lobbyTeam")
                 .collisionRule(TeamsPacket.CollisionRule.NEVER)
