@@ -1,9 +1,11 @@
 package me.hsgamer.epicmegagames.util;
 
+import lombok.experimental.UtilityClass;
 import net.minestom.server.coordinate.Pos;
 
 import java.util.Optional;
 
+@UtilityClass
 public final class PosUtil {
     public static Optional<Pos> convert(String value) {
         String[] split = value.split(",", 5);

@@ -1,5 +1,6 @@
 package me.hsgamer.epicmegagames.config.path;
 
+import lombok.experimental.ExtensionMethod;
 import me.hsgamer.epicmegagames.util.PosUtil;
 import me.hsgamer.hscore.common.CollectionUtils;
 import me.hsgamer.hscore.config.Config;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@ExtensionMethod({PosUtil.class, CollectionUtils.class})
 public class PosListPath extends AdvancedConfigPath<List<String>, List<Pos>> {
     public PosListPath(@NotNull String path, @Nullable List<Pos> def) {
         super(path, def);
@@ -22,7 +24,7 @@ public class PosListPath extends AdvancedConfigPath<List<String>, List<Pos>> {
         if (o == null) {
             return null;
         } else {
-            return CollectionUtils.createStringListFromObject(o, true);
+            return o.createStringListFromObject(true);
         }
     }
 
@@ -30,7 +32,7 @@ public class PosListPath extends AdvancedConfigPath<List<String>, List<Pos>> {
     public @Nullable List<Pos> convert(@NotNull List<String> rawValue) {
         List<Pos> list = new ArrayList<>();
         for (String s : rawValue) {
-            PosUtil.convert(s).ifPresent(list::add);
+            s.convert().ifPresent(list::add);
         }
         return list;
     }

@@ -1,8 +1,8 @@
 package me.hsgamer.epicmegagames.template.duel;
 
-import io.github.bloepiloepi.pvp.PvpExtension;
 import io.github.bloepiloepi.pvp.events.EntityPreDeathEvent;
 import io.github.bloepiloepi.pvp.events.FinalDamageEvent;
+import lombok.experimental.ExtensionMethod;
 import me.hsgamer.epicmegagames.api.ArenaGame;
 import me.hsgamer.epicmegagames.api.JoinResponse;
 import me.hsgamer.epicmegagames.board.Board;
@@ -13,6 +13,7 @@ import me.hsgamer.epicmegagames.state.EndingState;
 import me.hsgamer.epicmegagames.state.InGameState;
 import me.hsgamer.epicmegagames.state.WaitingState;
 import me.hsgamer.epicmegagames.util.FullBrightDimension;
+import me.hsgamer.epicmegagames.util.PvpUtil;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.implementation.feature.arena.ArenaTimerFeature;
 import me.hsgamer.minigamecore.implementation.feature.single.TimerFeature;
@@ -40,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+@ExtensionMethod({PvpUtil.class})
 public class DuelGame implements ArenaGame {
     private final DuelTemplate template;
     private final Arena arena;
@@ -89,7 +91,8 @@ public class DuelGame implements ArenaGame {
                 }
         );
         entityEventNode = EventNode.event("entityEvent-" + arena.getName(), EventFilter.ENTITY, entityEvent -> entityEvent.getEntity().getInstance() == instance);
-        entityEventNode.addChild(template.useLegacyPvp ? PvpExtension.legacyEvents() : PvpExtension.events())
+        entityEventNode
+                .applyPvp(template.useLegacyPvp)
                 .addListener(EntityPreDeathEvent.class, event -> {
                     if (event.getEntity() instanceof Player player) {
                         event.setCancelled(true);
@@ -147,7 +150,7 @@ public class DuelGame implements ArenaGame {
                 .addListener(PlayerBlockBreakEvent.class, event -> event.setCancelled(true));
         task = MinecraftServer.getSchedulerManager()
                 .buildTask(board::updateAll)
-                .repeat(TaskSchedule.tick(1))
+                .repeat(TaskSchedule.nextTick())
                 .schedule();
     }
 

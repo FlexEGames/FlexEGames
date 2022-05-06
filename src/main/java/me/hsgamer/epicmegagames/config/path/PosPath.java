@@ -1,5 +1,6 @@
 package me.hsgamer.epicmegagames.config.path;
 
+import lombok.experimental.ExtensionMethod;
 import me.hsgamer.epicmegagames.util.PosUtil;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.path.AdvancedConfigPath;
@@ -9,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+@ExtensionMethod({PosUtil.class})
 public class PosPath extends AdvancedConfigPath<String, Pos> {
     public PosPath(@NotNull String path, @Nullable Pos def) {
         super(path, def);
@@ -21,11 +23,11 @@ public class PosPath extends AdvancedConfigPath<String, Pos> {
 
     @Override
     public @Nullable Pos convert(@NotNull String rawValue) {
-        return PosUtil.convert(rawValue).orElse(null);
+        return rawValue.convert().orElse(null);
     }
 
     @Override
     public @Nullable String convertToRaw(@NotNull Pos value) {
-        return PosUtil.convert(value);
+        return value.convert();
     }
 }
