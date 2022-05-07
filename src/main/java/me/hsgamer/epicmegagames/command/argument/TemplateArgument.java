@@ -5,6 +5,7 @@ import me.hsgamer.epicmegagames.api.Template;
 import net.minestom.server.command.builder.NodeMaker;
 import net.minestom.server.command.builder.arguments.Argument;
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException;
+import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 import net.minestom.server.network.packet.server.play.DeclareCommandsPacket;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +20,14 @@ public class TemplateArgument extends Argument<Template> {
     public TemplateArgument(GameServer gameServer, @NotNull String id) {
         super(id);
         this.gameServer = gameServer;
+        setSuggestionCallback((sender, context, suggestion) -> {
+            String raw = context.getRaw(this);
+            gameServer.getTemplateManager().getTemplateMap().keySet().forEach(s -> {
+                if (raw.isBlank() || s.startsWith(raw)) {
+                    suggestion.addEntry(new SuggestionEntry(s));
+                }
+            });
+        });
     }
 
     @Override
