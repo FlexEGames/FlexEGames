@@ -31,7 +31,7 @@ public class DuelTemplate implements Template {
     private static final ConfigPath<Integer> endingTimePath = Paths.integerPath("ending-time", 5);
     private static final ConfigPath<Boolean> useLegacyPvpPath = Paths.booleanPath("use-legacy-pvp", false);
     private static final NumberObjectMapPath kitPath = new NumberObjectMapPath("kit", Collections.emptyMap());
-    private static final ConfigPath<Double> borderDiameterPath = Paths.doublePath("border-diameter", 10.0);
+    private static final ConfigPath<Double> borderDiameterPath = Paths.doublePath("border-diameter", 50.0);
     final List<Pos> posList;
     final Pos joinPos;
     final int maxHeight;
