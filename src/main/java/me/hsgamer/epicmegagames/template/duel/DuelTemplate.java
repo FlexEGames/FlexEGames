@@ -2,6 +2,8 @@ package me.hsgamer.epicmegagames.template.duel;
 
 import me.hsgamer.epicmegagames.api.ArenaGame;
 import me.hsgamer.epicmegagames.api.Template;
+import me.hsgamer.epicmegagames.builder.ItemBuilder;
+import me.hsgamer.epicmegagames.config.path.NumberObjectMapPath;
 import me.hsgamer.epicmegagames.config.path.PosListPath;
 import me.hsgamer.epicmegagames.config.path.PosPath;
 import me.hsgamer.hscore.config.Config;
@@ -9,8 +11,12 @@ import me.hsgamer.hscore.config.path.ConfigPath;
 import me.hsgamer.hscore.config.path.impl.Paths;
 import me.hsgamer.minigamecore.base.Arena;
 import net.minestom.server.coordinate.Pos;
+import net.minestom.server.item.ItemStack;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DuelTemplate implements Template {
     private static final ConfigPath<List<Pos>> posPath = new PosListPath("pos", List.of(
@@ -24,12 +30,14 @@ public class DuelTemplate implements Template {
     private static final ConfigPath<Integer> waitingTimePath = Paths.integerPath("waiting-time", 60);
     private static final ConfigPath<Integer> endingTimePath = Paths.integerPath("ending-time", 5);
     private static final ConfigPath<Boolean> useLegacyPvpPath = Paths.booleanPath("use-legacy-pvp", false);
+    private static final NumberObjectMapPath kitPath = new NumberObjectMapPath("kit", Collections.emptyMap());
     final List<Pos> posList;
     final Pos joinPos;
     final int maxHeight;
     final int waitingTime;
     final int endingTime;
     final boolean useLegacyPvp;
+    final Map<Integer, ItemStack> kit;
 
     public DuelTemplate(Config config) {
         posList = posPath.getValue(config);
@@ -38,6 +46,8 @@ public class DuelTemplate implements Template {
         waitingTime = waitingTimePath.getValue(config);
         endingTime = endingTimePath.getValue(config);
         useLegacyPvp = useLegacyPvpPath.getValue(config);
+        kit = new LinkedHashMap<>();
+        kitPath.getValue(config).forEach((key, value) -> kit.put(key.intValue(), ItemBuilder.buildItem(value)));
     }
 
     @Override

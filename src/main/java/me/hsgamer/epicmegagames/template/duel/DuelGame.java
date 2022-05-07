@@ -98,6 +98,7 @@ public class DuelGame implements ArenaGame {
                         event.setCancelled(true);
                         player.heal();
                         player.setFood(20);
+                        player.getInventory().clear();
                         if (!isFinished.get()) {
                             player.setTag(deadTag, true);
                             player.setGameMode(GameMode.SPECTATOR);
@@ -187,10 +188,19 @@ public class DuelGame implements ArenaGame {
         List<Player> players = new ArrayList<>(instance.getPlayers());
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
+            giveKit(player);
             player.setTag(deadTag, false);
             Pos pos = template.posList.get(i % template.posList.size());
             player.teleport(pos);
         }
+    }
+
+    private void giveKit(Player player) {
+        var inventory = player.getInventory();
+        template.kit.forEach((slot, item) -> {
+            if (slot < 0 || slot >= inventory.getSize()) return;
+            player.getInventory().setItemStack(slot, item);
+        });
     }
 
     private List<Player> getAlivePlayers() {
@@ -224,6 +234,7 @@ public class DuelGame implements ArenaGame {
             message = MessageConfig.GAME_DUEL_NO_WINNER_MESSAGE.getValue();
         }
         for (Player player : instance.getPlayers()) {
+            player.getInventory().clear();
             if (winnerPlayer != null) {
                 player.sendMessage(message);
             }
