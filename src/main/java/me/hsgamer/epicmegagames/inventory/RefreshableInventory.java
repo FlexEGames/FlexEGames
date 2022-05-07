@@ -1,5 +1,6 @@
 package me.hsgamer.epicmegagames.inventory;
 
+import lombok.val;
 import me.hsgamer.epicmegagames.util.TaskUtil;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
@@ -29,9 +30,11 @@ public class RefreshableInventory extends Inventory {
     ) {
         super(inventoryType, title);
 
-        final AtomicReference<Map<Integer, Button>> currentSlotMap = new AtomicReference<>(Collections.emptyMap());
+        val currentSlotMap = new AtomicReference<Map<Integer, Button>>(Collections.emptyMap());
+        val refreshTask = new AtomicReference<Task>();
+
         addInventoryCondition((player, slot, clickType, inventoryConditionResult) -> {
-            Button button = currentSlotMap.get().get(slot);
+            var button = currentSlotMap.get().get(slot);
             if (button == null) {
                 if (cancelClickByDefault) {
                     inventoryConditionResult.setCancel(true);
@@ -42,8 +45,6 @@ public class RefreshableInventory extends Inventory {
                 }
             }
         });
-
-        final AtomicReference<Task> refreshTask = new AtomicReference<>();
         MinecraftServer.getGlobalEventHandler()
                 .addListener(InventoryOpenEvent.class, openEvent -> {
                     if (!Objects.equals(openEvent.getInventory(), this)) return;
@@ -52,15 +53,15 @@ public class RefreshableInventory extends Inventory {
                         return;
                     }
 
-                    Task task = refreshTask.get();
+                    var task = refreshTask.get();
                     if (task != null && task.isAlive()) return;
                     refreshTask.set(
                             MinecraftServer.getSchedulerManager()
                                     .buildTask(() -> {
-                                        Map<Integer, Button> slotMap = buttonMap.getButtons();
+                                        var slotMap = buttonMap.getButtons(this);
                                         currentSlotMap.set(slotMap);
                                         for (int i = 0; i < getSize(); i++) {
-                                            Button button = slotMap.get(i);
+                                            var button = slotMap.get(i);
                                             if (button == null) {
                                                 setItemStack(i, ItemStack.AIR);
                                             } else {
