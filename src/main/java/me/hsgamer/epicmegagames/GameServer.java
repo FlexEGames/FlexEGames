@@ -24,7 +24,6 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerChatEvent;
-import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerLoginEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.server.ServerTickMonitorEvent;
@@ -87,12 +86,12 @@ public class GameServer {
                     );
                     event.getRecipients().removeIf(p -> !Objects.equals(p.getInstance(), event.getPlayer().getInstance()));
                 })
-                .addListener(PlayerDisconnectEvent.class, event -> Board.removeBoard(event.getPlayer()))
                 .addListener(PlayerSpawnEvent.class, event -> event.getPlayer().refreshCommands());
 
         // HOOK
         ServerListHook.hook(globalNode);
         PerInstanceInstanceViewHook.hook(globalNode);
+        Board.hook(globalNode);
         PvpExtension.init();
         PlacementRules.init();
         OptifineSupport.enable();

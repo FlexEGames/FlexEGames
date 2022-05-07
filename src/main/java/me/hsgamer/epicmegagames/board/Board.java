@@ -3,8 +3,10 @@ package me.hsgamer.epicmegagames.board;
 import me.hsgamer.hscore.common.CollectionUtils;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.Player;
+import net.minestom.server.event.Event;
+import net.minestom.server.event.EventNode;
+import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.scoreboard.Sidebar;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
 import java.util.function.Function;
@@ -22,7 +24,10 @@ public class Board {
         this.lines = lines;
     }
 
-    @ApiStatus.Internal
+    public static void hook(EventNode<Event> node) {
+        node.addListener(PlayerDisconnectEvent.class, event -> Board.removeBoard(event.getPlayer()));
+    }
+
     private static void initBoard(Player player) {
         if (boards.containsKey(player)) {
             return;
@@ -32,7 +37,7 @@ public class Board {
         boards.put(player, sidebar);
     }
 
-    public static void removeBoard(Player player) {
+    private static void removeBoard(Player player) {
         Optional.ofNullable(boards.remove(player)).ifPresent(sidebar -> sidebar.removeViewer(player));
     }
 
