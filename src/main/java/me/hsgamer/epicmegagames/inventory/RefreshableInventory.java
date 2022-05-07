@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 public class RefreshableInventory extends Inventory {
     private RefreshableInventory(
@@ -25,8 +24,8 @@ public class RefreshableInventory extends Inventory {
             @NotNull ButtonMap buttonMap,
             int updateTick,
             boolean cancelClickByDefault,
-            Consumer<InventoryOpenEvent> openEventConsumer,
-            Consumer<InventoryCloseEvent> closeEventConsumer
+            @NotNull OpenHandler openHandler,
+            @NotNull CloseHandler closeHandler
     ) {
         super(inventoryType, title);
 
@@ -48,7 +47,10 @@ public class RefreshableInventory extends Inventory {
         MinecraftServer.getGlobalEventHandler()
                 .addListener(InventoryOpenEvent.class, openEvent -> {
                     if (!Objects.equals(openEvent.getInventory(), this)) return;
-                    openEventConsumer.accept(openEvent);
+                    if (!openHandler.test(openEvent.getPlayer())) {
+                        openEvent.setCancelled(true);
+                        return;
+                    }
 
                     Task task = refreshTask.get();
                     if (task != null && task.isAlive()) return;
@@ -72,7 +74,10 @@ public class RefreshableInventory extends Inventory {
                 })
                 .addListener(InventoryCloseEvent.class, closeEvent -> {
                     if (!Objects.equals(closeEvent.getInventory(), this)) return;
-                    closeEventConsumer.accept(closeEvent);
+                    if (!closeHandler.test(closeEvent.getPlayer())) {
+                        closeEvent.setNewInventory(this);
+                        return;
+                    }
 
                     if (getViewers().size() > 1) return;
                     Optional.ofNullable(refreshTask.get()).ifPresent(Task::cancel);
@@ -89,16 +94,14 @@ public class RefreshableInventory extends Inventory {
         private ButtonMap buttonMap;
         private int updateTick;
         private boolean cancelClickByDefault;
-        private Consumer<InventoryOpenEvent> openEventConsumer;
-        private Consumer<InventoryCloseEvent> closeEventConsumer;
+        private OpenHandler openHandler;
+        private CloseHandler closeHandler;
 
         private Builder() {
             updateTick = 1;
             cancelClickByDefault = true;
-            openEventConsumer = event -> {
-            };
-            closeEventConsumer = event -> {
-            };
+            openHandler = player -> true;
+            closeHandler = player -> true;
         }
 
         public Builder setInventoryType(@NotNull InventoryType inventoryType) {
@@ -126,13 +129,13 @@ public class RefreshableInventory extends Inventory {
             return this;
         }
 
-        public Builder setOpenEventConsumer(@NotNull Consumer<InventoryOpenEvent> openEventConsumer) {
-            this.openEventConsumer = openEventConsumer;
+        public Builder setOpenHandler(@NotNull OpenHandler openHandler) {
+            this.openHandler = openHandler;
             return this;
         }
 
-        public Builder setCloseEventConsumer(@NotNull Consumer<InventoryCloseEvent> closeEventConsumer) {
-            this.closeEventConsumer = closeEventConsumer;
+        public Builder setCloseHandler(@NotNull CloseHandler closeHandler) {
+            this.closeHandler = closeHandler;
             return this;
         }
 
@@ -152,8 +155,8 @@ public class RefreshableInventory extends Inventory {
                     buttonMap,
                     updateTick,
                     cancelClickByDefault,
-                    openEventConsumer,
-                    closeEventConsumer
+                    openHandler,
+                    closeHandler
             );
         }
     }
