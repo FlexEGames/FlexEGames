@@ -59,6 +59,8 @@ public class DuelGame implements ArenaGame {
         this.arena = arena;
         this.timerFeature = arena.getArenaFeature(ArenaTimerFeature.class);
         this.instance = MinecraftServer.getInstanceManager().createInstanceContainer(FullBrightDimension.INSTANCE);
+        instance.getWorldBorder().setCenter((float) template.joinPos.x(), (float) template.joinPos.z());
+        instance.getWorldBorder().setDiameter(template.borderDiameter);
         this.board = new Board(
                 player -> ReplacementManager.builder()
                         .replaceGlobal()

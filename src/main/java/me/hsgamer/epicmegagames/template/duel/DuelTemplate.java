@@ -31,6 +31,7 @@ public class DuelTemplate implements Template {
     private static final ConfigPath<Integer> endingTimePath = Paths.integerPath("ending-time", 5);
     private static final ConfigPath<Boolean> useLegacyPvpPath = Paths.booleanPath("use-legacy-pvp", false);
     private static final NumberObjectMapPath kitPath = new NumberObjectMapPath("kit", Collections.emptyMap());
+    private static final ConfigPath<Double> borderDiameterPath = Paths.doublePath("border-diameter", 10.0);
     final List<Pos> posList;
     final Pos joinPos;
     final int maxHeight;
@@ -38,6 +39,7 @@ public class DuelTemplate implements Template {
     final int endingTime;
     final boolean useLegacyPvp;
     final Map<Integer, ItemStack> kit;
+    final double borderDiameter;
 
     public DuelTemplate(Config config) {
         posList = posPath.getValue(config);
@@ -48,6 +50,7 @@ public class DuelTemplate implements Template {
         useLegacyPvp = useLegacyPvpPath.getValue(config);
         kit = new LinkedHashMap<>();
         kitPath.getValue(config).forEach((key, value) -> kit.put(key.intValue(), ItemBuilder.buildItem(value)));
+        borderDiameter = borderDiameterPath.getValue(config);
     }
 
     @Override
