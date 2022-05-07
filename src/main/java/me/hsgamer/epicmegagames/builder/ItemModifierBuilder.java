@@ -10,10 +10,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiFunction;
 
 @ExtensionMethod({Objects.class, ReplacementManager.class, CollectionUtils.class})
@@ -61,5 +58,9 @@ public class ItemModifierBuilder extends Builder<Object, BiFunction<ItemStack, M
             }
         }
         return itemStack;
+    }
+
+    public static ItemStack buildItem(Map<String, Object> values) {
+        return buildItem(values, Collections.emptyMap());
     }
 }
