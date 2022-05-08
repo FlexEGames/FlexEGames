@@ -8,10 +8,9 @@ import net.minestom.server.command.builder.arguments.Argument;
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 import net.minestom.server.network.packet.server.play.DeclareCommandsPacket;
+import net.minestom.server.utils.binary.BinaryWriter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 public class ArenaArgument extends Argument<Arena> {
@@ -29,7 +28,7 @@ public class ArenaArgument extends Argument<Arena> {
                     return;
                 }
                 String s = arena.getName();
-                if (raw.isBlank() || s.startsWith(raw)) {
+                if (raw == null || raw.isBlank() || s.startsWith(raw)) {
                     suggestion.addEntry(new SuggestionEntry(s));
                 }
             });
@@ -51,16 +50,13 @@ public class ArenaArgument extends Argument<Arena> {
 
     @Override
     public void processNodes(@NotNull NodeMaker nodeMaker, boolean executable) {
-        List<DeclareCommandsPacket.Node> list = new ArrayList<>();
-        gameServer.getGameArenaManager().getAllArenas().forEach(arena -> {
-            if (arena.getArenaFeature(GameFeature.class).getGame() == null) {
-                return;
-            }
-            DeclareCommandsPacket.Node argumentNode = new DeclareCommandsPacket.Node();
-            argumentNode.flags = DeclareCommandsPacket.getFlag(DeclareCommandsPacket.NodeType.LITERAL, executable, false, false);
-            argumentNode.name = arena.getName();
-            list.add(argumentNode);
+        DeclareCommandsPacket.Node argumentNode = simpleArgumentNode(this, executable, false, false);
+
+        argumentNode.parser = "brigadier:string";
+        argumentNode.properties = BinaryWriter.makeArray(packetWriter -> {
+            packetWriter.writeVarInt(1); // Quotable phrase
         });
-        nodeMaker.addNodes(list.toArray(new DeclareCommandsPacket.Node[0]));
+
+        nodeMaker.addNodes(new DeclareCommandsPacket.Node[]{argumentNode});
     }
 }

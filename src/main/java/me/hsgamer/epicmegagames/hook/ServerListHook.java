@@ -1,5 +1,6 @@
 package me.hsgamer.epicmegagames.hook;
 
+import lombok.experimental.UtilityClass;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
@@ -9,7 +10,8 @@ import net.minestom.server.ping.ResponseData;
 
 import java.util.Collection;
 
-public class ServerListHook {
+@UtilityClass
+public final class ServerListHook {
     public static void hook(EventNode<Event> node) {
         node.addListener(ServerListPingEvent.class, event -> {
             ResponseData responseData = event.getResponseData();
