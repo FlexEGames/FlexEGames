@@ -1,5 +1,7 @@
 package me.hsgamer.epicmegagames.feature;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.hsgamer.epicmegagames.api.ArenaGame;
 import me.hsgamer.epicmegagames.api.Template;
 import me.hsgamer.minigamecore.base.Arena;
@@ -17,27 +19,18 @@ public class GameFeature extends ArenaFeature<GameFeature.ArenaGameFeature> {
 
     public static class ArenaGameFeature implements Feature {
         private final Arena arena;
-        private ArenaGame arenaGame;
+        @Getter
+        private ArenaGame game;
+        @Getter
+        @Setter
         private UUID owner;
 
         public ArenaGameFeature(Arena arena) {
             this.arena = arena;
         }
 
-        public ArenaGame getGame() {
-            return arenaGame;
-        }
-
         public void setGame(Template template) {
-            this.arenaGame = template.createGame(arena);
-        }
-
-        public UUID getOwner() {
-            return owner;
-        }
-
-        public void setOwner(UUID owner) {
-            this.owner = owner;
+            this.game = template.createGame(arena);
         }
     }
 }
