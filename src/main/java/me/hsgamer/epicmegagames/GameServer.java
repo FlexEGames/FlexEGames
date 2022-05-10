@@ -1,6 +1,5 @@
 package me.hsgamer.epicmegagames;
 
-import io.github.bloepiloepi.pvp.PvpExtension;
 import lombok.Getter;
 import me.hsgamer.epicmegagames.board.Board;
 import me.hsgamer.epicmegagames.command.CreateArenaCommand;
@@ -12,6 +11,7 @@ import me.hsgamer.epicmegagames.config.LobbyConfig;
 import me.hsgamer.epicmegagames.config.MainConfig;
 import me.hsgamer.epicmegagames.config.MessageConfig;
 import me.hsgamer.epicmegagames.hook.PerInstanceInstanceViewHook;
+import me.hsgamer.epicmegagames.hook.PvpHook;
 import me.hsgamer.epicmegagames.hook.ServerListHook;
 import me.hsgamer.epicmegagames.lobby.Lobby;
 import me.hsgamer.epicmegagames.manager.GameArenaManager;
@@ -92,7 +92,7 @@ public class GameServer {
         ServerListHook.hook(globalNode);
         PerInstanceInstanceViewHook.hook(globalNode);
         Board.hook(globalNode);
-        PvpExtension.init();
+        PvpHook.hook(globalNode);
         PlacementRules.init();
         OptifineSupport.enable();
 
