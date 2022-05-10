@@ -2,10 +2,7 @@ package me.hsgamer.epicmegagames;
 
 import lombok.Getter;
 import me.hsgamer.epicmegagames.board.Board;
-import me.hsgamer.epicmegagames.command.CreateArenaCommand;
-import me.hsgamer.epicmegagames.command.JoinArenaCommand;
-import me.hsgamer.epicmegagames.command.LeaveCommand;
-import me.hsgamer.epicmegagames.command.StopCommand;
+import me.hsgamer.epicmegagames.command.*;
 import me.hsgamer.epicmegagames.config.ChatConfig;
 import me.hsgamer.epicmegagames.config.LobbyConfig;
 import me.hsgamer.epicmegagames.config.MainConfig;
@@ -69,6 +66,7 @@ public class GameServer {
         manager.register(new LeaveCommand(this));
         manager.register(new CreateArenaCommand(this));
         manager.register(new JoinArenaCommand(this));
+        manager.register(new ListPlayerCommand());
 
         // GLOBAL EVENT
         EventNode<Event> globalNode = MinecraftServer.getGlobalEventHandler();
