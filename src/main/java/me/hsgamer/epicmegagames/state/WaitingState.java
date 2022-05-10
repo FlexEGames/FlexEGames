@@ -1,6 +1,7 @@
 package me.hsgamer.epicmegagames.state;
 
 import me.hsgamer.epicmegagames.api.ArenaGame;
+import me.hsgamer.epicmegagames.config.MessageConfig;
 import me.hsgamer.epicmegagames.feature.GameFeature;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.GameState;
@@ -33,5 +34,10 @@ public class WaitingState implements GameState {
         } else {
             arenaGame.onFailedWaitingEnd();
         }
+    }
+
+    @Override
+    public String getDisplayName() {
+        return MessageConfig.STATE_WAITING.getValue();
     }
 }

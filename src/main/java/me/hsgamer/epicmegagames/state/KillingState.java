@@ -1,5 +1,6 @@
 package me.hsgamer.epicmegagames.state;
 
+import me.hsgamer.epicmegagames.config.MessageConfig;
 import me.hsgamer.epicmegagames.feature.GameFeature;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.GameState;
@@ -10,5 +11,10 @@ public class KillingState implements GameState {
     public void start(Arena arena) {
         arena.getArenaFeature(GameFeature.class).getGame().clear();
         MinecraftServer.getSchedulerManager().scheduleNextTick(arena::removeFromManager);
+    }
+
+    @Override
+    public String getDisplayName() {
+        return MessageConfig.STATE_KILLING.getValue();
     }
 }

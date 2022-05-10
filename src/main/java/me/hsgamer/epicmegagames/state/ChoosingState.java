@@ -1,5 +1,6 @@
 package me.hsgamer.epicmegagames.state;
 
+import me.hsgamer.epicmegagames.config.MessageConfig;
 import me.hsgamer.epicmegagames.feature.GameFeature;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.GameState;
@@ -15,5 +16,10 @@ public class ChoosingState implements GameState {
     @Override
     public void end(Arena arena) {
         arena.getArenaFeature(GameFeature.class).getGame().init();
+    }
+
+    @Override
+    public String getDisplayName() {
+        return MessageConfig.STATE_CHOOSING.getValue();
     }
 }

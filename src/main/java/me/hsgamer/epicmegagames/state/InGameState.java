@@ -1,5 +1,6 @@
 package me.hsgamer.epicmegagames.state;
 
+import me.hsgamer.epicmegagames.config.MessageConfig;
 import me.hsgamer.epicmegagames.feature.GameFeature;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.GameState;
@@ -20,5 +21,10 @@ public class InGameState implements GameState {
     @Override
     public void end(Arena arena) {
         arena.getArenaFeature(GameFeature.class).getGame().onInGameOver();
+    }
+
+    @Override
+    public String getDisplayName() {
+        return MessageConfig.STATE_IN_GAME.getValue();
     }
 }
