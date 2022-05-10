@@ -3,13 +3,14 @@ package me.hsgamer.epicmegagames.template.duel;
 import me.hsgamer.epicmegagames.api.ArenaGame;
 import me.hsgamer.epicmegagames.api.Template;
 import me.hsgamer.epicmegagames.builder.ItemBuilder;
-import me.hsgamer.epicmegagames.config.path.NumberObjectMapPath;
-import me.hsgamer.epicmegagames.config.path.PosListPath;
-import me.hsgamer.epicmegagames.config.path.PosPath;
+import me.hsgamer.epicmegagames.config.path.*;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.path.ConfigPath;
 import me.hsgamer.hscore.config.path.impl.Paths;
 import me.hsgamer.minigamecore.base.Arena;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.item.ItemStack;
 
@@ -19,6 +20,9 @@ import java.util.List;
 import java.util.Map;
 
 public class DuelTemplate implements Template {
+    private static final ConfigPath<Component> displayNamePath = new ComponentPath("display-name", Component.text("Duel").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD));
+    private static final ConfigPath<List<Component>> descriptionPath = new ComponentListPath("description", Collections.singletonList(Component.text("Duel").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD)));
+    private static final ConfigPath<Map<String, Object>> displayItemPath = new MapPath("display-item", Collections.singletonMap("material", "STONE"));
     private static final ConfigPath<List<Pos>> posPath = new PosListPath("pos", List.of(
             new Pos(-2, 2, 0),
             new Pos(2, 2, 0),
@@ -32,6 +36,9 @@ public class DuelTemplate implements Template {
     private static final ConfigPath<Boolean> useLegacyPvpPath = Paths.booleanPath("use-legacy-pvp", false);
     private static final NumberObjectMapPath kitPath = new NumberObjectMapPath("kit", Collections.emptyMap());
     private static final ConfigPath<Double> borderDiameterPath = Paths.doublePath("border-diameter", 50.0);
+    final Component displayName;
+    final List<Component> description;
+    final Map<String, Object> displayItem;
     final List<Pos> posList;
     final Pos joinPos;
     final int maxHeight;
@@ -42,6 +49,9 @@ public class DuelTemplate implements Template {
     final double borderDiameter;
 
     public DuelTemplate(Config config) {
+        displayName = displayNamePath.getValue(config);
+        description = descriptionPath.getValue(config);
+        displayItem = displayItemPath.getValue(config);
         posList = posPath.getValue(config);
         joinPos = joinPosPath.getValue(config);
         maxHeight = maxHeightPath.getValue(config);
@@ -56,5 +66,20 @@ public class DuelTemplate implements Template {
     @Override
     public ArenaGame createGame(Arena arena) {
         return new DuelGame(this, arena);
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return displayName;
+    }
+
+    @Override
+    public List<Component> getDescription() {
+        return description;
+    }
+
+    @Override
+    public ItemStack getDisplayItem() {
+        return ItemBuilder.buildItem(displayItem).withDisplayName(displayName).withLore(description);
     }
 }

@@ -2,6 +2,7 @@ package me.hsgamer.epicmegagames.command.argument;
 
 import me.hsgamer.epicmegagames.GameServer;
 import me.hsgamer.epicmegagames.api.Template;
+import net.kyori.adventure.text.Component;
 import net.minestom.server.command.builder.NodeMaker;
 import net.minestom.server.command.builder.arguments.Argument;
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException;
@@ -21,9 +22,13 @@ public class TemplateArgument extends Argument<Template> {
         this.gameServer = gameServer;
         setSuggestionCallback((sender, context, suggestion) -> {
             String raw = context.getRaw(this);
-            gameServer.getTemplateManager().getTemplateMap().keySet().forEach(s -> {
+            gameServer.getTemplateManager().getTemplateMap().forEach((s, t) -> {
                 if (raw == null || raw.isBlank() || s.startsWith(raw)) {
-                    suggestion.addEntry(new SuggestionEntry(s));
+                    Component component = Component.empty().append(t.getDisplayName()).append(Component.newline());
+                    for (Component c : t.getDescription()) {
+                        component = component.append(c).append(Component.newline());
+                    }
+                    suggestion.addEntry(new SuggestionEntry(s, component));
                 }
             });
         });

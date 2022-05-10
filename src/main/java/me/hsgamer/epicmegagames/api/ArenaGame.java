@@ -4,6 +4,8 @@ import me.hsgamer.minigamecore.base.Initializer;
 import net.minestom.server.entity.Player;
 
 public interface ArenaGame extends Initializer {
+    Template getTemplate();
+
     default JoinResponse join(Player player) {
         return JoinResponse.INCOMPLETE_SETUP;
     }

@@ -5,6 +5,7 @@ import io.github.bloepiloepi.pvp.events.FinalDamageEvent;
 import lombok.experimental.ExtensionMethod;
 import me.hsgamer.epicmegagames.api.ArenaGame;
 import me.hsgamer.epicmegagames.api.JoinResponse;
+import me.hsgamer.epicmegagames.api.Template;
 import me.hsgamer.epicmegagames.board.Board;
 import me.hsgamer.epicmegagames.config.MessageConfig;
 import me.hsgamer.epicmegagames.feature.LobbyFeature;
@@ -113,6 +114,11 @@ public class DuelGame implements ArenaGame {
                         event.setCancelled(true);
                     }
                 });
+    }
+
+    @Override
+    public Template getTemplate() {
+        return template;
     }
 
     @Override
