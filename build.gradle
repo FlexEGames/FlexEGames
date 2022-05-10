@@ -18,6 +18,12 @@ shadowJar {
     }
 }
 
+tasks {
+    build {
+        dependsOn(tasks.shadowJar)
+    }
+}
+
 dependencies {
     def core = "4.0.4"
     implementation "me.hsgamer:hscore-config-simplixstorage:$core"
