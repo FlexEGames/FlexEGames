@@ -53,7 +53,7 @@ public class GameServer {
         messageConfig.setup();
 
         // LOBBY
-        lobby = new Lobby();
+        lobby = new Lobby(this);
         MinecraftServer.getInstanceManager().registerInstance(lobby);
 
         // COMMAND

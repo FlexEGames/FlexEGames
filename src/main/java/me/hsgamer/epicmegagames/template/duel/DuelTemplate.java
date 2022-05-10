@@ -10,7 +10,6 @@ import me.hsgamer.hscore.config.path.impl.Paths;
 import me.hsgamer.minigamecore.base.Arena;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
@@ -21,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DuelTemplate implements Template {
-    private static final ConfigPath<Component> displayNamePath = new ComponentPath("display-name", Component.text("Duel").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD));
+    private static final ConfigPath<Component> displayNamePath = new ComponentPath("display-name", "&e&lDuel");
     private static final ConfigPath<List<Component>> descriptionPath = new ComponentListPath("description", Collections.singletonList(
             Component.text("Kill other players to win").color(NamedTextColor.WHITE)
     ));

@@ -29,7 +29,7 @@ public class NumberObjectMapPath extends AdvancedConfigPath<Map<String, Map<Stri
                 map.put(entry.getKey(), mapValue);
             }
         }
-        return map;
+        return map.isEmpty() ? null : map;
     }
 
     @Override

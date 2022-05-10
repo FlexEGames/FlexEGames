@@ -8,15 +8,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class ComponentPath extends AdvancedConfigPath<String, Component> {
     public ComponentPath(@NotNull String path, @Nullable Component def) {
         super(path, def);
     }
 
+    public ComponentPath(@NotNull String path, @Nullable String def) {
+        super(path, Optional.ofNullable(def).map(LegacyComponentSerializer.legacyAmpersand()::deserialize).orElse(null));
+    }
+
     @Override
     public @Nullable String getFromConfig(@NotNull Config config) {
-        return Objects.toString(config.get(getPath()), "");
+        return Optional.ofNullable(config.get(getPath())).map(Objects::toString).orElse(null);
     }
 
     @Override

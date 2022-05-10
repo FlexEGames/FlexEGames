@@ -33,7 +33,7 @@ public class ItemBuilder extends Builder<Object, BiFunction<ItemStack, Map<Strin
             Component name = LegacyComponentSerializer.legacyAmpersand().deserialize(o.toString(""));
             name = name.replace(map);
             return itemStack.withDisplayName(name);
-        }, "name");
+        }, "display-name", "name");
         register(o -> (itemStack, map) -> {
             List<Component> lore = o.createStringListFromObject(false).stream()
                     .map(s -> LegacyComponentSerializer.legacyAmpersand().deserialize(s))
@@ -72,9 +72,13 @@ public class ItemBuilder extends Builder<Object, BiFunction<ItemStack, Map<Strin
             return itemStack.withMeta(builder -> builder.enchantments(enchantments));
         }, "enchantments", "enchants", "enchant", "enchantment");
         register(o -> (itemStack, map) -> {
-            List<ItemHideFlag> hideFlags = new ArrayList<>();
+            Set<ItemHideFlag> hideFlags = new HashSet<>();
             var list = o.createStringListFromObject(true);
             for (var entry : list) {
+                if (entry.equalsIgnoreCase("all")) {
+                    hideFlags.addAll(List.of(ItemHideFlag.values()));
+                    break;
+                }
                 try {
                     ItemHideFlag hideFlag = ItemHideFlag.valueOf(entry.toUpperCase());
                     hideFlags.add(hideFlag);
@@ -83,7 +87,7 @@ public class ItemBuilder extends Builder<Object, BiFunction<ItemStack, Map<Strin
                 }
             }
             return itemStack.withMeta(builder -> builder.hideFlag(hideFlags.toArray(new ItemHideFlag[0])));
-        }, "item-flags", "flags", "flag", "itemflag", "item-flag", "itemflags");
+        }, "item-flags", "flags", "flag", "itemflag", "item-flag", "itemflags", "hide-flags", "hide-flag", "hideflag", "hide");
         register(o -> (itemStack, map) -> {
             boolean unbreakable = Boolean.parseBoolean(o.toString(""));
             return itemStack.withMeta(builder -> builder.unbreakable(unbreakable));

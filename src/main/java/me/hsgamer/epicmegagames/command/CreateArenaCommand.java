@@ -31,5 +31,6 @@ public class CreateArenaCommand extends Command {
             arena.getArenaFeature(GameFeature.class).setGame(template);
             arena.getArenaFeature(GameFeature.class).setOwner(((Player) sender).getUuid());
         }, templateArgument);
+        addSyntax((sender, context) -> gameServer.getLobby().openTemplateInventory((Player) sender));
     }
 }

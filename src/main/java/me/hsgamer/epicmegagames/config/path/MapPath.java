@@ -13,7 +13,7 @@ public class MapPath extends SerializableMapConfigPath<Map<String, Object>> {
 
     @Override
     public @Nullable Map<String, Object> convert(@NotNull Map<String, Object> rawValue) {
-        return rawValue;
+        return rawValue.isEmpty() ? null : rawValue;
     }
 
     @Override
