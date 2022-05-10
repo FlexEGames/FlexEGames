@@ -7,6 +7,7 @@ import me.hsgamer.epicmegagames.api.ArenaGame;
 import me.hsgamer.epicmegagames.api.JoinResponse;
 import me.hsgamer.epicmegagames.api.Template;
 import me.hsgamer.epicmegagames.board.Board;
+import me.hsgamer.epicmegagames.builder.ItemBuilder;
 import me.hsgamer.epicmegagames.config.MessageConfig;
 import me.hsgamer.epicmegagames.feature.LobbyFeature;
 import me.hsgamer.epicmegagames.manager.ReplacementManager;
@@ -16,9 +17,11 @@ import me.hsgamer.epicmegagames.state.WaitingState;
 import me.hsgamer.epicmegagames.util.FullBrightDimension;
 import me.hsgamer.epicmegagames.util.PvpUtil;
 import me.hsgamer.minigamecore.base.Arena;
+import me.hsgamer.minigamecore.base.GameState;
 import me.hsgamer.minigamecore.implementation.feature.arena.ArenaTimerFeature;
 import me.hsgamer.minigamecore.implementation.feature.single.TimerFeature;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.GameMode;
@@ -34,6 +37,7 @@ import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.trait.EntityEvent;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.block.Block;
+import net.minestom.server.item.ItemStack;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskSchedule;
@@ -121,6 +125,18 @@ public class DuelGame implements ArenaGame {
     @Override
     public Template getTemplate() {
         return template;
+    }
+
+    @Override
+    public ItemStack getDisplayItem() {
+        return ItemBuilder.buildItem(template.gameDisplayItem, Map.of(
+                "players", () -> Component.text(Integer.toString(instance.getPlayers().size())),
+                "time", () -> Component.text(Long.toString(timerFeature.getDuration(TimeUnit.SECONDS))),
+                "max-players", () -> Component.text(Integer.toString(template.posList.size())),
+                "state", () -> arena.getStateInstance().map(GameState::getDisplayName).map(LegacyComponentSerializer.legacyAmpersand()::deserialize).orElse(Component.empty()),
+                "template", () -> template.displayName,
+                "name", () -> Component.text(arena.getName())
+        ));
     }
 
     @Override

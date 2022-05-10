@@ -25,6 +25,7 @@ public class DuelTemplate implements Template {
             Component.text("Kill other players to win").color(NamedTextColor.WHITE)
     ));
     private static final ConfigPath<Map<String, Object>> displayItemPath = new MapPath("display-item", Collections.singletonMap("material", "STONE"));
+    private static final ConfigPath<Map<String, Object>> gameDisplayItemPath = new MapPath("game-display-item", Collections.singletonMap("material", "STONE"));
     private static final ConfigPath<List<Pos>> posPath = new PosListPath("pos", List.of(
             new Pos(-2, 2, 0),
             new Pos(2, 2, 0),
@@ -41,6 +42,7 @@ public class DuelTemplate implements Template {
     final Component displayName;
     final List<Component> description;
     final Map<String, Object> displayItem;
+    final Map<String, Object> gameDisplayItem;
     final List<Pos> posList;
     final Pos joinPos;
     final int maxHeight;
@@ -54,6 +56,7 @@ public class DuelTemplate implements Template {
         displayName = displayNamePath.getValue(config);
         description = descriptionPath.getValue(config);
         displayItem = displayItemPath.getValue(config);
+        gameDisplayItem = gameDisplayItemPath.getValue(config);
         posList = posPath.getValue(config);
         joinPos = joinPosPath.getValue(config);
         maxHeight = maxHeightPath.getValue(config);

@@ -2,9 +2,12 @@ package me.hsgamer.epicmegagames.api;
 
 import me.hsgamer.minigamecore.base.Initializer;
 import net.minestom.server.entity.Player;
+import net.minestom.server.item.ItemStack;
 
 public interface ArenaGame extends Initializer {
     Template getTemplate();
+
+    ItemStack getDisplayItem();
 
     default JoinResponse join(Player player) {
         return JoinResponse.INCOMPLETE_SETUP;
