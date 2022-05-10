@@ -10,6 +10,7 @@ import me.hsgamer.epicmegagames.config.MessageConfig;
 import me.hsgamer.epicmegagames.hook.PerInstanceInstanceViewHook;
 import me.hsgamer.epicmegagames.hook.PvpHook;
 import me.hsgamer.epicmegagames.hook.ServerListHook;
+import me.hsgamer.epicmegagames.hook.TickMonitorHook;
 import me.hsgamer.epicmegagames.lobby.Lobby;
 import me.hsgamer.epicmegagames.manager.GameArenaManager;
 import me.hsgamer.epicmegagames.manager.ReplacementManager;
@@ -23,19 +24,15 @@ import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerChatEvent;
 import net.minestom.server.event.player.PlayerLoginEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
-import net.minestom.server.event.server.ServerTickMonitorEvent;
 import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.extras.PlacementRules;
 import net.minestom.server.extras.bungee.BungeeCordProxy;
 import net.minestom.server.extras.optifine.OptifineSupport;
 import net.minestom.server.extras.velocity.VelocityProxy;
-import net.minestom.server.monitoring.TickMonitor;
-import net.minestom.server.utils.MathUtils;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Getter
 public class GameServer {
@@ -67,6 +64,7 @@ public class GameServer {
         manager.register(new CreateArenaCommand(this));
         manager.register(new JoinArenaCommand(this));
         manager.register(new ListPlayerCommand());
+        manager.register(new TickMonitorCommand());
 
         // GLOBAL EVENT
         EventNode<Event> globalNode = MinecraftServer.getGlobalEventHandler();
@@ -91,27 +89,12 @@ public class GameServer {
         PerInstanceInstanceViewHook.hook(globalNode);
         Board.hook(globalNode);
         PvpHook.hook(globalNode);
+        TickMonitorHook.hook();
         PlacementRules.init();
         OptifineSupport.enable();
 
-        // Monitoring
-        AtomicReference<TickMonitor> lastTick = new AtomicReference<>();
-        globalNode.addListener(ServerTickMonitorEvent.class, event -> lastTick.set(event.getTickMonitor()));
-
         // Replacement
         ReplacementManager.addPlayerReplacement("player", Player::getName);
-        ReplacementManager.addGlobalReplacement("ram_usage", () -> {
-            Runtime runtime = Runtime.getRuntime();
-            return Component.text(Long.toString((runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024));
-        });
-        ReplacementManager.addGlobalReplacement("tick_time", () -> {
-            TickMonitor tickMonitor = lastTick.get();
-            if (tickMonitor == null) {
-                return Component.text("N/A");
-            }
-            double tick = MathUtils.round(tickMonitor.getTickTime(), 2);
-            return Component.text(Double.toString(tick));
-        });
         ReplacementManager.addGlobalReplacement("online", () -> Component.text(Integer.toString(MinecraftServer.getConnectionManager().getOnlinePlayers().size())));
     }
 
