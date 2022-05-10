@@ -35,5 +35,6 @@ public class JoinArenaCommand extends Command {
                 sender.sendMessage(response.getMessage((Player) sender));
             }
         }, arenaArgument);
+        addSyntax((sender, context) -> gameServer.getLobby().openArenaInventory((Player) sender, false));
     }
 }

@@ -29,21 +29,37 @@ public class LobbyConfig extends PathableConfig {
     public static final ConfigPath<Integer> BOARD_UPDATE_TIME = Paths.integerPath("board.update-time", 20);
     public static final ConfigPath<Component> INVENTORY_TEMPLATE_TITLE = new ComponentPath("inventory.template.title", Component.text("Template").decorate(TextDecoration.BOLD).color(NamedTextColor.DARK_RED));
     public static final MapPath INVENTORY_TEMPLATE_NEXT_PAGE = new MapPath("inventory.template.next-page", Map.of(
-            "material", Material.ARROW.name(),
+            "material", Material.GREEN_STAINED_GLASS_PANE.name(),
             "name", "&aNext page"
     ));
     public static final MapPath INVENTORY_TEMPLATE_PREVIOUS_PAGE = new MapPath("inventory.template.previous-page", Map.of(
-            "material", Material.ARROW.name(),
+            "material", Material.RED_STAINED_GLASS_PANE.name(),
             "name", "&cPrevious page"
+    ));
+    public static final MapPath INVENTORY_TEMPLATE_ARENA = new MapPath("inventory.template.arena", Map.of(
+            "material", Material.CHEST.name(),
+            "name", "&aPlay arena"
     ));
     public static final ConfigPath<Component> INVENTORY_ARENA_TITLE = new ComponentPath("inventory.arena.title", Component.text("Arena").decorate(TextDecoration.BOLD).color(NamedTextColor.DARK_RED));
     public static final MapPath INVENTORY_ARENA_NEXT_PAGE = new MapPath("inventory.arena.next-page", Map.of(
-            "material", Material.ARROW.name(),
+            "material", Material.GREEN_STAINED_GLASS_PANE.name(),
             "name", "&aNext page"
     ));
     public static final MapPath INVENTORY_ARENA_PREVIOUS_PAGE = new MapPath("inventory.arena.previous-page", Map.of(
-            "material", Material.ARROW.name(),
+            "material", Material.RED_STAINED_GLASS_PANE.name(),
             "name", "&cPrevious page"
+    ));
+    public static final MapPath INVENTORY_ARENA_TEMPLATE = new MapPath("inventory.arena.template", Map.of(
+            "material", Material.SPRUCE_SIGN.name(),
+            "name", "&e&lTemplate"
+    ));
+    public static final MapPath INVENTORY_ARENA_GLOBAL_ARENA = new MapPath("inventory.arena.global-arena", Map.of(
+            "material", Material.CHEST.name(),
+            "name", "&e&lGlobal arena"
+    ));
+    public static final MapPath INVENTORY_ARENA_MY_ARENA = new MapPath("inventory.arena.my-arena", Map.of(
+            "material", Material.ENDER_CHEST.name(),
+            "name", "&e&lMy arena"
     ));
 
     public LobbyConfig() {

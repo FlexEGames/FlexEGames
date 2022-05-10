@@ -10,6 +10,7 @@ import me.hsgamer.minigamecore.base.ArenaManager;
 import me.hsgamer.minigamecore.base.Feature;
 import me.hsgamer.minigamecore.base.GameState;
 import me.hsgamer.minigamecore.implementation.feature.arena.ArenaTimerFeature;
+import net.minestom.server.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
@@ -49,5 +50,19 @@ public class GameArenaManager extends ArenaManager {
         Arena arena = new GameArena(name, this);
         addArena(arena);
         return arena;
+    }
+
+    public List<Arena> getArenas(Player player, boolean myArena) {
+        return getAllArenas().stream().filter(arena -> {
+            GameFeature.ArenaGameFeature feature = arena.getArenaFeature(GameFeature.class);
+            if (feature.getGame() == null) {
+                return false;
+            }
+            if (myArena) {
+                return player.getUuid().equals(feature.getOwner());
+            } else {
+                return true;
+            }
+        }).toList();
     }
 }

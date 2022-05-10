@@ -24,7 +24,10 @@ public class DuelTemplate implements Template {
     private static final ConfigPath<List<Component>> descriptionPath = new ComponentListPath("description", Collections.singletonList(
             Component.text("Kill other players to win").color(NamedTextColor.WHITE)
     ));
-    private static final ConfigPath<Map<String, Object>> displayItemPath = new MapPath("display-item", Map.of("material", Material.DIAMOND_SWORD.name()));
+    private static final ConfigPath<Map<String, Object>> displayItemPath = new MapPath("display-item", Map.of(
+            "material", Material.DIAMOND_SWORD.name(),
+            "hide", "all"
+    ));
     private static final ConfigPath<Map<String, Object>> gameDisplayItemPath = new MapPath("game-display-item", Map.of(
             "material", Material.DIAMOND_SWORD.name(),
             "name", "%template%",
@@ -32,7 +35,8 @@ public class DuelTemplate implements Template {
                     "&ePlayers: &f%players%/%max-players%",
                     "&eState: &f%state%",
                     "&eTime: &f%time%"
-            )
+            ),
+            "hide", "all"
     ));
     private static final ConfigPath<List<Pos>> posPath = new PosListPath("pos", List.of(
             new Pos(-2, 2, 0, -90, 0),
