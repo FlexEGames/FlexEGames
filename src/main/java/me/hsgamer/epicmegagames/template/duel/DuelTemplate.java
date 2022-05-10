@@ -15,13 +15,15 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.item.ItemStack;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class DuelTemplate implements Template {
     private static final ConfigPath<Component> displayNamePath = new ComponentPath("display-name", Component.text("Duel").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD));
-    private static final ConfigPath<List<Component>> descriptionPath = new ComponentListPath("description", Collections.singletonList(Component.text("Duel").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD)));
+    private static final ConfigPath<List<Component>> descriptionPath = new ComponentListPath("description", Collections.singletonList(
+            Component.text("Kill other players to win").color(NamedTextColor.WHITE)
+    ));
     private static final ConfigPath<Map<String, Object>> displayItemPath = new MapPath("display-item", Collections.singletonMap("material", "STONE"));
     private static final ConfigPath<List<Pos>> posPath = new PosListPath("pos", List.of(
             new Pos(-2, 2, 0),
@@ -58,7 +60,7 @@ public class DuelTemplate implements Template {
         waitingTime = waitingTimePath.getValue(config);
         endingTime = endingTimePath.getValue(config);
         useLegacyPvp = useLegacyPvpPath.getValue(config);
-        kit = new LinkedHashMap<>();
+        kit = new HashMap<>();
         kitPath.getValue(config).forEach((key, value) -> kit.put(key.intValue(), ItemBuilder.buildItem(value)));
         borderDiameter = borderDiameterPath.getValue(config);
     }
