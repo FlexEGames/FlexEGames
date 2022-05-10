@@ -22,7 +22,7 @@ public class CreateArenaCommand extends Command {
         var templateArgument = new TemplateArgument(gameServer, "template");
         setArgumentCallback((sender, exception) -> {
             if (exception.getErrorCode() == TemplateArgument.TEMPLATE_NOT_FOUND) {
-                sender.sendMessage(ReplacementManager.replace(MessageConfig.ERROR_TEMPLATE_NOT_FOUND.getValue(), Map.of("input", Component.text(exception.getInput()))));
+                sender.sendMessage(ReplacementManager.replace(MessageConfig.ERROR_TEMPLATE_NOT_FOUND.getValue(), Map.of("input", () -> Component.text(exception.getInput()))));
             }
         }, templateArgument);
         addSyntax((sender, context) -> {

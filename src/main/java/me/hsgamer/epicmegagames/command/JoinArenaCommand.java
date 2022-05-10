@@ -22,9 +22,9 @@ public class JoinArenaCommand extends Command {
         var arenaArgument = new ArenaArgument(gameServer, "arena");
         setArgumentCallback((sender, exception) -> {
             if (exception.getErrorCode() == ArenaArgument.ARENA_NOT_FOUND) {
-                sender.sendMessage(ReplacementManager.replace(MessageConfig.ERROR_ARENA_NOT_FOUND.getValue(), Map.of("input", Component.text(exception.getInput()))));
+                sender.sendMessage(ReplacementManager.replace(MessageConfig.ERROR_ARENA_NOT_FOUND.getValue(), Map.of("input", () -> Component.text(exception.getInput()))));
             } else if (exception.getErrorCode() == ArenaArgument.ARENA_NOT_SETUP) {
-                sender.sendMessage(ReplacementManager.replace(MessageConfig.ERROR_ARENA_NOT_SETUP.getValue(), Map.of("input", Component.text(exception.getInput()))));
+                sender.sendMessage(ReplacementManager.replace(MessageConfig.ERROR_ARENA_NOT_SETUP.getValue(), Map.of("input", () -> Component.text(exception.getInput()))));
             }
         }, arenaArgument);
         addSyntax((sender, context) -> {

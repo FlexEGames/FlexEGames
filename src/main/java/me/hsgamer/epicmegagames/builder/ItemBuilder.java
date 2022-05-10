@@ -16,9 +16,10 @@ import net.minestom.server.item.Material;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 @ExtensionMethod({Objects.class, ReplacementManager.class, CollectionUtils.class})
-public class ItemBuilder extends Builder<Object, BiFunction<ItemStack, Map<String, ComponentLike>, ItemStack>> {
+public class ItemBuilder extends Builder<Object, BiFunction<ItemStack, Map<String, Supplier<ComponentLike>>, ItemStack>> {
     public static final ItemBuilder INSTANCE = new ItemBuilder();
 
     private ItemBuilder() {
@@ -97,10 +98,10 @@ public class ItemBuilder extends Builder<Object, BiFunction<ItemStack, Map<Strin
         }, "damage");
     }
 
-    public static ItemStack buildItem(Map<String, Object> values, Map<String, ComponentLike> replacements) {
+    public static ItemStack buildItem(Map<String, Object> values, Map<String, Supplier<ComponentLike>> replacements) {
         ItemStack itemStack = ItemStack.of(Material.STONE);
         for (Map.Entry<String, Object> entry : values.entrySet()) {
-            Optional<BiFunction<ItemStack, Map<String, ComponentLike>, ItemStack>> optional = INSTANCE.build(entry.getKey(), entry.getValue());
+            Optional<BiFunction<ItemStack, Map<String, Supplier<ComponentLike>>, ItemStack>> optional = INSTANCE.build(entry.getKey(), entry.getValue());
             if (optional.isPresent()) {
                 itemStack = optional.get().apply(itemStack, replacements);
             }

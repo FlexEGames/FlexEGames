@@ -1,5 +1,6 @@
 package me.hsgamer.epicmegagames.manager;
 
+import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.minestom.server.entity.Player;
@@ -13,6 +14,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
+@UtilityClass
 public final class ReplacementManager {
     private static final Map<String, Supplier<ComponentLike>> globalMap = new HashMap<>();
     private static final Map<String, Function<Player, ComponentLike>> playerMap = new HashMap<>();
@@ -25,19 +27,23 @@ public final class ReplacementManager {
         playerMap.put(key, function);
     }
 
-    public static Component replace(Component component, Map<String, ComponentLike> map) {
-        for (Map.Entry<String, ComponentLike> entry : map.entrySet()) {
-            component = component.replaceText(builder -> builder.match("%" + entry.getKey() + "%").replacement(entry.getValue()));
+    public static Component replace(Component component, Map<String, Supplier<ComponentLike>> map) {
+        for (Map.Entry<String, Supplier<ComponentLike>> entry : map.entrySet()) {
+            component = component.replaceText(builder -> builder.match("%" + entry.getKey() + "%").replacement(builder1 -> entry.getValue().get()));
         }
         return component;
     }
 
     public static Component replaceGlobal(Component component) {
-        return replace(component, globalMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().get())));
+        return replace(component, globalMap);
     }
 
     public static Component replacePlayer(Component component, Player player) {
-        return replace(component, playerMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().apply(player))));
+        return replace(component, playerMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> () -> entry.getValue().apply(player))));
+    }
+
+    public static Map<String, Supplier<ComponentLike>> toSupplierMap(Map<String, ComponentLike> map) {
+        return map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry::getValue));
     }
 
     public static Builder builder() {
@@ -61,7 +67,7 @@ public final class ReplacementManager {
             return this;
         }
 
-        public Builder replace(Map<String, ComponentLike> map) {
+        public Builder replace(Map<String, Supplier<ComponentLike>> map) {
             replacements.add(component -> ReplacementManager.replace(component, map));
             return this;
         }

@@ -73,19 +73,19 @@ public class DuelGame implements ArenaGame {
                     List<Component> components = Collections.emptyList();
                     if (arena.getState() == WaitingState.class) {
                         builder.replace(Map.of(
-                                "time", Component.text(Long.toString(timerFeature.getDuration(TimeUnit.SECONDS))),
-                                "players", Component.text(Integer.toString(instance.getPlayers().size()))
+                                "time", () -> Component.text(Long.toString(timerFeature.getDuration(TimeUnit.SECONDS))),
+                                "players", () -> Component.text(Integer.toString(instance.getPlayers().size()))
                         ));
                         components = MessageConfig.GAME_DUEL_BOARD_LINES_WAITING.getValue();
                     } else if (arena.getState() == InGameState.class) {
                         builder.replace(Map.of(
-                                "players", Component.text(Integer.toString(getAlivePlayers().size()))
+                                "players", () -> Component.text(Integer.toString(getAlivePlayers().size()))
                         ));
                         components = MessageConfig.GAME_DUEL_BOARD_LINES_INGAME.getValue();
                     } else if (arena.getState() == EndingState.class) {
                         builder.replace(Map.of(
-                                "time", Component.text(Long.toString(timerFeature.getDuration(TimeUnit.SECONDS))),
-                                "winner", Optional.ofNullable(winner.get()).map(Player::getName).orElse(Component.empty())
+                                "time", () -> Component.text(Long.toString(timerFeature.getDuration(TimeUnit.SECONDS))),
+                                "winner", () -> Optional.ofNullable(winner.get()).map(Player::getName).orElse(Component.empty())
                         ));
                         components = MessageConfig.GAME_DUEL_BOARD_LINES_ENDING.getValue();
                     }
@@ -231,7 +231,7 @@ public class DuelGame implements ArenaGame {
         Player winnerPlayer = winner.get();
         Component message;
         if (winnerPlayer != null) {
-            message = ReplacementManager.replace(MessageConfig.GAME_DUEL_WINNER_MESSAGE.getValue(), Map.of("player", winnerPlayer.getName()));
+            message = ReplacementManager.replace(MessageConfig.GAME_DUEL_WINNER_MESSAGE.getValue(), Map.of("player", winnerPlayer::getName));
         } else {
             message = MessageConfig.GAME_DUEL_NO_WINNER_MESSAGE.getValue();
         }

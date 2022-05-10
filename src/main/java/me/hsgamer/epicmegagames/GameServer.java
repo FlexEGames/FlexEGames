@@ -79,7 +79,7 @@ public class GameServer {
                     event.setChatFormat(e -> ReplacementManager.builder()
                             .replaceGlobal()
                             .replacePlayer(event.getPlayer())
-                            .replace(Map.of("message", Component.text(e.getMessage())))
+                            .replace(Map.of("message", () -> Component.text(e.getMessage())))
                             .build(ChatConfig.CHAT_FORMAT.getValue())
                     );
                     event.getRecipients().removeIf(p -> !Objects.equals(p.getInstance(), event.getPlayer().getInstance()));
