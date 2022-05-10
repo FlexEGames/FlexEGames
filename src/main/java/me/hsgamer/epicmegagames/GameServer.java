@@ -112,6 +112,7 @@ public class GameServer {
             double tick = MathUtils.round(tickMonitor.getTickTime(), 2);
             return Component.text(Double.toString(tick));
         });
+        ReplacementManager.addGlobalReplacement("online", () -> Component.text(Integer.toString(MinecraftServer.getConnectionManager().getOnlinePlayers().size())));
     }
 
     public void enable() {
