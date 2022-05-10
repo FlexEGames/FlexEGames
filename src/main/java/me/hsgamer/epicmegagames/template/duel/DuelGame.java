@@ -16,11 +16,13 @@ import me.hsgamer.epicmegagames.state.InGameState;
 import me.hsgamer.epicmegagames.state.WaitingState;
 import me.hsgamer.epicmegagames.util.FullBrightDimension;
 import me.hsgamer.epicmegagames.util.PvpUtil;
+import me.hsgamer.epicmegagames.util.TimeUtil;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.GameState;
 import me.hsgamer.minigamecore.implementation.feature.arena.ArenaTimerFeature;
 import me.hsgamer.minigamecore.implementation.feature.single.TimerFeature;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
@@ -46,6 +48,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 @ExtensionMethod({PvpUtil.class})
 public class DuelGame implements ArenaGame {
@@ -76,24 +79,14 @@ public class DuelGame implements ArenaGame {
                 player -> {
                     ReplacementManager.Builder builder = ReplacementManager.builder()
                             .replaceGlobal()
+                            .replace(getReplacements())
                             .replacePlayer(player);
                     List<Component> components = Collections.emptyList();
                     if (arena.getState() == WaitingState.class) {
-                        builder.replace(Map.of(
-                                "time", () -> Component.text(Long.toString(timerFeature.getDuration(TimeUnit.SECONDS))),
-                                "players", () -> Component.text(Integer.toString(instance.getPlayers().size()))
-                        ));
                         components = MessageConfig.GAME_DUEL_BOARD_LINES_WAITING.getValue();
                     } else if (arena.getState() == InGameState.class) {
-                        builder.replace(Map.of(
-                                "players", () -> Component.text(Integer.toString(getAlivePlayers().size()))
-                        ));
                         components = MessageConfig.GAME_DUEL_BOARD_LINES_INGAME.getValue();
                     } else if (arena.getState() == EndingState.class) {
-                        builder.replace(Map.of(
-                                "time", () -> Component.text(Long.toString(timerFeature.getDuration(TimeUnit.SECONDS))),
-                                "winner", () -> Optional.ofNullable(winner.get()).map(Player::getName).orElse(Component.empty())
-                        ));
                         components = MessageConfig.GAME_DUEL_BOARD_LINES_ENDING.getValue();
                     }
                     return components.stream().map(builder::build).toList();
@@ -129,14 +122,19 @@ public class DuelGame implements ArenaGame {
 
     @Override
     public ItemStack getDisplayItem() {
-        return ItemBuilder.buildItem(template.gameDisplayItem, Map.of(
+        return ItemBuilder.buildItem(template.gameDisplayItem, getReplacements());
+    }
+
+    private Map<String, Supplier<ComponentLike>> getReplacements() {
+        return Map.of(
                 "players", () -> Component.text(Integer.toString(instance.getPlayers().size())),
-                "time", () -> Component.text(Long.toString(timerFeature.getDuration(TimeUnit.SECONDS))),
+                "time", () -> Component.text(TimeUtil.format(timerFeature.getDuration(TimeUnit.MILLISECONDS))),
                 "max-players", () -> Component.text(Integer.toString(template.posList.size())),
                 "state", () -> arena.getStateInstance().map(GameState::getDisplayName).map(LegacyComponentSerializer.legacyAmpersand()::deserialize).orElse(Component.empty()),
                 "template", () -> template.displayName,
-                "name", () -> Component.text(arena.getName())
-        ));
+                "name", () -> Component.text(arena.getName()),
+                "winner", () -> Optional.ofNullable(winner.get()).map(Player::getName).orElse(Component.empty())
+        );
     }
 
     @Override

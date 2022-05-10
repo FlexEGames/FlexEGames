@@ -13,6 +13,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.item.ItemStack;
+import net.minestom.server.item.Material;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,13 +25,21 @@ public class DuelTemplate implements Template {
     private static final ConfigPath<List<Component>> descriptionPath = new ComponentListPath("description", Collections.singletonList(
             Component.text("Kill other players to win").color(NamedTextColor.WHITE)
     ));
-    private static final ConfigPath<Map<String, Object>> displayItemPath = new MapPath("display-item", Collections.singletonMap("material", "STONE"));
-    private static final ConfigPath<Map<String, Object>> gameDisplayItemPath = new MapPath("game-display-item", Collections.singletonMap("material", "STONE"));
+    private static final ConfigPath<Map<String, Object>> displayItemPath = new MapPath("display-item", Map.of("material", Material.DIAMOND_SWORD.name()));
+    private static final ConfigPath<Map<String, Object>> gameDisplayItemPath = new MapPath("game-display-item", Map.of(
+            "material", Material.DIAMOND_SWORD.name(),
+            "name", "%template%",
+            "lore", List.of(
+                    "&ePlayers: &f%players%/%max-players%",
+                    "&eState: &f%state%",
+                    "&eTime: &f%time%"
+            )
+    ));
     private static final ConfigPath<List<Pos>> posPath = new PosListPath("pos", List.of(
-            new Pos(-2, 2, 0),
-            new Pos(2, 2, 0),
-            new Pos(0, 2, -2),
-            new Pos(0, 2, 2)
+            new Pos(-2, 2, 0, -90, 0),
+            new Pos(2, 2, 0, 90, 0),
+            new Pos(0, 2, -2, 0, 0),
+            new Pos(0, 2, 2, 180, 0)
     ));
     private static final ConfigPath<Pos> joinPosPath = new PosPath("join-pos", new Pos(0, 2, 0));
     private static final ConfigPath<Integer> maxHeightPath = Paths.integerPath("max-height", 2);
