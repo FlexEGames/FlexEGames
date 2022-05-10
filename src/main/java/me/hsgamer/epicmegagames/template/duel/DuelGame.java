@@ -137,7 +137,12 @@ public class DuelGame implements ArenaGame {
 
     @Override
     public void init() {
-        instance.setGenerator(unit -> unit.modifier().fillHeight(0, template.maxHeight, Block.GRASS_BLOCK));
+        instance.setGenerator(unit -> {
+            unit.modifier().fillHeight(0, 1, Block.BEDROCK);
+            if (template.maxHeight > 1) {
+                unit.modifier().fillHeight(1, template.maxHeight, Block.GRASS_BLOCK);
+            }
+        });
         MinecraftServer.getGlobalEventHandler().addChild(entityEventNode);
         instance.eventNode()
                 .addListener(AddEntityToInstanceEvent.class, event -> {
