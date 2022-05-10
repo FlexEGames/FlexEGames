@@ -28,6 +28,7 @@ import net.minestom.server.event.EventNode;
 import net.minestom.server.event.instance.AddEntityToInstanceEvent;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
 import net.minestom.server.event.player.PlayerBlockBreakEvent;
+import net.minestom.server.event.player.PlayerBlockPlaceEvent;
 import net.minestom.server.event.player.PlayerMoveEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.trait.EntityEvent;
@@ -49,7 +50,8 @@ public class DuelGame implements ArenaGame {
     private final TimerFeature timerFeature;
     private final InstanceContainer instance;
     private final AtomicBoolean isFinished = new AtomicBoolean(false);
-    private final Tag<Boolean> deadTag = Tag.Boolean("dead");
+    private final Tag<Boolean> deadTag = Tag.Boolean("dead").defaultValue(false);
+    private final Tag<Boolean> playerBlockTag = Tag.Boolean("playerBlock").defaultValue(false);
     private final AtomicReference<Player> winner = new AtomicReference<>();
     private final Board board;
     private final EventNode<EntityEvent> entityEventNode;
@@ -156,7 +158,12 @@ public class DuelGame implements ArenaGame {
                         board.removePlayer(player);
                     }
                 })
-                .addListener(PlayerBlockBreakEvent.class, event -> event.setCancelled(true));
+                .addListener(PlayerBlockBreakEvent.class, event -> {
+                    if (Boolean.FALSE.equals(event.getBlock().getTag(playerBlockTag))) {
+                        event.setCancelled(true);
+                    }
+                })
+                .addListener(PlayerBlockPlaceEvent.class, event -> event.setBlock(event.getBlock().withTag(playerBlockTag, true)));
         task = MinecraftServer.getSchedulerManager()
                 .buildTask(board::updateAll)
                 .repeat(TaskSchedule.nextTick())
@@ -197,7 +204,6 @@ public class DuelGame implements ArenaGame {
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
             giveKit(player);
-            player.setTag(deadTag, false);
             Pos pos = template.posList.get(i % template.posList.size());
             player.teleport(pos);
         }
