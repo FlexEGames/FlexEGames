@@ -9,7 +9,6 @@ import me.hsgamer.flexegames.api.JoinResponse;
 import me.hsgamer.flexegames.api.Template;
 import me.hsgamer.flexegames.board.Board;
 import me.hsgamer.flexegames.builder.ItemBuilder;
-import me.hsgamer.flexegames.config.MessageConfig;
 import me.hsgamer.flexegames.feature.LobbyFeature;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.state.EndingState;
@@ -76,7 +75,7 @@ public class DuelGame implements ArenaGame {
                         .replaceGlobal()
                         .replace(getReplacements())
                         .replacePlayer(player)
-                        .build(MessageConfig.GAME_DUEL_BOARD_TITLE.getValue()),
+                        .build(template.boardTitle),
                 player -> {
                     ReplacementManager.Builder builder = ReplacementManager.builder()
                             .replaceGlobal()
@@ -84,11 +83,11 @@ public class DuelGame implements ArenaGame {
                             .replacePlayer(player);
                     List<Component> components = Collections.emptyList();
                     if (arena.getState() == WaitingState.class) {
-                        components = MessageConfig.GAME_DUEL_BOARD_LINES_WAITING.getValue();
+                        components = template.boardLinesWaiting;
                     } else if (arena.getState() == InGameState.class) {
-                        components = MessageConfig.GAME_DUEL_BOARD_LINES_INGAME.getValue();
+                        components = template.boardLinesIngame;
                     } else if (arena.getState() == EndingState.class) {
-                        components = MessageConfig.GAME_DUEL_BOARD_LINES_ENDING.getValue();
+                        components = template.boardLinesEnding;
                     }
                     return components.stream().map(builder::build).toList();
                 }
@@ -236,7 +235,7 @@ public class DuelGame implements ArenaGame {
 
     @Override
     public void onFailedWaitingEnd() {
-        Component component = MessageConfig.GAME_DUEL_NOT_ENOUGH_PLAYERS.getValue();
+        Component component = template.notEnoughPlayers;
         for (Player player : instance.getPlayers()) {
             player.sendMessage(component);
         }
@@ -287,9 +286,9 @@ public class DuelGame implements ArenaGame {
         Player winnerPlayer = winner.get();
         Component message;
         if (winnerPlayer != null) {
-            message = ReplacementManager.replace(MessageConfig.GAME_DUEL_WINNER_MESSAGE.getValue(), Map.of("player", winnerPlayer::getName));
+            message = ReplacementManager.replace(template.winnerMessage, getReplacements());
         } else {
-            message = MessageConfig.GAME_DUEL_NO_WINNER_MESSAGE.getValue();
+            message = template.noWinnerMessage;
         }
         for (Player player : instance.getPlayers()) {
             player.getInventory().clear();

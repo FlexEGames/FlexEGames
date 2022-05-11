@@ -55,6 +55,23 @@ public class DuelTemplate implements Template {
     private static final ConfigPath<Boolean> useWorldPath = Paths.booleanPath("use-world", false);
     private static final ConfigPath<ChunkLoaderType> worldLoaderPath = new ChunkLoaderTypePath("world-loader", ChunkLoaderType.ANVIL);
     private static final ConfigPath<String> worldNamePath = Paths.stringPath("world-name", "duel");
+    public static final ConfigPath<Component> winnerMessagePath = new ComponentPath("winner-message", Component.text("&a%winner% won the duel!"));
+    public static final ConfigPath<Component> noWinnerMessagePath = new ComponentPath("no-winner-message", Component.text("&cNo winner"));
+    public static final ConfigPath<Component> boardTitlePath = new ComponentPath("board.title", Component.text("&e&lDuel"));
+    public static final ConfigPath<List<Component>> boardLinesWaitingPath = new ComponentListPath("board.lines.waiting", List.of(
+            Component.text("&eWaiting for players"),
+            Component.text("&ePlayers: &a%players%"),
+            Component.text("&eTime Left: &a%time%")
+    ));
+    public static final ConfigPath<List<Component>> boardLinesIngamePath = new ComponentListPath("board.lines.ingame", List.of(
+            Component.text("&eAlive: &a%alive%")
+    ));
+    public static final ConfigPath<List<Component>> boardLinesEndingPath = new ComponentListPath("board.lines.ending", List.of(
+            Component.text("&eEnding in: &a%time%"),
+            Component.text("&eWinner: &a%winner%")
+    ));
+    public static final ConfigPath<Component> notEnoughPlayersPath = new ComponentPath("not-enough-players", Component.text("&cNot enough players"));
+
     final Component displayName;
     final List<Component> description;
     final Map<String, Object> displayItem;
@@ -70,6 +87,13 @@ public class DuelTemplate implements Template {
     final boolean useWorld;
     final ChunkLoaderType worldLoader;
     final String worldName;
+    final Component winnerMessage;
+    final Component noWinnerMessage;
+    final Component boardTitle;
+    final List<Component> boardLinesWaiting;
+    final List<Component> boardLinesIngame;
+    final List<Component> boardLinesEnding;
+    final Component notEnoughPlayers;
 
     public DuelTemplate(Config config) {
         displayName = displayNamePath.getValue(config);
@@ -88,6 +112,13 @@ public class DuelTemplate implements Template {
         useWorld = useWorldPath.getValue(config);
         worldLoader = worldLoaderPath.getValue(config);
         worldName = worldNamePath.getValue(config);
+        winnerMessage = winnerMessagePath.getValue(config);
+        noWinnerMessage = noWinnerMessagePath.getValue(config);
+        boardTitle = boardTitlePath.getValue(config);
+        boardLinesWaiting = boardLinesWaitingPath.getValue(config);
+        boardLinesIngame = boardLinesIngamePath.getValue(config);
+        boardLinesEnding = boardLinesEndingPath.getValue(config);
+        notEnoughPlayers = notEnoughPlayersPath.getValue(config);
     }
 
     @Override

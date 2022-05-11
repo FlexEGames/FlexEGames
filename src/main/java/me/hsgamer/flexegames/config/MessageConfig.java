@@ -31,23 +31,6 @@ public class MessageConfig extends PathableConfig {
     public static final ConfigPath<String> STATE_ENDING = Paths.stringPath("state.ending", "Ending");
     public static final ConfigPath<String> STATE_KILLING = Paths.stringPath("state.killing", "Killing");
 
-    public static final ConfigPath<Component> GAME_DUEL_WINNER_MESSAGE = new ComponentPath("game.duel.winner-message", Component.text("&a%player% won the duel!"));
-    public static final ConfigPath<Component> GAME_DUEL_NO_WINNER_MESSAGE = new ComponentPath("game.duel.no-winner-message", Component.text("&cNo winner"));
-    public static final ConfigPath<Component> GAME_DUEL_BOARD_TITLE = new ComponentPath("game.duel.board.title", Component.text("&e&lDuel"));
-    public static final ConfigPath<List<Component>> GAME_DUEL_BOARD_LINES_WAITING = new ComponentListPath("game.duel.board.lines.waiting", List.of(
-            Component.text("&eWaiting for players"),
-            Component.text("&ePlayers: &a%players%"),
-            Component.text("&eTime Left: &a%time%")
-    ));
-    public static final ConfigPath<List<Component>> GAME_DUEL_BOARD_LINES_INGAME = new ComponentListPath("game.duel.board.lines.ingame", List.of(
-            Component.text("&eAlive: &a%alive%")
-    ));
-    public static final ConfigPath<List<Component>> GAME_DUEL_BOARD_LINES_ENDING = new ComponentListPath("game.duel.board.lines.ending", List.of(
-            Component.text("&eEnding in: &a%time%"),
-            Component.text("&eWinner: &a%winner%")
-    ));
-    public static final ConfigPath<Component> GAME_DUEL_NOT_ENOUGH_PLAYERS = new ComponentPath("game.duel.not-enough-players", Component.text("&cNot enough players"));
-
     public MessageConfig() {
         super(new YamlProvider().loadConfiguration(new File("messages.yml")));
     }
