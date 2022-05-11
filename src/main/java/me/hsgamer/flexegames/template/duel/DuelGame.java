@@ -292,7 +292,9 @@ public class DuelGame implements ArenaGame {
         if (task != null) {
             task.cancel();
         }
-        MinecraftServer.getGlobalEventHandler().removeChild(entityEventNode);
-        MinecraftServer.getInstanceManager().unregisterInstance(instance);
+        MinecraftServer.getSchedulerManager().scheduleNextTick(() -> {
+            MinecraftServer.getGlobalEventHandler().removeChild(entityEventNode);
+            MinecraftServer.getInstanceManager().unregisterInstance(instance);
+        });
     }
 }
