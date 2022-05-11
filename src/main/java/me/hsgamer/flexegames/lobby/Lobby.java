@@ -112,7 +112,7 @@ public class Lobby extends InstanceContainer {
                 .build();
 
         var selectorMap = LobbyConfig.HOTBAR_SELECTOR.getValue();
-        var selectorItem = ItemBuilder.buildItem(selectorMap);
+        var selectorItem = ItemBuilder.buildItem(selectorMap).stripItalics();
         var selectorSlot = Validate.getNumber(Objects.toString(selectorMap.getOrDefault("slot", 0))).map(BigDecimal::intValue).orElse(4);
         registerHotbarItem(selectorSlot, selectorItem, player -> openArenaInventory(player, false));
     }
