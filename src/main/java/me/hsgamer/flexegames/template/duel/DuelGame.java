@@ -16,6 +16,7 @@ import me.hsgamer.flexegames.state.InGameState;
 import me.hsgamer.flexegames.state.WaitingState;
 import me.hsgamer.flexegames.util.FullBrightDimension;
 import me.hsgamer.flexegames.util.PvpUtil;
+import me.hsgamer.flexegames.util.TemplateUtil;
 import me.hsgamer.flexegames.util.TimeUtil;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.GameState;
@@ -132,6 +133,7 @@ public class DuelGame implements ArenaGame {
                 "max-players", () -> Component.text(Integer.toString(template.posList.size())),
                 "state", () -> arena.getStateInstance().map(GameState::getDisplayName).map(LegacyComponentSerializer.legacyAmpersand()::deserialize).orElse(Component.empty()),
                 "template", () -> template.displayName,
+                "owner", () -> TemplateUtil.getOwner(arena),
                 "name", () -> Component.text(arena.getName()),
                 "winner", () -> Optional.ofNullable(winner.get()).map(Player::getName).orElse(Component.empty())
         );
