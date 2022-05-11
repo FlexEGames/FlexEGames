@@ -36,6 +36,7 @@ import net.minestom.server.event.player.PlayerBlockPlaceEvent;
 import net.minestom.server.event.player.PlayerMoveEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.trait.EntityEvent;
+import net.minestom.server.instance.IChunkLoader;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;
@@ -98,13 +99,7 @@ public class DuelGame implements ArenaGame {
                 .addListener(EntityPreDeathEvent.class, event -> {
                     if (event.getEntity() instanceof Player player) {
                         event.setCancelled(true);
-                        player.heal();
-                        player.setFood(20);
-                        player.getInventory().clear();
-                        if (!isFinished.get()) {
-                            player.setTag(deadTag, true);
-                            player.setGameMode(GameMode.SPECTATOR);
-                        }
+                        onKill(player);
                     }
                 })
                 .addListener(PlayerExhaustEvent.class, event -> {
@@ -118,6 +113,16 @@ public class DuelGame implements ArenaGame {
                         event.setCancelled(true);
                     }
                 });
+    }
+
+    private void onKill(Player player) {
+        player.heal();
+        player.setFood(20);
+        player.getInventory().clear();
+        if (!isFinished.get()) {
+            player.setTag(deadTag, true);
+            player.setGameMode(GameMode.SPECTATOR);
+        }
     }
 
     @Override
@@ -158,12 +163,22 @@ public class DuelGame implements ArenaGame {
 
     @Override
     public void init() {
-        instance.setGenerator(unit -> {
-            unit.modifier().fillHeight(0, 1, Block.BEDROCK);
-            if (template.maxHeight > 1) {
-                unit.modifier().fillHeight(1, template.maxHeight, Block.GRASS_BLOCK);
+        boolean setGenerator = true;
+        if (template.useWorld) {
+            IChunkLoader chunkLoader = template.worldLoader.getLoader(instance, WorldUtil.getWorldFile(template.worldName).toPath());
+            if (chunkLoader != null) {
+                instance.setChunkLoader(chunkLoader);
+                setGenerator = false;
             }
-        });
+        }
+        if (setGenerator) {
+            instance.setGenerator(unit -> {
+                unit.modifier().fillHeight(0, 1, Block.BEDROCK);
+                if (template.maxHeight > 1) {
+                    unit.modifier().fillHeight(1, template.maxHeight, Block.GRASS_BLOCK);
+                }
+            });
+        }
         MinecraftServer.getGlobalEventHandler().addChild(entityEventNode);
         instance.eventNode()
                 .addListener(AddEntityToInstanceEvent.class, event -> {
@@ -174,8 +189,10 @@ public class DuelGame implements ArenaGame {
                     }
                 })
                 .addListener(PlayerMoveEvent.class, event -> {
-                    if (instance.isInVoid(event.getNewPosition())) {
-                        event.setNewPosition(template.joinPos);
+                    if (!instance.isInVoid(event.getNewPosition())) return;
+                    event.setNewPosition(template.joinPos);
+                    if (arena.getState() == InGameState.class) {
+                        onKill(event.getPlayer());
                     }
                 })
                 .addListener(RemoveEntityFromInstanceEvent.class, event -> {

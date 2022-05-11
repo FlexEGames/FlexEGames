@@ -1,6 +1,7 @@
 package me.hsgamer.flexegames.template.duel;
 
 import me.hsgamer.flexegames.api.ArenaGame;
+import me.hsgamer.flexegames.api.ChunkLoaderType;
 import me.hsgamer.flexegames.api.Template;
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.config.path.*;
@@ -51,6 +52,9 @@ public class DuelTemplate implements Template {
     private static final ConfigPath<Boolean> useLegacyPvpPath = Paths.booleanPath("use-legacy-pvp", false);
     private static final NumberObjectMapPath kitPath = new NumberObjectMapPath("kit", Collections.emptyMap());
     private static final ConfigPath<Double> borderDiameterPath = Paths.doublePath("border-diameter", 50.0);
+    private static final ConfigPath<Boolean> useWorldPath = Paths.booleanPath("use-world", false);
+    private static final ConfigPath<ChunkLoaderType> worldLoaderPath = new ChunkLoaderTypePath("world-loader", ChunkLoaderType.ANVIL);
+    private static final ConfigPath<String> worldNamePath = Paths.stringPath("world-name", "duel");
     final Component displayName;
     final List<Component> description;
     final Map<String, Object> displayItem;
@@ -63,6 +67,9 @@ public class DuelTemplate implements Template {
     final boolean useLegacyPvp;
     final Map<Integer, ItemStack> kit;
     final double borderDiameter;
+    final boolean useWorld;
+    final ChunkLoaderType worldLoader;
+    final String worldName;
 
     public DuelTemplate(Config config) {
         displayName = displayNamePath.getValue(config);
@@ -78,6 +85,9 @@ public class DuelTemplate implements Template {
         kit = new HashMap<>();
         kitPath.getValue(config).forEach((key, value) -> kit.put(key.intValue(), ItemBuilder.buildItem(value)));
         borderDiameter = borderDiameterPath.getValue(config);
+        useWorld = useWorldPath.getValue(config);
+        worldLoader = worldLoaderPath.getValue(config);
+        worldName = worldNamePath.getValue(config);
     }
 
     @Override
