@@ -156,30 +156,13 @@ public class Lobby extends InstanceContainer {
     private void onFirstSpawn(Player player) {
         board.addPlayer(player);
         player.setRespawnPoint(position);
-        player.setEnableRespawnScreen(false);
         player.setGameMode(GameMode.ADVENTURE);
         player.setTeam(lobbyTeam);
     }
 
     private void onBackSpawn(Player player) {
-        board.addPlayer(player);
-        player.setGameMode(GameMode.ADVENTURE);
-        player.heal();
-        player.setFood(20);
-        player.setLevel(0);
-        player.setAllowFlying(false);
-        player.setFlying(false);
-        player.setInvisible(false);
-        player.setAdditionalHearts(0);
-        player.clearEffects();
-        player.setNoGravity(false);
-        player.setExp(0);
-        player.stopSpectating();
-        player.askSynchronization();
+        onFirstSpawn(player);
         player.teleport(position);
-        player.setRespawnPoint(position);
-        player.setEnableRespawnScreen(false);
-        player.setTeam(lobbyTeam);
     }
 
     private void onQuit(Player player) {

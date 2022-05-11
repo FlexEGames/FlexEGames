@@ -2,6 +2,7 @@ package me.hsgamer.flexegames.template.duel;
 
 import io.github.bloepiloepi.pvp.events.EntityPreDeathEvent;
 import io.github.bloepiloepi.pvp.events.FinalDamageEvent;
+import io.github.bloepiloepi.pvp.events.PlayerExhaustEvent;
 import lombok.experimental.ExtensionMethod;
 import me.hsgamer.flexegames.api.ArenaGame;
 import me.hsgamer.flexegames.api.JoinResponse;
@@ -14,10 +15,7 @@ import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.state.EndingState;
 import me.hsgamer.flexegames.state.InGameState;
 import me.hsgamer.flexegames.state.WaitingState;
-import me.hsgamer.flexegames.util.FullBrightDimension;
-import me.hsgamer.flexegames.util.PvpUtil;
-import me.hsgamer.flexegames.util.TemplateUtil;
-import me.hsgamer.flexegames.util.TimeUtil;
+import me.hsgamer.flexegames.util.*;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.GameState;
 import me.hsgamer.minigamecore.implementation.feature.arena.ArenaTimerFeature;
@@ -51,7 +49,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
-@ExtensionMethod({PvpUtil.class})
+@ExtensionMethod({PvpUtil.class, PlayerUtil.class})
 public class DuelGame implements ArenaGame {
     private final DuelTemplate template;
     private final Arena arena;
@@ -109,9 +107,14 @@ public class DuelGame implements ArenaGame {
                         }
                     }
                 })
+                .addListener(PlayerExhaustEvent.class, event -> {
+                    if (isFinished.get() || arena.getState() != InGameState.class || Boolean.TRUE.equals(event.getEntity().getTag(deadTag))) {
+                        event.setCancelled(true);
+                    }
+                })
                 .addListener(PlayerSpawnEvent.class, event -> event.getPlayer().teleport(template.joinPos))
                 .addListener(FinalDamageEvent.class, event -> {
-                    if (isFinished.get() || arena.getState() == WaitingState.class || arena.getState() == EndingState.class || Boolean.TRUE.equals(event.getEntity().getTag(deadTag))) {
+                    if (isFinished.get() || arena.getState() != InGameState.class || Boolean.TRUE.equals(event.getEntity().getTag(deadTag))) {
                         event.setCancelled(true);
                     }
                 });
@@ -177,9 +180,9 @@ public class DuelGame implements ArenaGame {
                 })
                 .addListener(RemoveEntityFromInstanceEvent.class, event -> {
                     if (event.getEntity() instanceof Player player) {
-                        player.getInventory().clear();
-                        player.removeTag(deadTag);
                         board.removePlayer(player);
+                        player.removeTag(deadTag);
+                        player.reset();
                     }
                 })
                 .addListener(PlayerBlockBreakEvent.class, event -> {
