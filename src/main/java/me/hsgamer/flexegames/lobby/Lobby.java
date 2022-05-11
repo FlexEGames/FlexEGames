@@ -2,10 +2,6 @@ package me.hsgamer.flexegames.lobby;
 
 import lombok.experimental.ExtensionMethod;
 import me.hsgamer.flexegames.GameServer;
-import me.hsgamer.flexegames.api.ArenaGame;
-import me.hsgamer.flexegames.api.ChunkLoaderType;
-import me.hsgamer.flexegames.api.JoinResponse;
-import me.hsgamer.flexegames.api.Template;
 import me.hsgamer.flexegames.board.Board;
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.config.LobbyConfig;
@@ -18,7 +14,7 @@ import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.util.FullBrightDimension;
 import me.hsgamer.flexegames.util.ItemUtil;
 import me.hsgamer.flexegames.util.TaskUtil;
-import me.hsgamer.minigamecore.base.Arena;
+import me.hsgamer.hscore.common.Validate;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
@@ -30,10 +26,7 @@ import net.minestom.server.event.instance.AddEntityToInstanceEvent;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
 import net.minestom.server.event.inventory.InventoryPreClickEvent;
 import net.minestom.server.event.item.ItemDropEvent;
-import net.minestom.server.event.player.PlayerBlockBreakEvent;
-import net.minestom.server.event.player.PlayerBlockPlaceEvent;
-import net.minestom.server.event.player.PlayerMoveEvent;
-import net.minestom.server.event.player.PlayerSwapItemEvent;
+import net.minestom.server.event.player.*;
 import net.minestom.server.event.trait.InstanceEvent;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;
@@ -44,9 +37,14 @@ import net.minestom.server.network.packet.server.play.TeamsPacket;
 import net.minestom.server.scoreboard.Team;
 import net.minestom.server.timer.Task;
 
-import java.util.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 @ExtensionMethod({ItemUtil.class})
 public class Lobby extends InstanceContainer {
@@ -71,7 +69,7 @@ public class Lobby extends InstanceContainer {
         );
         setTimeRate(0);
 
-        ChunkLoaderType worldType = LobbyConfig.WORLD_TYPE.getValue();
+        var worldType = LobbyConfig.WORLD_TYPE.getValue();
         setChunkLoader(worldType.getLoader(this, LobbyConfig.WORLD_NAME.getValue()));
 
         EventNode<InstanceEvent> eventNode = eventNode();
@@ -112,9 +110,50 @@ public class Lobby extends InstanceContainer {
         lobbyTeam = MinecraftServer.getTeamManager().createBuilder("lobbyTeam")
                 .collisionRule(TeamsPacket.CollisionRule.NEVER)
                 .build();
+
+        var selectorMap = LobbyConfig.HOTBAR_SELECTOR.getValue();
+        var selectorItem = ItemBuilder.buildItem(selectorMap);
+        var selectorSlot = Validate.getNumber(Objects.toString(selectorMap.getOrDefault("slot", 0))).map(BigDecimal::intValue).orElse(4);
+        registerHotbarItem(selectorSlot, selectorItem, player -> openArenaInventory(player, false));
     }
 
-    void onFirstSpawn(Player player) {
+    public void registerHotbarItem(int slot, ItemStack itemStack, Consumer<Player> consumer) {
+        eventNode()
+                .addListener(ItemDropEvent.class, event -> {
+                    if (event.getItemStack().equals(itemStack)) {
+                        event.setCancelled(true);
+                    }
+                })
+                .addListener(AddEntityToInstanceEvent.class, event -> {
+                    Entity entity = event.getEntity();
+                    if (entity instanceof Player player) {
+                        player.getInventory().setItemStack(slot, itemStack);
+                    }
+                })
+                .addListener(RemoveEntityFromInstanceEvent.class, event -> {
+                    Entity entity = event.getEntity();
+                    if (entity instanceof Player player) {
+                        player.getInventory().setItemStack(slot, ItemStack.AIR);
+                    }
+                })
+                .addListener(PlayerUseItemEvent.class, event -> {
+                    event.setCancelled(true);
+                    if (event.getItemStack().equals(itemStack)) {
+                        consumer.accept(event.getPlayer());
+                    }
+                })
+                .addListener(PlayerBlockInteractEvent.class, event -> {
+                    if (event.getHand() != Player.Hand.MAIN) {
+                        return;
+                    }
+                    if (event.getPlayer().getInventory().getItemInHand(event.getHand()).equals(itemStack)) {
+                        event.setCancelled(true);
+                        consumer.accept(event.getPlayer());
+                    }
+                });
+    }
+
+    private void onFirstSpawn(Player player) {
         board.addPlayer(player);
         player.setRespawnPoint(position);
         player.setEnableRespawnScreen(false);
@@ -122,7 +161,7 @@ public class Lobby extends InstanceContainer {
         player.setTeam(lobbyTeam);
     }
 
-    void onBackSpawn(Player player) {
+    private void onBackSpawn(Player player) {
         board.addPlayer(player);
         player.setGameMode(GameMode.ADVENTURE);
         player.heal();
@@ -144,7 +183,7 @@ public class Lobby extends InstanceContainer {
         player.setTeam(lobbyTeam);
     }
 
-    void onQuit(Player player) {
+    private void onQuit(Player player) {
         board.removePlayer(player);
         player.setTeam(null);
     }
@@ -162,9 +201,9 @@ public class Lobby extends InstanceContainer {
     }
 
     public void openTemplateInventory(Player openPlayer) {
-        List<Template> templates = new ArrayList<>(gameServer.getTemplateManager().getTemplateMap().values());
-        int maxPage = getMaxPage(templates.size());
-        AtomicReference<Integer> pages = new AtomicReference<>(0);
+        var templates = new ArrayList<>(gameServer.getTemplateManager().getTemplateMap().values());
+        var maxPage = getMaxPage(templates.size());
+        var pages = new AtomicReference<>(0);
         Button nextPageButton = new Button() {
             @Override
             public ItemStack getItem() {
@@ -175,7 +214,7 @@ public class Lobby extends InstanceContainer {
             public ClickConsumer getClickConsumer() {
                 return (player, clickType, result) -> {
                     result.setCancel(true);
-                    int page = pages.get();
+                    var page = pages.get();
                     if (page < maxPage - 1) {
                         pages.set(page + 1);
                     }
@@ -193,7 +232,7 @@ public class Lobby extends InstanceContainer {
             public ClickConsumer getClickConsumer() {
                 return (player, clickType, result) -> {
                     result.setCancel(true);
-                    int page = pages.get();
+                    var page = pages.get();
                     if (page > 0) {
                         pages.set(page - 1);
                     }
@@ -219,15 +258,15 @@ public class Lobby extends InstanceContainer {
         Button dummyButton = () -> ItemStack.of(Material.BLACK_STAINED_GLASS_PANE).withDisplayName(Component.empty());
         Button airButton = () -> ItemStack.AIR;
         ButtonMap buttonMap = inventory -> {
-            Map<Integer, Button> buttons = new HashMap<>();
-            int page = pages.get();
+            var buttons = new HashMap<Integer, Button>();
+            var page = pages.get();
             for (int i = 0; i < 18; i++) {
-                int index = i + page * 18;
+                var index = i + page * 18;
                 if (index >= templates.size()) {
                     buttons.put(i, airButton);
                     continue;
                 }
-                Template template = templates.get(index);
+                var template = templates.get(index);
                 buttons.put(i, new Button() {
                     @Override
                     public ItemStack getItem() {
@@ -238,7 +277,7 @@ public class Lobby extends InstanceContainer {
                     public ClickConsumer getClickConsumer() {
                         return (player, clickType, result) -> {
                             result.setCancel(true);
-                            Arena arena = gameServer.getGameArenaManager().createNewArena();
+                            var arena = gameServer.getGameArenaManager().createNewArena();
                             arena.getArenaFeature(GameFeature.class).setGame(template);
                             arena.getArenaFeature(GameFeature.class).setOwner(player.getUuid());
                             openArenaInventory(player, true);
@@ -265,9 +304,9 @@ public class Lobby extends InstanceContainer {
     }
 
     public void openArenaInventory(Player openPlayer, boolean myArena) {
-        AtomicReference<List<Arena>> arenas = new AtomicReference<>(gameServer.getGameArenaManager().getArenas(openPlayer, myArena));
-        AtomicBoolean isMyArena = new AtomicBoolean(myArena);
-        AtomicReference<Integer> pages = new AtomicReference<>(0);
+        var arenas = new AtomicReference<>(gameServer.getGameArenaManager().getArenas(openPlayer, myArena));
+        var isMyArena = new AtomicBoolean(myArena);
+        var pages = new AtomicReference<>(0);
 
         Button nextPageButton = new Button() {
             @Override
@@ -279,7 +318,7 @@ public class Lobby extends InstanceContainer {
             public ClickConsumer getClickConsumer() {
                 return (player, clickType, result) -> {
                     result.setCancel(true);
-                    int page = pages.get() + 1;
+                    var page = pages.get() + 1;
                     if (page >= getMaxPage(arenas.get().size())) {
                         page = 0;
                     }
@@ -298,7 +337,7 @@ public class Lobby extends InstanceContainer {
             public ClickConsumer getClickConsumer() {
                 return (player, clickType, result) -> {
                     result.setCancel(true);
-                    int page = pages.get() - 1;
+                    var page = pages.get() - 1;
                     if (page < 0) {
                         page = Math.max(getMaxPage(arenas.get().size()) - 1, 0);
                     }
@@ -357,17 +396,17 @@ public class Lobby extends InstanceContainer {
         Button dummyButton = () -> ItemStack.of(Material.BLACK_STAINED_GLASS_PANE).withDisplayName(Component.empty());
         Button airButton = () -> ItemStack.AIR;
         ButtonMap buttonMap = inventory -> {
-            Map<Integer, Button> buttons = new HashMap<>();
-            List<Arena> arenasList = arenas.get();
-            int page = pages.get();
+            var buttons = new HashMap<Integer, Button>();
+            var arenasList = arenas.get();
+            var page = pages.get();
             for (int i = 0; i < 18; i++) {
-                int index = i + page * 18;
+                var index = i + page * 18;
                 if (index >= arenasList.size()) {
                     buttons.put(i, airButton);
                     continue;
                 }
-                Arena arena = arenasList.get(index);
-                ArenaGame game = arena.getArenaFeature(GameFeature.class).getGame();
+                var arena = arenasList.get(index);
+                var game = arena.getArenaFeature(GameFeature.class).getGame();
                 if (game == null) {
                     buttons.put(i, airButton);
                     continue;
@@ -382,7 +421,7 @@ public class Lobby extends InstanceContainer {
                     public ClickConsumer getClickConsumer() {
                         return (player, clickType, result) -> {
                             result.setCancel(true);
-                            JoinResponse response = game.join(player);
+                            var response = game.join(player);
                             if (!response.success()) {
                                 player.sendMessage(response.getMessage(player));
                             } else {

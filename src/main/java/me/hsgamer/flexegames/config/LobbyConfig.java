@@ -61,6 +61,11 @@ public class LobbyConfig extends PathableConfig {
             "material", Material.ENDER_CHEST.name(),
             "name", "&e&lMy arena"
     ));
+    public static final MapPath HOTBAR_SELECTOR = new MapPath("hotbar.selector", Map.of(
+            "material", Material.DIAMOND_BLOCK.name(),
+            "name", "&e&lArena",
+            "slot", 4
+    ));
 
     public LobbyConfig() {
         super(new YamlProvider().loadConfiguration(new File("lobby.yml")));
