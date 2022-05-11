@@ -173,6 +173,7 @@ public class DuelGame implements ArenaGame {
                 })
                 .addListener(RemoveEntityFromInstanceEvent.class, event -> {
                     if (event.getEntity() instanceof Player player) {
+                        player.getInventory().clear();
                         player.removeTag(deadTag);
                         board.removePlayer(player);
                     }
@@ -183,7 +184,7 @@ public class DuelGame implements ArenaGame {
                     }
                 })
                 .addListener(PlayerBlockPlaceEvent.class, event -> event.setBlock(event.getBlock().withTag(playerBlockTag, true)));
-        task = MinecraftServer.getSchedulerManager()
+        task = instance.scheduler()
                 .buildTask(board::updateAll)
                 .repeat(TaskSchedule.nextTick())
                 .schedule();

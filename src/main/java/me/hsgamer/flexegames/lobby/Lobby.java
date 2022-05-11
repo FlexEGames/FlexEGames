@@ -104,7 +104,7 @@ public class Lobby extends InstanceContainer {
                         event.setCancelled(true);
                     }
                 });
-        boardTask = MinecraftServer.getSchedulerManager().buildTask(board::updateAll)
+        boardTask = scheduler().buildTask(board::updateAll)
                 .repeat(TaskUtil.tick(LobbyConfig.BOARD_UPDATE_TIME.getValue()))
                 .schedule();
         lobbyTeam = MinecraftServer.getTeamManager().createBuilder("lobbyTeam")
@@ -127,7 +127,7 @@ public class Lobby extends InstanceContainer {
                 .addListener(AddEntityToInstanceEvent.class, event -> {
                     Entity entity = event.getEntity();
                     if (entity instanceof Player player) {
-                        player.getInventory().setItemStack(slot, itemStack);
+                        player.scheduler().scheduleNextTick(() -> player.getInventory().setItemStack(slot, itemStack));
                     }
                 })
                 .addListener(RemoveEntityFromInstanceEvent.class, event -> {
@@ -172,7 +172,6 @@ public class Lobby extends InstanceContainer {
         player.setInvisible(false);
         player.setAdditionalHearts(0);
         player.clearEffects();
-        player.getInventory().clear();
         player.setNoGravity(false);
         player.setExp(0);
         player.stopSpectating();
