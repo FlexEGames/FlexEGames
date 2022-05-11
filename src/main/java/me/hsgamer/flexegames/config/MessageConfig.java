@@ -40,7 +40,7 @@ public class MessageConfig extends PathableConfig {
             Component.text("&eTime Left: &a%time%")
     ));
     public static final ConfigPath<List<Component>> GAME_DUEL_BOARD_LINES_INGAME = new ComponentListPath("game.duel.board.lines.ingame", List.of(
-            Component.text("&eAlive: &a%players%")
+            Component.text("&eAlive: &a%alive%")
     ));
     public static final ConfigPath<List<Component>> GAME_DUEL_BOARD_LINES_ENDING = new ComponentListPath("game.duel.board.lines.ending", List.of(
             Component.text("&eEnding in: &a%time%"),
