@@ -7,10 +7,7 @@ import me.hsgamer.flexegames.config.ChatConfig;
 import me.hsgamer.flexegames.config.LobbyConfig;
 import me.hsgamer.flexegames.config.MainConfig;
 import me.hsgamer.flexegames.config.MessageConfig;
-import me.hsgamer.flexegames.hook.PerInstanceInstanceViewHook;
-import me.hsgamer.flexegames.hook.PvpHook;
-import me.hsgamer.flexegames.hook.ServerListHook;
-import me.hsgamer.flexegames.hook.TickMonitorHook;
+import me.hsgamer.flexegames.hook.*;
 import me.hsgamer.flexegames.lobby.Lobby;
 import me.hsgamer.flexegames.manager.GameArenaManager;
 import me.hsgamer.flexegames.manager.ReplacementManager;
@@ -21,7 +18,6 @@ import net.minestom.server.command.CommandManager;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
-import net.minestom.server.event.player.PlayerChatEvent;
 import net.minestom.server.event.player.PlayerLoginEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.extras.MojangAuth;
@@ -30,9 +26,6 @@ import net.minestom.server.extras.bungee.BungeeCordProxy;
 import net.minestom.server.extras.optifine.OptifineSupport;
 import net.minestom.server.extras.velocity.VelocityProxy;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.Map;
-import java.util.Objects;
 
 @Getter
 public class GameServer {
@@ -73,15 +66,6 @@ public class GameServer {
                     event.setSpawningInstance(lobby);
                     event.getPlayer().setRespawnPoint(lobby.getPosition());
                 })
-                .addListener(PlayerChatEvent.class, event -> {
-                    event.setChatFormat(e -> ReplacementManager.builder()
-                            .replaceGlobal()
-                            .replacePlayer(event.getPlayer())
-                            .replace(Map.of("message", () -> Component.text(e.getMessage())))
-                            .build(ChatConfig.CHAT_FORMAT.getValue())
-                    );
-                    event.getRecipients().removeIf(p -> !Objects.equals(p.getInstance(), event.getPlayer().getInstance()));
-                })
                 .addListener(PlayerSpawnEvent.class, event -> event.getPlayer().refreshCommands());
 
         // HOOK
@@ -89,6 +73,7 @@ public class GameServer {
         PerInstanceInstanceViewHook.hook(globalNode);
         Board.hook(globalNode);
         PvpHook.hook(globalNode);
+        ChatHook.hook(globalNode);
         TickMonitorHook.hook();
         PlacementRules.init();
         OptifineSupport.enable();
