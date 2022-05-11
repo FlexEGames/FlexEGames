@@ -8,6 +8,7 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    mavenLocal()
     maven { url 'https://jitpack.io' }
     maven { url 'https://repo.codemc.io/repository/maven-public/'}
 }
@@ -25,7 +26,7 @@ tasks {
 }
 
 dependencies {
-    def core = "4.0.4"
+    def core = "4.0.5"
     implementation "me.hsgamer:hscore-config-simplixstorage:$core"
     implementation "me.hsgamer:hscore-config-proxy:$core"
     implementation "me.hsgamer:hscore-config-path:$core"

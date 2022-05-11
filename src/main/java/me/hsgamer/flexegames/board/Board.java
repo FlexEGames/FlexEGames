@@ -9,13 +9,14 @@ import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.scoreboard.Sidebar;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Function;
 
 public class Board {
     private static final Map<Player, Sidebar> boards = new HashMap<>();
     private static final int MAX_LINES = 15;
     private static final String MAGIC_STRING = "boardLine_";
-    private final List<Player> players = new ArrayList<>();
+    private final Collection<Player> players = new ConcurrentLinkedDeque<>();
     private final Function<Player, Component> title;
     private final Function<Player, List<Component>> lines;
 
