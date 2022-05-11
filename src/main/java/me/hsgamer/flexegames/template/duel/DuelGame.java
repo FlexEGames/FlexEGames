@@ -75,6 +75,7 @@ public class DuelGame implements ArenaGame {
         this.board = new Board(
                 player -> ReplacementManager.builder()
                         .replaceGlobal()
+                        .replace(getReplacements())
                         .replacePlayer(player)
                         .build(MessageConfig.GAME_DUEL_BOARD_TITLE.getValue()),
                 player -> {
