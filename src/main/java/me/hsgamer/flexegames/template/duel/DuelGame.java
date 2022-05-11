@@ -135,7 +135,8 @@ public class DuelGame implements ArenaGame {
                 "template", () -> template.displayName,
                 "owner", () -> TemplateUtil.getOwner(arena),
                 "name", () -> Component.text(arena.getName()),
-                "winner", () -> Optional.ofNullable(winner.get()).map(Player::getName).orElse(Component.empty())
+                "winner", () -> Optional.ofNullable(winner.get()).map(Player::getName).orElse(Component.empty()),
+                "alive", () -> Component.text(Integer.toString(getAlivePlayers().size()))
         );
     }
 
@@ -240,7 +241,7 @@ public class DuelGame implements ArenaGame {
     }
 
     private List<Player> getAlivePlayers() {
-        return instance.getPlayers().stream().filter(player -> player.tagHandler().getTag(deadTag) != Boolean.TRUE).toList();
+        return instance.getPlayers().stream().filter(player -> Boolean.FALSE.equals(player.tagHandler().getTag(deadTag))).toList();
     }
 
     private void checkWinner() {
