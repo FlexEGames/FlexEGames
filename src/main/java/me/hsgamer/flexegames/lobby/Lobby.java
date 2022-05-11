@@ -451,7 +451,7 @@ public class Lobby extends InstanceContainer {
                     return true;
                 })
                 .build()
-                .autoRefresh(TaskUtil.tick(20))
+                .autoRefresh(TaskUtil.tick(10))
                 .unregisterWhenClosed();
         openPlayer.openInventory(inventory);
     }
