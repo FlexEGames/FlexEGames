@@ -51,6 +51,6 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'me.hsgamer.epicmegagames.EpicMegaGames', "Multi-Release": true
+        attributes 'Main-Class': 'me.hsgamer.flexegames.FlexEGames', "Multi-Release": true
     }
 }
