@@ -13,6 +13,7 @@ import me.hsgamer.flexegames.inventory.ButtonMap;
 import me.hsgamer.flexegames.inventory.ClickConsumer;
 import me.hsgamer.flexegames.inventory.RefreshableInventory;
 import me.hsgamer.flexegames.manager.ReplacementManager;
+import me.hsgamer.flexegames.util.AssetUtil;
 import me.hsgamer.flexegames.util.FullBrightDimension;
 import me.hsgamer.flexegames.util.ItemUtil;
 import me.hsgamer.flexegames.util.TaskUtil;
@@ -70,7 +71,7 @@ public class Lobby extends InstanceContainer {
         setTimeRate(0);
 
         var worldType = LobbyConfig.WORLD_TYPE.getValue();
-        setChunkLoader(worldType.getLoader(this, LobbyConfig.WORLD_NAME.getValue()));
+        setChunkLoader(worldType.getLoader(this, AssetUtil.getWorldFile(LobbyConfig.WORLD_NAME.getValue()).toPath()));
 
         EventNode<InstanceEvent> eventNode = eventNode();
         eventNode
