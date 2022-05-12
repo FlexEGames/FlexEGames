@@ -63,7 +63,7 @@ public class ImageInstanceModifier implements InstanceModifierProvider {
             BufferedImage image = ImageIO.read(inputStream);
             framebuffer.getRenderer().drawRenderedImage(image, AffineTransform.getScaleInstance(scaleX, scaleY));
         } catch (Exception e) {
-            throw new IllegalArgumentException("asset not found");
+            throw new IllegalArgumentException("Error when loading file " + asset.getName(), e);
         }
         startId = (int) map.getOrDefault("startId", 0);
         orientation = ItemFrameMeta.Orientation.valueOf(Objects.toString(map.getOrDefault("orientation", ItemFrameMeta.Orientation.NORTH.name())).toUpperCase());
