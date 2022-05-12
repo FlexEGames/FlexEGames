@@ -49,7 +49,7 @@ public class ImageInstanceModifier implements InstanceModifierProvider {
             String[] split = posString.split(";");
             Pos[] pos = new Pos[split.length];
             for (int i = 0; i < split.length; i++) {
-                pos[i] = PosUtil.convert(split[i]).orElse(null);
+                pos[i] = PosUtil.convert(split[i].trim()).orElse(null);
             }
             list.add(pos);
             rawWidth = Math.max(rawWidth, pos.length);
