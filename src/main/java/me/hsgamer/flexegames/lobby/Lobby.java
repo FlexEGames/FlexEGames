@@ -7,6 +7,7 @@ import me.hsgamer.flexegames.board.Board;
 import me.hsgamer.flexegames.builder.InstanceModifierBuilder;
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.config.LobbyConfig;
+import me.hsgamer.flexegames.config.MessageConfig;
 import me.hsgamer.flexegames.feature.GameFeature;
 import me.hsgamer.flexegames.inventory.Button;
 import me.hsgamer.flexegames.inventory.ButtonMap;
@@ -272,10 +273,12 @@ public class Lobby extends InstanceContainer {
                     public ClickConsumer getClickConsumer() {
                         return (player, clickType, result) -> {
                             result.setCancel(true);
-                            var arena = gameServer.getGameArenaManager().createNewArena();
-                            arena.getArenaFeature(GameFeature.class).setGame(template);
-                            arena.getArenaFeature(GameFeature.class).setOwner(player.getUuid());
-                            openArenaInventory(player, true);
+                            if (gameServer.getGameArenaManager().createArena(player, template)) {
+                                player.sendMessage(MessageConfig.RESPONSE_CREATE_ARENA_SUCCESSFUL.getValue());
+                                openArenaInventory(player, true);
+                            } else {
+                                player.sendMessage(MessageConfig.RESPONSE_CANNOT_CREATE_ARENA.getValue());
+                            }
                             return false;
                         };
                     }

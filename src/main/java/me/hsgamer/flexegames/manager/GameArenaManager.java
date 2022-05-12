@@ -1,7 +1,9 @@
 package me.hsgamer.flexegames.manager;
 
 import me.hsgamer.flexegames.GameServer;
+import me.hsgamer.flexegames.api.Template;
 import me.hsgamer.flexegames.arena.GameArena;
+import me.hsgamer.flexegames.config.MainConfig;
 import me.hsgamer.flexegames.feature.GameFeature;
 import me.hsgamer.flexegames.feature.LobbyFeature;
 import me.hsgamer.flexegames.state.*;
@@ -64,5 +66,16 @@ public class GameArenaManager extends ArenaManager {
                 return true;
             }
         }).toList();
+    }
+
+    public boolean createArena(Player player, Template template) {
+        int amount = MainConfig.ARENA_AMOUNT_PER_PLAYER.getValue();
+        if (amount >= 0 && getArenas(player, true).size() >= amount) {
+            return false;
+        }
+        Arena arena = gameServer.getGameArenaManager().createNewArena();
+        arena.getArenaFeature(GameFeature.class).setGame(template);
+        arena.getArenaFeature(GameFeature.class).setOwner(player.getUuid());
+        return true;
     }
 }

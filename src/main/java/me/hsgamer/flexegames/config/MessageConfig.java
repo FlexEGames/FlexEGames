@@ -24,6 +24,8 @@ public class MessageConfig extends PathableConfig {
     public static final ConfigPath<Component> RESPONSE_MAX_PLAYERS_REACH = new ComponentPath("response.max-players-reach", Component.text("&cMax players reached"));
     public static final ConfigPath<Component> RESPONSE_INCOMPLETE_SETUP = new ComponentPath("response.incomplete-setup", Component.text("&cIncomplete setup"));
     public static final ConfigPath<Component> RESPONSE_NOT_WAITING = new ComponentPath("response.not-waiting", Component.text("&cArena not waiting"));
+    public static final ConfigPath<Component> RESPONSE_CREATE_ARENA_SUCCESSFUL = new ComponentPath("response.create-arena-successful", Component.text("&aArena created successfully"));
+    public static final ConfigPath<Component> RESPONSE_CANNOT_CREATE_ARENA = new ComponentPath("response.cannot-create-arena", Component.text("&cYou cannot create arena"));
 
     public static final ConfigPath<String> STATE_CHOOSING = Paths.stringPath("state.choosing", "Choosing");
     public static final ConfigPath<String> STATE_WAITING = Paths.stringPath("state.waiting", "Waiting");
