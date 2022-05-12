@@ -17,6 +17,7 @@ public class NumberObjectMapPath extends AdvancedConfigPath<Map<String, Map<Stri
 
     @Override
     public @Nullable Map<String, Map<String, Object>> getFromConfig(@NotNull Config config) {
+        if (!config.contains(getPath())) return null;
         Map<String, Object> rawMap = config.getNormalizedValues(getPath(), false);
         Map<String, Map<String, Object>> map = new LinkedHashMap<>();
         for (Map.Entry<String, Object> entry : rawMap.entrySet()) {
@@ -29,7 +30,7 @@ public class NumberObjectMapPath extends AdvancedConfigPath<Map<String, Map<Stri
                 map.put(entry.getKey(), mapValue);
             }
         }
-        return map.isEmpty() ? null : map;
+        return map;
     }
 
     @Override
