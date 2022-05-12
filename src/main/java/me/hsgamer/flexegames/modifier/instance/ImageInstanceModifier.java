@@ -40,8 +40,8 @@ public class ImageInstanceModifier implements InstanceModifierProvider {
     private final ItemFrameMeta.Orientation orientation;
 
     public ImageInstanceModifier(Map<String, Object> map) {
-        double scaleX = (double) map.getOrDefault("scale-x", 1);
-        double scaleY = (double) map.getOrDefault("scale-y", 1);
+        double scaleX = Double.parseDouble(Objects.toString(map.get("scale-x"), "1"));
+        double scaleY = Double.parseDouble(Objects.toString(map.get("scale-y"), "1"));
         List<String> stringList = CollectionUtils.createStringListFromObject(map.getOrDefault("pos", ""), true);
         List<Pos[]> list = new ArrayList<>();
         int rawWidth = 1;
