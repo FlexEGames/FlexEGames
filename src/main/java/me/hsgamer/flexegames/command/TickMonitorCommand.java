@@ -6,6 +6,7 @@ import net.kyori.adventure.text.Component;
 import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.command.builder.Command;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TickMonitorCommand extends Command {
@@ -13,7 +14,7 @@ public class TickMonitorCommand extends Command {
         super("tickmonitor", "monitor");
         setCondition((sender, commandString) -> sender instanceof ConsoleSender);
         setDefaultExecutor((sender, context) -> {
-            List<Component> components = MessageConfig.TICK_MONITOR.getValue();
+            List<Component> components = new ArrayList<>(MessageConfig.TICK_MONITOR.getValue());
             components.replaceAll(ReplacementManager::replaceGlobal);
             for (Component component : components) {
                 sender.sendMessage(component);
