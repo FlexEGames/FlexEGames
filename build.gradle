@@ -20,6 +20,9 @@ shadowJar {
 }
 
 tasks {
+    compileJava {
+        dependsOn(tasks.clean)
+    }
     build {
         dependsOn(tasks.shadowJar)
     }
