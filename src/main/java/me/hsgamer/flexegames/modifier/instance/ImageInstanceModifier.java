@@ -10,7 +10,10 @@ import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.metadata.other.ItemFrameMeta;
+import net.minestom.server.event.EventFilter;
+import net.minestom.server.event.EventNode;
 import net.minestom.server.event.instance.AddEntityToInstanceEvent;
+import net.minestom.server.event.trait.InstanceEvent;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
@@ -24,10 +27,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public class ImageInstanceModifier implements InstanceModifierProvider {
@@ -73,6 +73,12 @@ public class ImageInstanceModifier implements InstanceModifierProvider {
     public InstanceModifier getInstanceModifier(Instance instance) {
         List<Entity> entityList = new ArrayList<>();
         ServerPacket[] packets = new ServerPacket[width * height];
+        EventNode<InstanceEvent> eventNode = EventNode.type("image-" + UUID.randomUUID(), EventFilter.INSTANCE);
+        eventNode.addListener(AddEntityToInstanceEvent.class, event -> {
+            if (event.getEntity().getInstance() == null && event.getEntity() instanceof Player player) {
+                player.sendPackets(packets);
+            }
+        });
 
         return new InstanceModifier() {
             @Override
@@ -92,16 +98,13 @@ public class ImageInstanceModifier implements InstanceModifierProvider {
                     entityList.add(itemFrame);
                     packets[id] = framebuffer.createSubView(x * MAP_UNIT_LENGTH, y * MAP_UNIT_LENGTH).preparePacket(startId + id);
                 });
-                instance.eventNode().addListener(AddEntityToInstanceEvent.class, event -> {
-                    if (event.getEntity().getInstance() == null && event.getEntity() instanceof Player player) {
-                        player.sendPackets(packets);
-                    }
-                });
+                instance.eventNode().addChild(eventNode);
             }
 
             @Override
             public void clear() {
                 entityList.forEach(Entity::remove);
+                instance.eventNode().removeChild(eventNode);
             }
         };
     }
