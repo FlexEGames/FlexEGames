@@ -33,8 +33,8 @@ public class InstanceChunkLoader implements IChunkLoader {
                 return null;
             }
             for (int y = instance.getDimensionType().getMinY(); y < instance.getDimensionType().getMaxY(); y++) {
-                for (int x = 0; x < 16; x++) {
-                    for (int z = 0; z < 16; z++) {
+                for (int x = 0; x < Chunk.CHUNK_SIZE_X; x++) {
+                    for (int z = 0; z < Chunk.CHUNK_SIZE_Z; z++) {
                         Block block = chunk.getBlock(x, y, z);
                         if (!block.isAir() || !ignoreAir) {
                             block = blockModifier.apply(chunk, block);
