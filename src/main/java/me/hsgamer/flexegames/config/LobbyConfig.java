@@ -64,9 +64,14 @@ public class LobbyConfig extends PathableConfig {
             "name", "&e&lMy arena"
     ));
     public static final MapConfigPath HOTBAR_SELECTOR = new MapConfigPath("hotbar.selector", Map.of(
-            "material", Material.DIAMOND_BLOCK.name(),
+            "material", Material.COMPASS.name(),
             "name", "&e&lArena",
             "slot", 4
+    ));
+    public static final MapConfigPath HOTBAR_TOGGLE_PLAYER = new MapConfigPath("hotbar.toggle-player", Map.of(
+            "material", Material.ENDER_EYE.name(),
+            "name", "&c&lToggle player",
+            "slot", 7
     ));
     public static final MapListPath MODIFIERS = new MapListPath("modifiers", Collections.emptyList());
 

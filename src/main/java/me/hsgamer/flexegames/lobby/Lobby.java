@@ -39,6 +39,7 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.network.packet.server.play.TeamsPacket;
 import net.minestom.server.scoreboard.Team;
+import net.minestom.server.tag.Tag;
 import net.minestom.server.timer.Task;
 
 import java.math.BigDecimal;
@@ -55,6 +56,7 @@ public class Lobby extends InstanceContainer {
     private final Team lobbyTeam;
     private final GameServer gameServer;
     private final List<InstanceModifier> instanceModifiers;
+    private final Tag<Boolean> hidePlayerTag = Tag.Boolean("lobbyHidePlayer").defaultValue(false);
 
     public Lobby(GameServer gameServer) {
         super(UUID.randomUUID(), FullBrightDimension.INSTANCE);
@@ -97,7 +99,6 @@ public class Lobby extends InstanceContainer {
                         event.setNewPosition(position);
                     }
                 })
-                .addListener(ItemDropEvent.class, event -> event.setCancelled(true))
                 .addListener(PlayerBlockBreakEvent.class, event -> event.setCancelled(true))
                 .addListener(PlayerBlockPlaceEvent.class, event -> event.setCancelled(true))
                 .addListener(PlayerSwapItemEvent.class, event -> event.setCancelled(true))
@@ -115,8 +116,20 @@ public class Lobby extends InstanceContainer {
 
         var selectorMap = LobbyConfig.HOTBAR_SELECTOR.getValue();
         var selectorItem = ItemBuilder.buildItem(selectorMap).stripItalics();
-        var selectorSlot = Validate.getNumber(Objects.toString(selectorMap.getOrDefault("slot", 0))).map(BigDecimal::intValue).orElse(4);
+        var selectorSlot = Optional.ofNullable(selectorMap.get("slot")).map(Objects::toString).flatMap(Validate::getNumber).map(BigDecimal::intValue).orElse(4);
         registerHotbarItem(selectorSlot, selectorItem, player -> openArenaInventory(player, false));
+        var togglePlayerMap = LobbyConfig.HOTBAR_TOGGLE_PLAYER.getValue();
+        var togglePlayerItem = ItemBuilder.buildItem(togglePlayerMap).stripItalics();
+        var togglePlayerSlot = Optional.ofNullable(togglePlayerMap.get("slot")).map(Objects::toString).flatMap(Validate::getNumber).map(BigDecimal::intValue).orElse(7);
+        registerHotbarItem(togglePlayerSlot, togglePlayerItem, player -> {
+            if (Boolean.TRUE.equals(player.getTag(hidePlayerTag))) {
+                player.updateViewerRule(entity -> true);
+                player.setTag(hidePlayerTag, false);
+            } else {
+                player.updateViewerRule(entity -> !(entity instanceof Player));
+                player.setTag(hidePlayerTag, true);
+            }
+        });
 
         instanceModifiers = new ArrayList<>();
         LobbyConfig.MODIFIERS.getValue()
@@ -146,16 +159,8 @@ public class Lobby extends InstanceContainer {
                     }
                 })
                 .addListener(PlayerUseItemEvent.class, event -> {
-                    event.setCancelled(true);
+                    if (event.getHand() != Player.Hand.MAIN) return;
                     if (event.getItemStack().equals(itemStack)) {
-                        consumer.accept(event.getPlayer());
-                    }
-                })
-                .addListener(PlayerBlockInteractEvent.class, event -> {
-                    if (event.getHand() != Player.Hand.MAIN) {
-                        return;
-                    }
-                    if (event.getPlayer().getInventory().getItemInHand(event.getHand()).equals(itemStack)) {
                         event.setCancelled(true);
                         consumer.accept(event.getPlayer());
                     }
@@ -177,6 +182,8 @@ public class Lobby extends InstanceContainer {
     private void onQuit(Player player) {
         board.removePlayer(player);
         player.setTeam(null);
+        player.removeTag(hidePlayerTag);
+        player.updateViewerRule(entity -> true);
     }
 
     public Pos getPosition() {
