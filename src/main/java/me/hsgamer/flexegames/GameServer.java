@@ -48,6 +48,7 @@ public class GameServer {
         // LOBBY
         lobby = new Lobby(this);
         MinecraftServer.getInstanceManager().registerInstance(lobby);
+        lobby.init();
 
         // COMMAND
         CommandManager manager = MinecraftServer.getCommandManager();

@@ -2,7 +2,9 @@ package me.hsgamer.flexegames.lobby;
 
 import lombok.experimental.ExtensionMethod;
 import me.hsgamer.flexegames.GameServer;
+import me.hsgamer.flexegames.api.InstanceModifier;
 import me.hsgamer.flexegames.board.Board;
+import me.hsgamer.flexegames.builder.InstanceModifierBuilder;
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.config.LobbyConfig;
 import me.hsgamer.flexegames.feature.GameFeature;
@@ -38,10 +40,7 @@ import net.minestom.server.scoreboard.Team;
 import net.minestom.server.timer.Task;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -53,6 +52,7 @@ public class Lobby extends InstanceContainer {
     private final Task boardTask;
     private final Team lobbyTeam;
     private final GameServer gameServer;
+    private final List<InstanceModifier> instanceModifiers;
 
     public Lobby(GameServer gameServer) {
         super(UUID.randomUUID(), FullBrightDimension.INSTANCE);
@@ -115,6 +115,13 @@ public class Lobby extends InstanceContainer {
         var selectorItem = ItemBuilder.buildItem(selectorMap).stripItalics();
         var selectorSlot = Validate.getNumber(Objects.toString(selectorMap.getOrDefault("slot", 0))).map(BigDecimal::intValue).orElse(4);
         registerHotbarItem(selectorSlot, selectorItem, player -> openArenaInventory(player, false));
+
+        instanceModifiers = new ArrayList<>();
+        LobbyConfig.MODIFIERS.getValue()
+                .forEach(map -> InstanceModifierBuilder.buildInstanceModifier(map)
+                        .map(provider -> provider.getInstanceModifier(this))
+                        .ifPresent(instanceModifiers::add)
+                );
     }
 
     public void registerHotbarItem(int slot, ItemStack itemStack, Consumer<Player> consumer) {
@@ -174,8 +181,13 @@ public class Lobby extends InstanceContainer {
         return position;
     }
 
+    public void init() {
+        instanceModifiers.forEach(InstanceModifier::init);
+    }
+
     public void clear() {
         boardTask.cancel();
+        instanceModifiers.forEach(InstanceModifier::clear);
     }
 
     public boolean isInLobby(Player player) {

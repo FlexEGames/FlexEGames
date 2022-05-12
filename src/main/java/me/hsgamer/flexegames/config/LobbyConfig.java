@@ -1,10 +1,7 @@
 package me.hsgamer.flexegames.config;
 
 import me.hsgamer.flexegames.api.ChunkLoaderType;
-import me.hsgamer.flexegames.config.path.ChunkLoaderTypePath;
-import me.hsgamer.flexegames.config.path.ComponentListPath;
-import me.hsgamer.flexegames.config.path.ComponentPath;
-import me.hsgamer.flexegames.config.path.PosPath;
+import me.hsgamer.flexegames.config.path.*;
 import me.hsgamer.hscore.config.PathableConfig;
 import me.hsgamer.hscore.config.path.ConfigPath;
 import me.hsgamer.hscore.config.path.impl.MapConfigPath;
@@ -18,6 +15,7 @@ import net.minestom.server.item.Material;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -70,6 +68,7 @@ public class LobbyConfig extends PathableConfig {
             "name", "&e&lArena",
             "slot", 4
     ));
+    public static final MapListPath MODIFIERS = new MapListPath("modifiers", Collections.emptyList());
 
     public LobbyConfig() {
         super(new YamlProvider().loadConfiguration(new File("lobby.yml")));

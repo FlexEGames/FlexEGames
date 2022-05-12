@@ -9,7 +9,7 @@ import java.util.Optional;
 public final class PosUtil {
     public static Optional<Pos> convert(String value) {
         String[] split = value.split(",", 5);
-        if (split.length != 5) {
+        if (split.length != 3 && split.length != 5) {
             return Optional.empty();
         }
         try {
@@ -17,8 +17,8 @@ public final class PosUtil {
                     Double.parseDouble(split[0].trim()),
                     Double.parseDouble(split[1].trim()),
                     Double.parseDouble(split[2].trim()),
-                    Float.parseFloat(split[3].trim()),
-                    Float.parseFloat(split[4].trim())
+                    split.length > 3 ? Float.parseFloat(split[3].trim()) : 0,
+                    split.length > 4 ? Float.parseFloat(split[4].trim()) : 0
             ));
         } catch (NumberFormatException ignored) {
             return Optional.empty();

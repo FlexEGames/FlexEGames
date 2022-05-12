@@ -29,7 +29,7 @@ public class ComponentListPath extends AdvancedConfigPath<List<String>, List<Com
     public @Nullable List<Component> convert(@NotNull List<String> rawValue) {
         return rawValue.stream()
                 .map(s -> LegacyComponentSerializer.legacyAmpersand().deserialize(s))
-                .map(Component.class::cast)
+                .map(Component::asComponent)
                 .toList();
     }
 

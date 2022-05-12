@@ -164,7 +164,7 @@ public class DuelGame implements ArenaGame {
     public void init() {
         boolean setGenerator = true;
         if (template.useWorld) {
-            IChunkLoader chunkLoader = template.worldLoader.getLoader(instance, WorldUtil.getWorldFile(template.worldName).toPath());
+            IChunkLoader chunkLoader = template.worldLoader.getLoader(instance, AssetUtil.getWorldFile(template.worldName).toPath());
             if (chunkLoader != null) {
                 instance.setChunkLoader(chunkLoader);
                 setGenerator = false;

@@ -33,9 +33,7 @@ public class TemplateManager {
             }
             String name = file.getName().replace(".yml", "");
             Config config = new YamlProvider().loadConfiguration(file);
-            Optional<Template> optional = Optional.ofNullable(config.get("type"))
-                    .map(String::valueOf)
-                    .flatMap(type -> TemplateBuilder.INSTANCE.build(type, config));
+            Optional<Template> optional = TemplateBuilder.buildTemplate(config);
             if (optional.isPresent()) {
                 templateMap.put(name, optional.get());
             } else {
