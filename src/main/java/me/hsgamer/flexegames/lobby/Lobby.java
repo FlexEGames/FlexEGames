@@ -117,19 +117,25 @@ public class Lobby extends InstanceContainer {
         var selectorMap = LobbyConfig.HOTBAR_SELECTOR.getValue();
         var selectorItem = ItemBuilder.buildItem(selectorMap).stripItalics();
         var selectorSlot = Optional.ofNullable(selectorMap.get("slot")).map(Objects::toString).flatMap(Validate::getNumber).map(BigDecimal::intValue).orElse(4);
-        registerHotbarItem(selectorSlot, selectorItem, player -> openArenaInventory(player, false));
+        boolean selectorEnable = Optional.ofNullable(selectorMap.get("enable")).map(Objects::toString).map(Boolean::parseBoolean).orElse(true);
+        if (selectorEnable) {
+            registerHotbarItem(selectorSlot, selectorItem, player -> openArenaInventory(player, false));
+        }
         var togglePlayerMap = LobbyConfig.HOTBAR_TOGGLE_PLAYER.getValue();
         var togglePlayerItem = ItemBuilder.buildItem(togglePlayerMap).stripItalics();
         var togglePlayerSlot = Optional.ofNullable(togglePlayerMap.get("slot")).map(Objects::toString).flatMap(Validate::getNumber).map(BigDecimal::intValue).orElse(7);
-        registerHotbarItem(togglePlayerSlot, togglePlayerItem, player -> {
-            if (Boolean.TRUE.equals(player.getTag(hidePlayerTag))) {
-                player.updateViewerRule(entity -> true);
-                player.setTag(hidePlayerTag, false);
-            } else {
-                player.updateViewerRule(entity -> !(entity instanceof Player));
-                player.setTag(hidePlayerTag, true);
-            }
-        });
+        boolean togglePlayerEnable = Optional.ofNullable(togglePlayerMap.get("enable")).map(Objects::toString).map(Boolean::parseBoolean).orElse(true);
+        if (togglePlayerEnable) {
+            registerHotbarItem(togglePlayerSlot, togglePlayerItem, player -> {
+                if (Boolean.TRUE.equals(player.getTag(hidePlayerTag))) {
+                    player.updateViewerRule(entity -> true);
+                    player.setTag(hidePlayerTag, false);
+                } else {
+                    player.updateViewerRule(entity -> !(entity instanceof Player));
+                    player.setTag(hidePlayerTag, true);
+                }
+            });
+        }
 
         instanceModifiers = new ArrayList<>();
         LobbyConfig.MODIFIERS.getValue()
