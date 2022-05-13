@@ -42,7 +42,7 @@ dependencies {
     implementation "me.hsgamer:minigamecore-base:$minigameCore"
     implementation "me.hsgamer:minigamecore-implementation:$minigameCore"
 
-    implementation 'com.github.Minestom:Minestom:e4c1c9fe8d'
+    implementation 'com.github.Minestom:Minestom:737b663a4c'
     implementation "com.github.CatDevz:SlimeLoader:a8e533636c"
     implementation 'com.github.Bloepiloepi:MinestomPvP:529548362c'
 
