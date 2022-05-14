@@ -8,7 +8,6 @@ group 'me.hsgamer'
 version '1.0-SNAPSHOT'
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven { url 'https://jitpack.io' }
     maven { url 'https://repo.codemc.io/repository/maven-public/'}
@@ -21,7 +20,12 @@ ext {
     minestom = "737b663a4c"
 }
 
+java {
+    withSourcesJar()
+}
+
 shadowJar {
+    archiveClassifier.set(null)
     minimize {
         exclude(dependency('com.github.*:.*:.*'))
     }
@@ -38,12 +42,13 @@ tasks {
 
 publishing {
     publications {
-        mavenJar(MavenPublication) {
-            from components.java
+        shadow(MavenPublication) { publication ->
+            project.shadow.component(publication)
+            artifactId = project.name
+            pom {
+                name = 'FlexEGames'
+            }
         }
-    }
-    repositories {
-        mavenLocal()
     }
 }
 
