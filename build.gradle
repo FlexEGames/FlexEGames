@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'maven-publish'
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
@@ -8,8 +8,8 @@ group 'me.hsgamer'
 version '1.0-SNAPSHOT'
 
 repositories {
-    mavenCentral()
     mavenLocal()
+    mavenCentral()
     maven { url 'https://jitpack.io' }
     maven { url 'https://repo.codemc.io/repository/maven-public/'}
 }
@@ -38,8 +38,8 @@ tasks {
 
 publishing {
     publications {
-        shadow(MavenPublication) { publication ->
-            project.shadow.component(publication)
+        mavenJar(MavenPublication) {
+            from components.java
         }
     }
     repositories {
@@ -48,20 +48,20 @@ publishing {
 }
 
 dependencies {
-    implementation "me.hsgamer:hscore-config-simplixstorage:$core"
-    implementation "me.hsgamer:hscore-config-proxy:$core"
-    implementation "me.hsgamer:hscore-config-path:$core"
-    implementation "me.hsgamer:hscore-config-annotated:$core"
-    implementation "me.hsgamer:hscore-builder:$core"
-    implementation "me.hsgamer:hscore-common:$core"
-    implementation "me.hsgamer:hscore-collections:$core"
+    api "me.hsgamer:hscore-config-simplixstorage:$core"
+    api "me.hsgamer:hscore-config-proxy:$core"
+    api "me.hsgamer:hscore-config-path:$core"
+    api "me.hsgamer:hscore-config-annotated:$core"
+    api "me.hsgamer:hscore-builder:$core"
+    api "me.hsgamer:hscore-common:$core"
+    api "me.hsgamer:hscore-collections:$core"
 
-    implementation "me.hsgamer:minigamecore-base:$minigameCore"
-    implementation "me.hsgamer:minigamecore-implementation:$minigameCore"
+    api "me.hsgamer:minigamecore-base:$minigameCore"
+    api "me.hsgamer:minigamecore-implementation:$minigameCore"
 
-    implementation "com.github.Minestom:Minestom:$minestom"
-    implementation "com.github.CatDevz:SlimeLoader:a8e533636c"
-    implementation "com.github.Bloepiloepi:MinestomPvP:529548362c"
+    api "com.github.Minestom:Minestom:$minestom"
+    api "com.github.CatDevz:SlimeLoader:a8e533636c"
+    api "com.github.Bloepiloepi:MinestomPvP:529548362c"
 
     compileOnly "org.projectlombok:lombok:$lombok"
     annotationProcessor "org.projectlombok:lombok:$lombok"
