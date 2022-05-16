@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 public class RefreshableInventory extends Inventory {
     private final ButtonMap buttonMap;
@@ -93,11 +94,22 @@ public class RefreshableInventory extends Inventory {
         getEventNode()
                 .addListener(InventoryOpenEvent.class, event -> {
                     Optional.ofNullable(task.get()).ifPresent(Task::cancel);
-                    task.set(MinecraftServer.getSchedulerManager().buildTask(this::refresh).delay(taskSchedule).repeat(taskSchedule).schedule());
-                })
-                .addListener(InventoryCloseEvent.class, event -> {
-                    if (getViewers().size() > 1) return;
-                    Optional.ofNullable(task.get()).ifPresent(Task::cancel);
+                    task.set(MinecraftServer.getSchedulerManager().submitTask(new Supplier<>() {
+                        private boolean first = true;
+
+                        @Override
+                        public TaskSchedule get() {
+                            if (first) {
+                                first = false;
+                                return taskSchedule;
+                            }
+                            if (getViewers().isEmpty()) {
+                                return TaskSchedule.stop();
+                            }
+                            refresh();
+                            return taskSchedule;
+                        }
+                    }));
                 });
         return this;
     }
