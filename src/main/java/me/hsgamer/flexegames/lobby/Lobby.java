@@ -19,6 +19,7 @@ import me.hsgamer.flexegames.util.FullBrightDimension;
 import me.hsgamer.flexegames.util.ItemUtil;
 import me.hsgamer.flexegames.util.TaskUtil;
 import me.hsgamer.hscore.common.Validate;
+import me.hsgamer.minigamecore.base.Arena;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
@@ -41,12 +42,13 @@ import net.minestom.server.network.packet.server.play.TeamsPacket;
 import net.minestom.server.scoreboard.Team;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.timer.Task;
+import net.minestom.server.utils.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @ExtensionMethod({ItemUtil.class})
 public class Lobby extends InstanceContainer {
@@ -318,9 +320,9 @@ public class Lobby extends InstanceContainer {
         openPlayer.openInventory(inventory);
     }
 
-    public void openArenaInventory(Player openPlayer, boolean myArena) {
-        var arenas = new AtomicReference<>(gameServer.getGameArenaManager().getArenas(openPlayer, myArena));
-        var isMyArena = new AtomicBoolean(myArena);
+    public void openArenaInventory(Player openPlayer, Supplier<List<Arena>> arenaSupplier) {
+        var arenaSupplierRef = new AtomicReference<>(arenaSupplier);
+        var arenas = new AtomicReference<>(arenaSupplierRef.get().get());
         var pages = new AtomicReference<>(0);
 
         Button nextPageButton = new Button() {
@@ -372,7 +374,7 @@ public class Lobby extends InstanceContainer {
                 return (player, clickType, result) -> {
                     result.setCancel(true);
                     pages.set(0);
-                    isMyArena.set(false);
+                    arenaSupplierRef.set(() -> gameServer.getGameArenaManager().getAllArenas());
                     return true;
                 };
             }
@@ -388,7 +390,7 @@ public class Lobby extends InstanceContainer {
                 return (player, clickType, result) -> {
                     result.setCancel(true);
                     pages.set(0);
-                    isMyArena.set(true);
+                    arenaSupplierRef.set(() -> gameServer.getGameArenaManager().findArenasByOwner(player));
                     return true;
                 };
             }
@@ -463,13 +465,30 @@ public class Lobby extends InstanceContainer {
                 .setTitle(LobbyConfig.INVENTORY_ARENA_TITLE.getValue())
                 .setButtonMap(buttonMap)
                 .setRefreshHandler((inv, firstTime) -> {
-                    arenas.set(gameServer.getGameArenaManager().getArenas(openPlayer, isMyArena.get()));
+                    arenas.set(arenaSupplierRef.get().get());
                     return true;
                 })
                 .build()
                 .autoRefresh(TaskUtil.tick(10))
                 .unregisterWhenClosed();
         openPlayer.openInventory(inventory);
+    }
+
+    public void openArenaInventory(Player openPlayer, String ownerQuery) {
+        List<UUID> uuids = MinecraftServer.getConnectionManager().getOnlinePlayers()
+                .stream()
+                .filter(player -> StringUtils.jaroWinklerScore(player.getUsername().toLowerCase(), ownerQuery.toLowerCase()) > 0)
+                .map(Player::getUuid)
+                .toList();
+        openArenaInventory(openPlayer, () -> gameServer.getGameArenaManager().findArenasByOwner(uuids));
+    }
+
+    public void openArenaInventory(Player openPlayer, boolean myArena) {
+        if (myArena) {
+            openArenaInventory(openPlayer, () -> gameServer.getGameArenaManager().findArenasByOwner(openPlayer));
+        } else {
+            openArenaInventory(openPlayer, () -> gameServer.getGameArenaManager().getAllArenas());
+        }
     }
 
     private int getMaxPage(int size) {

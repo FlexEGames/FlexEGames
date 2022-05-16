@@ -11,6 +11,7 @@ import net.minestom.server.network.packet.server.play.DeclareCommandsPacket;
 import net.minestom.server.utils.binary.BinaryWriter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class TemplateArgument extends Argument<Template> {
@@ -53,5 +54,23 @@ public class TemplateArgument extends Argument<Template> {
         });
 
         nodeMaker.addNodes(new DeclareCommandsPacket.Node[]{argumentNode});
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Template<%s>", getId());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TemplateArgument that)) return false;
+        if (!super.equals(o)) return false;
+        return gameServer.equals(that.gameServer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), gameServer);
     }
 }

@@ -16,6 +16,7 @@ import net.minestom.server.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class GameArenaManager extends ArenaManager {
     private final GameServer gameServer;
@@ -54,23 +55,31 @@ public class GameArenaManager extends ArenaManager {
         return arena;
     }
 
-    public List<Arena> getArenas(Player player, boolean myArena) {
+    public List<Arena> findArenas(Predicate<Arena> predicate) {
+        return getAllArenas().stream().filter(predicate).toList();
+    }
+
+    public List<Arena> findArenasByOwner(Predicate<UUID> ownerPredicate) {
         return getAllArenas().stream().filter(arena -> {
             GameFeature.ArenaGameFeature feature = arena.getArenaFeature(GameFeature.class);
             if (feature.getGame() == null) {
                 return false;
             }
-            if (myArena) {
-                return player.getUuid().equals(feature.getOwner());
-            } else {
-                return true;
-            }
+            return ownerPredicate.test(feature.getOwner());
         }).toList();
+    }
+
+    public List<Arena> findArenasByOwner(Player player) {
+        return findArenasByOwner(uuid -> player.getUuid().equals(uuid));
+    }
+
+    public List<Arena> findArenasByOwner(List<UUID> owners) {
+        return findArenasByOwner(owners::contains);
     }
 
     public boolean createArena(Player player, Template template) {
         int amount = MainConfig.ARENA_AMOUNT_PER_PLAYER.getValue();
-        if (amount >= 0 && getArenas(player, true).size() >= amount) {
+        if (amount >= 0 && findArenasByOwner(player).size() >= amount) {
             return false;
         }
         Arena arena = gameServer.getGameArenaManager().createNewArena();
