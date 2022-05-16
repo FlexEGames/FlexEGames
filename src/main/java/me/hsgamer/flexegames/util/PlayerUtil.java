@@ -19,8 +19,8 @@ public final class PlayerUtil {
         player.setExp(0);
         player.stopSpectating();
         player.setEnableRespawnScreen(false);
-        player.updateViewerRule();
-        player.updateViewableRule();
+        player.updateViewerRule(entity -> true);
+        player.updateViewableRule(player1 -> true);
         player.askSynchronization();
     }
 }
