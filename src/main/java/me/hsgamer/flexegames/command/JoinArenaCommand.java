@@ -53,7 +53,7 @@ public class JoinArenaCommand extends Command {
             String[] args = context.get(ownerQueryArgument);
             if (args == null || args.length < 1) {
                 MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(player -> suggestion.addEntry(new SuggestionEntry(player.getUsername(), player.getName())));
-            } else {
+            } else if (args.length == 1) {
                 MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(player -> {
                     if (StringUtils.jaroWinklerScore(player.getUsername(), args[0]) > 0) {
                         suggestion.addEntry(new SuggestionEntry(player.getUsername(), player.getName()));
