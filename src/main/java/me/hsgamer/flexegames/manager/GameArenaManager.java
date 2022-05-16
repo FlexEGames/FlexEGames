@@ -1,7 +1,7 @@
 package me.hsgamer.flexegames.manager;
 
 import me.hsgamer.flexegames.GameServer;
-import me.hsgamer.flexegames.api.Template;
+import me.hsgamer.flexegames.api.game.Template;
 import me.hsgamer.flexegames.arena.GameArena;
 import me.hsgamer.flexegames.config.MainConfig;
 import me.hsgamer.flexegames.feature.GameFeature;

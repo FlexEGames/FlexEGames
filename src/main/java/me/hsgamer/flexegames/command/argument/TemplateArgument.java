@@ -1,7 +1,7 @@
 package me.hsgamer.flexegames.command.argument;
 
 import me.hsgamer.flexegames.GameServer;
-import me.hsgamer.flexegames.api.Template;
+import me.hsgamer.flexegames.api.game.Template;
 import net.minestom.server.command.builder.NodeMaker;
 import net.minestom.server.command.builder.arguments.Argument;
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException;

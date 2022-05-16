@@ -1,6 +1,6 @@
 package me.hsgamer.flexegames.state;
 
-import me.hsgamer.flexegames.api.ArenaGame;
+import me.hsgamer.flexegames.api.game.ArenaGame;
 import me.hsgamer.flexegames.config.MessageConfig;
 import me.hsgamer.flexegames.feature.GameFeature;
 import me.hsgamer.minigamecore.base.Arena;

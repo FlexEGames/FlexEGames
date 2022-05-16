@@ -1,4 +1,4 @@
-package me.hsgamer.flexegames.api;
+package me.hsgamer.flexegames.api.game;
 
 import me.hsgamer.flexegames.config.MessageConfig;
 import net.kyori.adventure.text.Component;

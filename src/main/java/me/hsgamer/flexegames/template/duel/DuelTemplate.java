@@ -1,8 +1,8 @@
 package me.hsgamer.flexegames.template.duel;
 
-import me.hsgamer.flexegames.api.ArenaGame;
-import me.hsgamer.flexegames.api.ChunkLoaderType;
-import me.hsgamer.flexegames.api.Template;
+import me.hsgamer.flexegames.api.chunk.ChunkLoaderType;
+import me.hsgamer.flexegames.api.game.ArenaGame;
+import me.hsgamer.flexegames.api.game.Template;
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.config.path.*;
 import me.hsgamer.hscore.config.Config;

@@ -1,4 +1,4 @@
-package me.hsgamer.flexegames.api;
+package me.hsgamer.flexegames.api.modifier;
 
 public interface InstanceModifier {
     void init();

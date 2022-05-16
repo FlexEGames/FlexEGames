@@ -1,4 +1,4 @@
-package me.hsgamer.flexegames.api;
+package me.hsgamer.flexegames.api.modifier;
 
 import net.minestom.server.instance.Instance;
 

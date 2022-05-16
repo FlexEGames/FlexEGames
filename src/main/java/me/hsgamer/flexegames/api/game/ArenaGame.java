@@ -1,4 +1,4 @@
-package me.hsgamer.flexegames.api;
+package me.hsgamer.flexegames.api.game;
 
 import me.hsgamer.minigamecore.base.Initializer;
 import net.minestom.server.entity.Player;

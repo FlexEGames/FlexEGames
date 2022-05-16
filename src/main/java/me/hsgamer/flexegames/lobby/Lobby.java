@@ -2,7 +2,7 @@ package me.hsgamer.flexegames.lobby;
 
 import lombok.experimental.ExtensionMethod;
 import me.hsgamer.flexegames.GameServer;
-import me.hsgamer.flexegames.api.InstanceModifier;
+import me.hsgamer.flexegames.api.modifier.InstanceModifier;
 import me.hsgamer.flexegames.board.Board;
 import me.hsgamer.flexegames.builder.InstanceModifierBuilder;
 import me.hsgamer.flexegames.builder.ItemBuilder;

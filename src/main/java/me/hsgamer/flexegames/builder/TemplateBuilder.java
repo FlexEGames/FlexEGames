@@ -1,6 +1,6 @@
 package me.hsgamer.flexegames.builder;
 
-import me.hsgamer.flexegames.api.Template;
+import me.hsgamer.flexegames.api.game.Template;
 import me.hsgamer.flexegames.template.duel.DuelTemplate;
 import me.hsgamer.hscore.builder.Builder;
 import me.hsgamer.hscore.config.Config;

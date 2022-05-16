@@ -1,7 +1,7 @@
 package me.hsgamer.flexegames.builder;
 
-import me.hsgamer.flexegames.api.InstanceModifierProvider;
-import me.hsgamer.flexegames.modifier.instance.ImageInstanceModifier;
+import me.hsgamer.flexegames.api.modifier.InstanceModifierProvider;
+import me.hsgamer.flexegames.modifier.ImageInstanceModifier;
 import me.hsgamer.hscore.builder.Builder;
 
 import java.util.Map;

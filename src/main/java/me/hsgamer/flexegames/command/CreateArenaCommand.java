@@ -1,7 +1,7 @@
 package me.hsgamer.flexegames.command;
 
 import me.hsgamer.flexegames.GameServer;
-import me.hsgamer.flexegames.api.Template;
+import me.hsgamer.flexegames.api.game.Template;
 import me.hsgamer.flexegames.command.argument.TemplateArgument;
 import me.hsgamer.flexegames.config.MessageConfig;
 import me.hsgamer.flexegames.manager.ReplacementManager;

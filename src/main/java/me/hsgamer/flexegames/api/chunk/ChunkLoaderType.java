@@ -1,4 +1,4 @@
-package me.hsgamer.flexegames.api;
+package me.hsgamer.flexegames.api.chunk;
 
 import gg.astromc.slimeloader.loader.SlimeLoader;
 import gg.astromc.slimeloader.source.FileSlimeSource;

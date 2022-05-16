@@ -1,6 +1,6 @@
 package me.hsgamer.flexegames.config;
 
-import me.hsgamer.flexegames.api.ChunkLoaderType;
+import me.hsgamer.flexegames.api.chunk.ChunkLoaderType;
 import me.hsgamer.flexegames.config.path.*;
 import me.hsgamer.hscore.config.PathableConfig;
 import me.hsgamer.hscore.config.path.ConfigPath;

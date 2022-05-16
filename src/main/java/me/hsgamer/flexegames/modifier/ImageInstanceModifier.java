@@ -1,7 +1,7 @@
-package me.hsgamer.flexegames.modifier.instance;
+package me.hsgamer.flexegames.modifier;
 
-import me.hsgamer.flexegames.api.InstanceModifier;
-import me.hsgamer.flexegames.api.InstanceModifierProvider;
+import me.hsgamer.flexegames.api.modifier.InstanceModifier;
+import me.hsgamer.flexegames.api.modifier.InstanceModifierProvider;
 import me.hsgamer.flexegames.util.AssetUtil;
 import me.hsgamer.flexegames.util.PosUtil;
 import me.hsgamer.hscore.common.CollectionUtils;

@@ -2,8 +2,8 @@ package me.hsgamer.flexegames.feature;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.hsgamer.flexegames.api.ArenaGame;
-import me.hsgamer.flexegames.api.Template;
+import me.hsgamer.flexegames.api.game.ArenaGame;
+import me.hsgamer.flexegames.api.game.Template;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaFeature;
 import me.hsgamer.minigamecore.base.Feature;

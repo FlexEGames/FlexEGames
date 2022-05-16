@@ -1,9 +1,9 @@
 package me.hsgamer.flexegames.command;
 
 import me.hsgamer.flexegames.GameServer;
-import me.hsgamer.flexegames.api.ArenaGame;
-import me.hsgamer.flexegames.api.JoinResponse;
-import me.hsgamer.flexegames.api.Template;
+import me.hsgamer.flexegames.api.game.ArenaGame;
+import me.hsgamer.flexegames.api.game.JoinResponse;
+import me.hsgamer.flexegames.api.game.Template;
 import me.hsgamer.flexegames.command.argument.ArenaArgument;
 import me.hsgamer.flexegames.command.argument.TemplateArgument;
 import me.hsgamer.flexegames.config.MessageConfig;

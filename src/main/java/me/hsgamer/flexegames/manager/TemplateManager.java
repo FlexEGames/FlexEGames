@@ -1,6 +1,6 @@
 package me.hsgamer.flexegames.manager;
 
-import me.hsgamer.flexegames.api.Template;
+import me.hsgamer.flexegames.api.game.Template;
 import me.hsgamer.flexegames.builder.TemplateBuilder;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringHashMap;
 import me.hsgamer.hscore.config.Config;
