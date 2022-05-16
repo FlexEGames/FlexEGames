@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @UtilityClass
@@ -29,7 +30,7 @@ public final class ReplacementManager {
 
     public static Component replace(Component component, Map<String, Supplier<ComponentLike>> map) {
         for (Map.Entry<String, Supplier<ComponentLike>> entry : map.entrySet()) {
-            component = component.replaceText(builder -> builder.match("%" + entry.getKey() + "%").replacement(builder1 -> entry.getValue().get()));
+            component = component.replaceText(builder -> builder.match(Pattern.quote("%" + entry.getKey() + "%")).replacement(builder1 -> entry.getValue().get()));
         }
         return component;
     }

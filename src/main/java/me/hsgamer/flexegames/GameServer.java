@@ -86,6 +86,7 @@ public class GameServer {
         // Replacement
         ReplacementManager.addPlayerReplacement("player", Player::getName);
         ReplacementManager.addGlobalReplacement("online", () -> Component.text(Integer.toString(MinecraftServer.getConnectionManager().getOnlinePlayers().size())));
+        MainConfig.CUSTOM_PLACEHOLDERS.getValue().forEach((k, v) -> ReplacementManager.addGlobalReplacement(k, () -> v));
     }
 
     public void enable() {
