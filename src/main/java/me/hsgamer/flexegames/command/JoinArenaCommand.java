@@ -27,6 +27,7 @@ public class JoinArenaCommand extends Command {
         setDefaultExecutor((sender, context) -> {
             sender.sendMessage("Usage: /" + context.getCommandName() + " <arena>");
             sender.sendMessage("Usage: /" + context.getCommandName() + " search <owner>");
+            sender.sendMessage("Usage: /" + context.getCommandName() + " template <template>");
         });
 
         var arenaArgument = new ArenaArgument(gameServer, "arena");
