@@ -114,6 +114,7 @@ public class Lobby extends InstanceContainer {
                 .collisionRule(TeamsPacket.CollisionRule.NEVER)
                 .build();
 
+        registerHotbarItemFromMap(LobbyConfig.HOTBAR_CREATOR.getValue(), 1, this::openTemplateInventory);
         registerHotbarItemFromMap(LobbyConfig.HOTBAR_SELECTOR.getValue(), 4, player -> openArenaInventory(player, false));
         registerHotbarItemFromMap(LobbyConfig.HOTBAR_TOGGLE_PLAYER.getValue(), 7, player -> {
             if (Boolean.TRUE.equals(player.getTag(hidePlayerTag))) {

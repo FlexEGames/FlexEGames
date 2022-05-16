@@ -63,6 +63,11 @@ public class LobbyConfig extends PathableConfig {
             "material", Material.ENDER_CHEST.name(),
             "name", "&e&lMy arena"
     ));
+    public static final MapConfigPath HOTBAR_CREATOR = new MapConfigPath("hotbar.creator", Map.of(
+            "material", Material.ACACIA_SIGN.name(),
+            "name", "&a&lTemplate",
+            "slot", 1
+    ));
     public static final MapConfigPath HOTBAR_SELECTOR = new MapConfigPath("hotbar.selector", Map.of(
             "material", Material.COMPASS.name(),
             "name", "&e&lArena",
