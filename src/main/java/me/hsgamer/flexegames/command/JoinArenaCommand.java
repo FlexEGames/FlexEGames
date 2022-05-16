@@ -9,9 +9,12 @@ import me.hsgamer.flexegames.feature.GameFeature;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.minigamecore.base.Arena;
 import net.kyori.adventure.text.Component;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
+import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 import net.minestom.server.entity.Player;
+import net.minestom.server.utils.StringUtils;
 
 import java.util.Map;
 
@@ -46,6 +49,18 @@ public class JoinArenaCommand extends Command {
 
         var searchArgument = ArgumentType.Literal("search");
         var ownerQueryArgument = ArgumentType.StringArray("owner");
+        ownerQueryArgument.setSuggestionCallback((sender, context, suggestion) -> {
+            String[] args = context.get(ownerQueryArgument);
+            if (args == null || args.length < 1) {
+                MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(player -> suggestion.addEntry(new SuggestionEntry(player.getUsername(), player.getName())));
+            } else {
+                MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(player -> {
+                    if (StringUtils.jaroWinklerScore(player.getUsername(), args[0]) > 0) {
+                        suggestion.addEntry(new SuggestionEntry(player.getUsername(), player.getName()));
+                    }
+                });
+            }
+        });
         addSyntax((sender, context) -> {
             String[] query = context.get(ownerQueryArgument);
             String queryString = String.join(" ", query);
