@@ -2,7 +2,6 @@ package me.hsgamer.flexegames.command.argument;
 
 import me.hsgamer.flexegames.GameServer;
 import me.hsgamer.flexegames.api.Template;
-import net.kyori.adventure.text.Component;
 import net.minestom.server.command.builder.NodeMaker;
 import net.minestom.server.command.builder.arguments.Argument;
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException;
@@ -25,11 +24,7 @@ public class TemplateArgument extends Argument<Template> {
             String raw = context.getRaw(this);
             gameServer.getTemplateManager().getTemplateMap().forEach((s, t) -> {
                 if (raw == null || raw.isBlank() || s.startsWith(raw)) {
-                    Component component = Component.empty().append(t.getDisplayName()).append(Component.newline());
-                    for (Component c : t.getDescription()) {
-                        component = component.append(c).append(Component.newline());
-                    }
-                    suggestion.addEntry(new SuggestionEntry(s, component));
+                    suggestion.addEntry(new SuggestionEntry(s, t.getDisplayName()));
                 }
             });
         });
