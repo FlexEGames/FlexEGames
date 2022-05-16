@@ -3,7 +3,9 @@ package me.hsgamer.flexegames.command;
 import me.hsgamer.flexegames.GameServer;
 import me.hsgamer.flexegames.api.ArenaGame;
 import me.hsgamer.flexegames.api.JoinResponse;
+import me.hsgamer.flexegames.api.Template;
 import me.hsgamer.flexegames.command.argument.ArenaArgument;
+import me.hsgamer.flexegames.command.argument.TemplateArgument;
 import me.hsgamer.flexegames.config.MessageConfig;
 import me.hsgamer.flexegames.feature.GameFeature;
 import me.hsgamer.flexegames.manager.ReplacementManager;
@@ -66,5 +68,12 @@ public class JoinArenaCommand extends Command {
             String queryString = String.join(" ", query);
             gameServer.getLobby().openArenaInventory((Player) sender, queryString);
         }, searchArgument, ownerQueryArgument);
+
+        var templateArgument = ArgumentType.Literal("template");
+        var templateNameArgument = new TemplateArgument(gameServer, "templateName");
+        addSyntax((sender, context) -> {
+            Template template = context.get(templateNameArgument);
+            gameServer.getLobby().openArenaInventory((Player) sender, () -> gameServer.getGameArenaManager().findArenasByTemplate(template));
+        }, templateArgument, templateNameArgument);
     }
 }

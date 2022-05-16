@@ -77,6 +77,13 @@ public class GameArenaManager extends ArenaManager {
         return findArenasByOwner(owners::contains);
     }
 
+    public List<Arena> findArenasByTemplate(Template template) {
+        return getAllArenas().stream().filter(arena -> {
+            GameFeature.ArenaGameFeature feature = arena.getArenaFeature(GameFeature.class);
+            return feature.getGame() != null && feature.getGame().getTemplate() == template;
+        }).toList();
+    }
+
     public boolean createArena(Player player, Template template) {
         int amount = MainConfig.ARENA_AMOUNT_PER_PLAYER.getValue();
         if (amount >= 0 && findArenasByOwner(player).size() >= amount) {
