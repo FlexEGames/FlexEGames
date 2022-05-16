@@ -12,6 +12,7 @@ import me.hsgamer.flexegames.lobby.Lobby;
 import me.hsgamer.flexegames.manager.GameArenaManager;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.manager.TemplateManager;
+import me.hsgamer.flexegames.player.GamePlayer;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
@@ -78,6 +79,9 @@ public class GameServer {
         TickMonitorHook.hook();
         PlacementRules.init();
         OptifineSupport.enable();
+
+        // Player
+        MinecraftServer.getConnectionManager().setPlayerProvider(GamePlayer::new);
 
         // Replacement
         ReplacementManager.addPlayerReplacement("player", Player::getName);
