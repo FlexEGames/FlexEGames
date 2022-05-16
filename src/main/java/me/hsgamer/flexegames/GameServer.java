@@ -1,5 +1,6 @@
 package me.hsgamer.flexegames;
 
+import io.github.bloepiloepi.pvp.PvpExtension;
 import lombok.Getter;
 import me.hsgamer.flexegames.board.Board;
 import me.hsgamer.flexegames.command.*;
@@ -7,7 +8,10 @@ import me.hsgamer.flexegames.config.ChatConfig;
 import me.hsgamer.flexegames.config.LobbyConfig;
 import me.hsgamer.flexegames.config.MainConfig;
 import me.hsgamer.flexegames.config.MessageConfig;
-import me.hsgamer.flexegames.hook.*;
+import me.hsgamer.flexegames.hook.ChatHook;
+import me.hsgamer.flexegames.hook.PerInstanceInstanceViewHook;
+import me.hsgamer.flexegames.hook.ServerListHook;
+import me.hsgamer.flexegames.hook.TickMonitorHook;
 import me.hsgamer.flexegames.lobby.Lobby;
 import me.hsgamer.flexegames.manager.GameArenaManager;
 import me.hsgamer.flexegames.manager.ReplacementManager;
@@ -74,9 +78,9 @@ public class GameServer {
         ServerListHook.hook(globalNode);
         PerInstanceInstanceViewHook.hook(globalNode);
         Board.hook(globalNode);
-        PvpHook.hook(globalNode);
         ChatHook.hook(globalNode);
         TickMonitorHook.hook();
+        PvpExtension.init();
         PlacementRules.init();
         OptifineSupport.enable();
 
