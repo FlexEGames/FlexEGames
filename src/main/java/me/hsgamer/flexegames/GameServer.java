@@ -89,20 +89,8 @@ public class GameServer {
         MainConfig.CUSTOM_PLACEHOLDERS.getValue().forEach((k, v) -> ReplacementManager.addGlobalReplacement(k, () -> v));
     }
 
-    public void enable() {
-        templateManager.init();
-        gameArenaManager.init();
-        gameArenaManager.postInit();
-    }
-
-    public void disable() {
-        gameArenaManager.clear();
-        lobby.clear();
-    }
-
     @ApiStatus.Internal
     public void start() {
-        enable();
         String secret = MainConfig.VELOCITY_SECRET.getValue();
         if (!secret.isBlank()) {
             VelocityProxy.enable(secret);
@@ -120,11 +108,16 @@ public class GameServer {
             MinecraftServer.LOGGER.error("Failed to start server", e);
             System.exit(1);
         }
+
+        templateManager.init();
+        gameArenaManager.init();
+        gameArenaManager.postInit();
     }
 
     @ApiStatus.Internal
     public void stop() {
         MinecraftServer.stopCleanly();
-        disable();
+        gameArenaManager.clear();
+        lobby.clear();
     }
 }
