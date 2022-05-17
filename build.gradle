@@ -14,7 +14,7 @@ repositories {
 }
 
 ext {
-    core = "4.0.7"
+    core = "4.0.8"
     minigameCore = "1.0.1"
     lombok = "1.18.24"
     minestom = "bfa2dbd3f7"
