@@ -28,7 +28,7 @@ shadowJar {
     archiveClassifier.set(null)
     minimize {
         exclude(dependency('me.hsgamer:hscore-config.*:.*'))
-        exclude(dependency('com.github.*:.*:.*'))
+        exclude(dependency('com.github.Minestom:.*:.*'))
     }
 }
 

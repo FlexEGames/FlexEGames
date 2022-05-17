@@ -26,6 +26,7 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
+import net.minestom.server.event.EventListener;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.instance.AddEntityToInstanceEvent;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
@@ -147,37 +148,43 @@ public class Lobby extends InstanceContainer {
 
     public void registerHotbarItem(int slot, ItemStack itemStack, Consumer<Player> consumer) {
         eventNode()
-                .addListener(ItemDropEvent.class, event -> {
-                    if (event.getItemStack().equals(itemStack)) {
-                        event.setCancelled(true);
-                    }
-                })
-                .addListener(AddEntityToInstanceEvent.class, event -> {
-                    Entity entity = event.getEntity();
-                    if (entity instanceof Player player) {
-                        player.scheduler().scheduleNextTick(() -> player.getInventory().setItemStack(slot, itemStack));
-                    }
-                })
-                .addListener(RemoveEntityFromInstanceEvent.class, event -> {
-                    Entity entity = event.getEntity();
-                    if (entity instanceof Player player) {
-                        player.getInventory().setItemStack(slot, ItemStack.AIR);
-                    }
-                })
-                .addListener(PlayerUseItemEvent.class, event -> {
-                    if (event.getHand() != Player.Hand.MAIN) return;
-                    if (event.getItemStack().equals(itemStack)) {
-                        event.setCancelled(true);
-                        consumer.accept(event.getPlayer());
-                    }
-                })
-                .addListener(PlayerBlockInteractEvent.class, event -> {
-                    if (event.getPlayer().getInventory().getItemInHand(event.getHand()).equals(itemStack)) {
-                        event.setCancelled(true);
-                        event.setBlockingItemUse(true);
-                        consumer.accept(event.getPlayer());
-                    }
-                });
+                .addListener(EventListener.builder(RemoveEntityFromInstanceEvent.class)
+                        .handler(event -> ((Player) event.getEntity()).getInventory().setItemStack(slot, ItemStack.AIR))
+                        .filter(event -> event.getEntity() instanceof Player)
+                        .build())
+                .addListener(EventListener.builder(AddEntityToInstanceEvent.class)
+                        .handler(event -> {
+                            Player player = (Player) event.getEntity();
+                            player.scheduler().scheduleNextTick(() -> player.getInventory().setItemStack(slot, itemStack));
+                        })
+                        .filter(event -> event.getEntity() instanceof Player)
+                        .build())
+                .addListener(EventListener.builder(ItemDropEvent.class)
+                        .handler(event -> event.setCancelled(true))
+                        .filter(event -> event.getItemStack().equals(itemStack))
+                        .build())
+                .addListener(EventListener.builder(PlayerUseItemEvent.class)
+                        .handler(event -> {
+                            event.setCancelled(true);
+                            consumer.accept(event.getPlayer());
+                        })
+                        .filter(event -> event.getPlayer().getInventory().getItemInHand(event.getHand()).equals(itemStack))
+                        .build())
+                .addListener(EventListener.builder(PlayerBlockInteractEvent.class)
+                        .handler(event -> {
+                            event.setCancelled(true);
+                            event.setBlockingItemUse(true);
+                            consumer.accept(event.getPlayer());
+                        })
+                        .filter(event -> event.getPlayer().getInventory().getItemInHand(event.getHand()).equals(itemStack))
+                        .build())
+                .addListener(EventListener.builder(PlayerHandAnimationEvent.class)
+                        .handler(event -> {
+                            event.setCancelled(true);
+                            consumer.accept(event.getPlayer());
+                        })
+                        .filter(event -> event.getPlayer().getInventory().getItemInHand(event.getHand()).equals(itemStack))
+                        .build());
     }
 
     private void onFirstSpawn(Player player) {
