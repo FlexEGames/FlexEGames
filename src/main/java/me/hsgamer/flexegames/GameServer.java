@@ -9,7 +9,7 @@ import me.hsgamer.flexegames.config.LobbyConfig;
 import me.hsgamer.flexegames.config.MainConfig;
 import me.hsgamer.flexegames.config.MessageConfig;
 import me.hsgamer.flexegames.hook.ChatHook;
-import me.hsgamer.flexegames.hook.PerInstanceInstanceViewHook;
+import me.hsgamer.flexegames.hook.PerInstanceTabListHook;
 import me.hsgamer.flexegames.hook.ServerListHook;
 import me.hsgamer.flexegames.hook.TickMonitorHook;
 import me.hsgamer.flexegames.lobby.Lobby;
@@ -76,7 +76,7 @@ public class GameServer {
 
         // HOOK
         ServerListHook.hook(globalNode);
-        PerInstanceInstanceViewHook.hook(globalNode);
+        PerInstanceTabListHook.hook(globalNode);
         Board.hook(globalNode);
         ChatHook.hook(globalNode);
         TickMonitorHook.hook();

@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 @UtilityClass
-public final class PerInstanceInstanceViewHook {
+public final class PerInstanceTabListHook {
     public static void hook(EventNode<Event> node) {
         node.addListener(AddEntityToInstanceEvent.class, event -> {
             if (!(event.getEntity() instanceof Player player)) return;
