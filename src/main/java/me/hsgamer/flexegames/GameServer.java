@@ -95,17 +95,17 @@ public class GameServer {
 
     @ApiStatus.Internal
     public void start() {
-        String secret = MainConfig.VELOCITY_SECRET.getValue();
+        String secret = MainConfig.SERVER_VELOCITY_SECRET.getValue();
         if (!secret.isBlank()) {
             VelocityProxy.enable(secret);
-        } else if (Boolean.TRUE.equals(MainConfig.BUNGEE.getValue())) {
+        } else if (Boolean.TRUE.equals(MainConfig.SERVER_BUNGEE.getValue())) {
             BungeeCordProxy.enable();
         }
         if (Boolean.TRUE.equals(MainConfig.SERVER_ONLINE_MODE.getValue())) {
             MojangAuth.init();
         }
-        MinecraftServer.setCompressionThreshold(MainConfig.COMPRESSION_THRESHOLD.getValue());
-        MinecraftServer.setBrandName(MainConfig.BRAND_NAME.getValue());
+        MinecraftServer.setCompressionThreshold(MainConfig.SERVER_COMPRESSION_THRESHOLD.getValue());
+        MinecraftServer.setBrandName(MainConfig.SERVER_BRAND_NAME.getValue());
         try {
             minecraftServer.start(MainConfig.SERVER_IP.getValue(), MainConfig.SERVER_PORT.getValue());
         } catch (Exception e) {
