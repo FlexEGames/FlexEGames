@@ -26,6 +26,10 @@ java {
 
 shadowJar {
     archiveClassifier.set(null)
+    minimize {
+        exclude(dependency('me.hsgamer:hscore-config.*:.*'))
+        exclude(dependency('com.github.*:.*:.*'))
+    }
 }
 
 tasks {
@@ -50,20 +54,20 @@ publishing {
 }
 
 dependencies {
-    api "me.hsgamer:hscore-config-simplixstorage:$core"
-    api "me.hsgamer:hscore-config-proxy:$core"
-    api "me.hsgamer:hscore-config-path:$core"
-    api "me.hsgamer:hscore-config-annotated:$core"
-    api "me.hsgamer:hscore-builder:$core"
-    api "me.hsgamer:hscore-common:$core"
-    api "me.hsgamer:hscore-collections:$core"
+    implementation "me.hsgamer:hscore-config-simplixstorage:$core"
+    implementation "me.hsgamer:hscore-config-proxy:$core"
+    implementation "me.hsgamer:hscore-config-path:$core"
+    implementation "me.hsgamer:hscore-config-annotated:$core"
+    implementation "me.hsgamer:hscore-builder:$core"
+    implementation "me.hsgamer:hscore-common:$core"
+    implementation "me.hsgamer:hscore-collections:$core"
 
-    api "me.hsgamer:minigamecore-base:$minigameCore"
-    api "me.hsgamer:minigamecore-implementation:$minigameCore"
+    implementation "me.hsgamer:minigamecore-base:$minigameCore"
+    implementation "me.hsgamer:minigamecore-implementation:$minigameCore"
 
-    api "com.github.Minestom:Minestom:$minestom"
-    api "com.github.CatDevz:SlimeLoader:a8e533636c"
-    api "com.github.Bloepiloepi:MinestomPvP:70671a3cf8"
+    implementation "com.github.Minestom:Minestom:$minestom"
+    implementation "com.github.CatDevz:SlimeLoader:a8e533636c"
+    implementation "com.github.Bloepiloepi:MinestomPvP:70671a3cf8"
 
     compileOnly "org.projectlombok:lombok:$lombok"
     annotationProcessor "org.projectlombok:lombok:$lombok"
