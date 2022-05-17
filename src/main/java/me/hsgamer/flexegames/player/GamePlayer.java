@@ -1,6 +1,6 @@
 package me.hsgamer.flexegames.player;
 
-import io.github.bloepiloepi.pvp.entities.CustomPlayer;
+import io.github.bloepiloepi.pvp.entity.CustomPlayer;
 import net.minestom.server.network.player.PlayerConnection;
 import org.jetbrains.annotations.NotNull;
 
