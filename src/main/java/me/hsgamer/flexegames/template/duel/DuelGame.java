@@ -16,12 +16,10 @@ import me.hsgamer.flexegames.state.InGameState;
 import me.hsgamer.flexegames.state.WaitingState;
 import me.hsgamer.flexegames.util.*;
 import me.hsgamer.minigamecore.base.Arena;
-import me.hsgamer.minigamecore.base.GameState;
 import me.hsgamer.minigamecore.implementation.feature.arena.ArenaTimerFeature;
 import me.hsgamer.minigamecore.implementation.feature.single.TimerFeature;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.GameMode;
@@ -139,9 +137,9 @@ public class DuelGame implements ArenaGame {
                 "players", () -> Component.text(Integer.toString(instance.getPlayers().size())),
                 "time", () -> Component.text(TimeUtil.format(timerFeature.getDuration(TimeUnit.MILLISECONDS))),
                 "max-players", () -> Component.text(Integer.toString(template.posList.size())),
-                "state", () -> arena.getStateInstance().map(GameState::getDisplayName).map(LegacyComponentSerializer.legacyAmpersand()::deserialize).orElse(Component.empty()),
+                "state", () -> ArenaUtil.getState(arena),
                 "template", () -> template.displayName,
-                "owner", () -> TemplateUtil.getOwner(arena),
+                "owner", () -> ArenaUtil.getOwner(arena),
                 "name", () -> Component.text(arena.getName()),
                 "winner", () -> Optional.ofNullable(winner.get()).map(Player::getName).orElse(Component.empty()),
                 "alive", () -> Component.text(Integer.toString(getAlivePlayers().size()))
