@@ -1,21 +1,12 @@
 package me.hsgamer.flexegames.config.path;
 
 import me.hsgamer.flexegames.api.chunk.ChunkLoaderType;
-import me.hsgamer.hscore.config.Config;
-import me.hsgamer.hscore.config.path.AdvancedConfigPath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
-public class ChunkLoaderTypePath extends AdvancedConfigPath<String, ChunkLoaderType> {
+public class ChunkLoaderTypePath extends StringToObjectPath<ChunkLoaderType> {
     public ChunkLoaderTypePath(@NotNull String path, @Nullable ChunkLoaderType def) {
         super(path, def);
-    }
-
-    @Override
-    public @Nullable String getFromConfig(@NotNull Config config) {
-        return Objects.toString(config.get(getPath()), null);
     }
 
     @Override

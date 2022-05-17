@@ -1,8 +1,5 @@
 package me.hsgamer.flexegames.config.path;
 
-import me.hsgamer.hscore.common.CollectionUtils;
-import me.hsgamer.hscore.config.Config;
-import me.hsgamer.hscore.config.path.AdvancedConfigPath;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -10,19 +7,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class ComponentListPath extends AdvancedConfigPath<List<String>, List<Component>> {
+public class ComponentListPath extends StringListToObjectPath<List<Component>> {
     public ComponentListPath(@NotNull String path, @Nullable List<Component> def) {
         super(path, def);
-    }
-
-    @Override
-    public @Nullable List<String> getFromConfig(@NotNull Config config) {
-        Object o = config.get(getPath());
-        if (o == null) {
-            return null;
-        } else {
-            return CollectionUtils.createStringListFromObject(o, true);
-        }
     }
 
     @Override

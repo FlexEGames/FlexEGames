@@ -62,7 +62,7 @@ public class Lobby extends InstanceContainer {
     private final Tag<Boolean> hidePlayerTag = Tag.Boolean("lobbyHidePlayer").defaultValue(false);
 
     public Lobby(GameServer gameServer) {
-        super(UUID.randomUUID(), FullBrightDimension.INSTANCE);
+        super(LobbyConfig.UNIQUE_ID.getValue(), FullBrightDimension.INSTANCE);
         this.gameServer = gameServer;
         position = LobbyConfig.POSITION.getValue();
         board = new Board(

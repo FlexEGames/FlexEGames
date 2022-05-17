@@ -14,12 +14,10 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.item.Material;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class LobbyConfig extends PathableConfig {
+    public static final ConfigPath<UUID> UNIQUE_ID = new UuidPath("unique-id", UUID.randomUUID());
     public static final ConfigPath<ChunkLoaderType> WORLD_TYPE = new ChunkLoaderTypePath("world-type", ChunkLoaderType.ANVIL);
     public static final ConfigPath<String> WORLD_NAME = Paths.stringPath("world-name", "lobby");
     public static final ConfigPath<Pos> POSITION = new PosPath("position", new Pos(0, 0, 0));
