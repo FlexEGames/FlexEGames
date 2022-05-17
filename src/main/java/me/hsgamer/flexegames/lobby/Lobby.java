@@ -171,10 +171,11 @@ public class Lobby extends InstanceContainer {
                         consumer.accept(event.getPlayer());
                     }
                 })
-                .addListener(PlayerBlockPlaceEvent.class, event -> {
+                .addListener(PlayerBlockInteractEvent.class, event -> {
                     if (event.getPlayer().getInventory().getItemInHand(event.getHand()).equals(itemStack)) {
-                        event.consumeBlock(false);
                         event.setCancelled(true);
+                        event.setBlockingItemUse(true);
+                        consumer.accept(event.getPlayer());
                     }
                 });
     }
