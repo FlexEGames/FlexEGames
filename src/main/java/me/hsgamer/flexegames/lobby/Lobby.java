@@ -315,8 +315,8 @@ public class Lobby extends InstanceContainer {
                 .setInventoryType(InventoryType.CHEST_3_ROW)
                 .setTitle(LobbyConfig.INVENTORY_TEMPLATE_TITLE.getValue())
                 .setButtonMap(buttonMap)
-                .build()
-                .unregisterWhenClosed();
+                .setUnregisterOnClose(true)
+                .build();
         openPlayer.openInventory(inventory);
     }
 
@@ -468,9 +468,9 @@ public class Lobby extends InstanceContainer {
                     arenas.set(arenaSupplierRef.get().get());
                     return true;
                 })
-                .build()
-                .autoRefresh(TaskUtil.tick(10))
-                .unregisterWhenClosed();
+                .setUnregisterOnClose(true)
+                .setUpdateSchedule(TaskUtil.tick(10))
+                .build();
         openPlayer.openInventory(inventory);
     }
 

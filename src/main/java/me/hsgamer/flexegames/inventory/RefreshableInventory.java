@@ -25,17 +25,22 @@ public class RefreshableInventory extends Inventory {
     private final EventNode<InventoryEvent> eventNode;
     private final RefreshHandler refreshHandler;
     private final AtomicBoolean firstTime = new AtomicBoolean(true);
+    private final boolean unregisterOnClose;
 
     private RefreshableInventory(
             @NotNull InventoryType inventoryType,
             @NotNull Component title,
             @NotNull ButtonMap buttonMap,
             boolean cancelClickByDefault,
+            boolean unregisterOnClose,
             @NotNull OpenHandler openHandler,
             @NotNull CloseHandler closeHandler,
-            @NotNull RefreshHandler refreshHandler) {
+            @NotNull RefreshHandler refreshHandler,
+            @NotNull TaskSchedule updateSchedule
+    ) {
         super(inventoryType, title);
         this.buttonMap = buttonMap;
+        this.unregisterOnClose = unregisterOnClose;
         this.refreshHandler = refreshHandler;
         this.eventNode = EventNode.event("inventory-" + UUID.randomUUID(), EventFilter.INVENTORY, event -> Objects.equals(event.getInventory(), this));
 
@@ -61,6 +66,7 @@ public class RefreshableInventory extends Inventory {
         MinecraftServer.getGlobalEventHandler().addChild(eventNode);
 
         refresh();
+        autoRefresh(updateSchedule);
     }
 
     public static Builder builder() {
@@ -89,7 +95,7 @@ public class RefreshableInventory extends Inventory {
         }
     }
 
-    public RefreshableInventory autoRefresh(TaskSchedule taskSchedule) {
+    private void autoRefresh(TaskSchedule taskSchedule) {
         AtomicReference<Task> task = new AtomicReference<>();
         getEventNode()
                 .addListener(InventoryOpenEvent.class, event -> {
@@ -104,6 +110,9 @@ public class RefreshableInventory extends Inventory {
                                 return taskSchedule;
                             }
                             if (getViewers().isEmpty()) {
+                                if (unregisterOnClose) {
+                                    unregister();
+                                }
                                 return TaskSchedule.stop();
                             }
                             refresh();
@@ -111,15 +120,10 @@ public class RefreshableInventory extends Inventory {
                         }
                     }));
                 });
-        return this;
     }
 
-    public RefreshableInventory unregisterWhenClosed() {
-        getEventNode().addListener(InventoryCloseEvent.class, event -> {
-            if (getViewers().size() > 1) return;
-            MinecraftServer.getGlobalEventHandler().removeChild(eventNode);
-        });
-        return this;
+    private void unregister() {
+        MinecraftServer.getGlobalEventHandler().removeChild(eventNode);
     }
 
     public static class Builder {
@@ -127,15 +131,19 @@ public class RefreshableInventory extends Inventory {
         private Component title;
         private ButtonMap buttonMap;
         private boolean cancelClickByDefault;
+        private boolean unregisterOnClose;
         private OpenHandler openHandler;
         private CloseHandler closeHandler;
         private RefreshHandler refreshHandler;
+        private TaskSchedule updateSchedule;
 
         private Builder() {
             cancelClickByDefault = true;
+            unregisterOnClose = false;
             openHandler = player -> true;
             closeHandler = player -> true;
             refreshHandler = (inv, b) -> true;
+            updateSchedule = TaskSchedule.tick(20);
         }
 
         public Builder setInventoryType(@NotNull InventoryType inventoryType) {
@@ -173,6 +181,16 @@ public class RefreshableInventory extends Inventory {
             return this;
         }
 
+        public Builder setUnregisterOnClose(boolean unregisterOnClose) {
+            this.unregisterOnClose = unregisterOnClose;
+            return this;
+        }
+
+        public Builder setUpdateSchedule(@NotNull TaskSchedule updateSchedule) {
+            this.updateSchedule = updateSchedule;
+            return this;
+        }
+
         public RefreshableInventory build() {
             if (inventoryType == null) {
                 throw new IllegalStateException("inventoryType is null");
@@ -188,9 +206,12 @@ public class RefreshableInventory extends Inventory {
                     title,
                     buttonMap,
                     cancelClickByDefault,
+                    unregisterOnClose,
                     openHandler,
                     closeHandler,
-                    refreshHandler);
+                    refreshHandler,
+                    updateSchedule
+            );
         }
     }
 }
