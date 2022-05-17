@@ -26,9 +26,6 @@ java {
 
 shadowJar {
     archiveClassifier.set(null)
-    minimize {
-        exclude(dependency('com.github.*:.*:.*'))
-    }
 }
 
 tasks {
