@@ -30,6 +30,7 @@ import net.minestom.server.extras.PlacementRules;
 import net.minestom.server.extras.bungee.BungeeCordProxy;
 import net.minestom.server.extras.optifine.OptifineSupport;
 import net.minestom.server.extras.velocity.VelocityProxy;
+import net.minestom.server.permission.Permission;
 import org.jetbrains.annotations.ApiStatus;
 
 @Getter
@@ -56,14 +57,14 @@ public class GameServer {
         lobby.init();
 
         // COMMAND
-        CommandManager manager = MinecraftServer.getCommandManager();
-        manager.setUnknownCommandCallback((sender, c) -> sender.sendMessage("Unknown command: " + c));
-        manager.register(new StopCommand(this));
-        manager.register(new LeaveCommand(this));
-        manager.register(new CreateArenaCommand(this));
-        manager.register(new JoinArenaCommand(this));
-        manager.register(new ListPlayerCommand());
-        manager.register(new TickMonitorCommand());
+        CommandManager commandManager = MinecraftServer.getCommandManager();
+        commandManager.setUnknownCommandCallback((sender, c) -> sender.sendMessage("Unknown command: " + c));
+        commandManager.register(new StopCommand(this));
+        commandManager.register(new LeaveCommand(this));
+        commandManager.register(new CreateArenaCommand(this));
+        commandManager.register(new JoinArenaCommand(this));
+        commandManager.register(new ListPlayerCommand());
+        commandManager.register(new TickMonitorCommand());
 
         // GLOBAL EVENT
         EventNode<Event> globalNode = MinecraftServer.getGlobalEventHandler();
@@ -86,6 +87,12 @@ public class GameServer {
 
         // Player
         MinecraftServer.getConnectionManager().setPlayerProvider(GamePlayer::new);
+
+        // Console
+        var consoleSender = commandManager.getConsoleSender();
+        for (var permission : MainConfig.CONSOLE_PERMISSIONS.getValue()) {
+            consoleSender.addPermission(new Permission(permission));
+        }
 
         // Replacement
         ReplacementManager.addPlayerReplacement("player", Player::getName);

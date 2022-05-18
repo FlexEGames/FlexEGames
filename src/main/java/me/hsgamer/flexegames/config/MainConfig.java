@@ -2,6 +2,7 @@ package me.hsgamer.flexegames.config;
 
 import me.hsgamer.flexegames.FlexEGames;
 import me.hsgamer.flexegames.config.path.ComponentMapPath;
+import me.hsgamer.flexegames.config.path.StringListPath;
 import me.hsgamer.hscore.config.PathableConfig;
 import me.hsgamer.hscore.config.path.ConfigPath;
 import me.hsgamer.hscore.config.path.impl.Paths;
@@ -10,6 +11,7 @@ import net.kyori.adventure.text.Component;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class MainConfig extends PathableConfig {
@@ -24,6 +26,7 @@ public class MainConfig extends PathableConfig {
     public static final ConfigPath<Boolean> ARENA_ASYNC = Paths.booleanPath("arena.async", true);
     public static final ConfigPath<Integer> ARENA_AMOUNT_PER_PLAYER = Paths.integerPath("arena.amount-per-player", -1);
     public static final ConfigPath<Map<String, Component>> CUSTOM_PLACEHOLDERS = new ComponentMapPath("custom-placeholders", Collections.emptyMap());
+    public static final ConfigPath<List<String>> CONSOLE_PERMISSIONS = new StringListPath("console.permissions", Collections.emptyList());
 
     public MainConfig() {
         super(new YamlProvider().loadConfiguration(new File("config.yml")));
