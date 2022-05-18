@@ -121,9 +121,11 @@ public class Lobby extends InstanceContainer {
         registerHotbarItemFromMap(LobbyConfig.HOTBAR_SELECTOR.getValue(), 4, player -> openArenaInventory(player, false));
         registerHotbarItemFromMap(LobbyConfig.HOTBAR_TOGGLE_PLAYER.getValue(), 7, player -> {
             if (Boolean.TRUE.equals(player.getTag(hidePlayerTag))) {
+                player.sendMessage(MessageConfig.LOBBY_SHOW_PLAYERS.getValue());
                 player.updateViewerRule(entity -> true);
                 player.setTag(hidePlayerTag, false);
             } else {
+                player.sendMessage(MessageConfig.LOBBY_HIDE_PLAYERS.getValue());
                 player.updateViewerRule(entity -> !(entity instanceof Player));
                 player.setTag(hidePlayerTag, true);
             }
