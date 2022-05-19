@@ -1,6 +1,5 @@
 package me.hsgamer.flexegames.config;
 
-import me.hsgamer.flexegames.config.path.ComponentListPath;
 import me.hsgamer.flexegames.config.path.ComponentPath;
 import me.hsgamer.hscore.config.PathableConfig;
 import me.hsgamer.hscore.config.path.ConfigPath;
@@ -9,16 +8,9 @@ import me.hsgamer.hscore.config.simplixstorage.YamlProvider;
 import net.kyori.adventure.text.Component;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 
 public class MessageConfig extends PathableConfig {
-    public static final ConfigPath<List<Component>> TICK_MONITOR = new ComponentListPath("tick-monitor", Arrays.asList(
-            Component.text("&7Tick: &c%tick_time%"),
-            Component.text("&7RAM: &c%ram_usage%"),
-            Component.text("&7Online: &c%online%")
-    ));
-    public static final ConfigPath<Component> ERROR_TEMPLATE_NOT_FOUND = new ComponentPath("error.template-not-found","&cTemplate not found");
+    public static final ConfigPath<Component> ERROR_TEMPLATE_NOT_FOUND = new ComponentPath("error.template-not-found", "&cTemplate not found");
     public static final ConfigPath<Component> ERROR_ARENA_NOT_FOUND = new ComponentPath("error.arena-not-found", "&cArena not found");
     public static final ConfigPath<Component> ERROR_ARENA_NOT_SETUP = new ComponentPath("error.arena-not-setup", "&cArena not setup");
     public static final ConfigPath<Component> RESPONSE_MAX_PLAYERS_REACH = new ComponentPath("response.max-players-reach", "&cMax players reached");

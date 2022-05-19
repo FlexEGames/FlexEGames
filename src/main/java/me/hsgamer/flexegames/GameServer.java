@@ -11,7 +11,6 @@ import me.hsgamer.flexegames.config.MessageConfig;
 import me.hsgamer.flexegames.hook.ChatHook;
 import me.hsgamer.flexegames.hook.PerInstanceTabListHook;
 import me.hsgamer.flexegames.hook.ServerListHook;
-import me.hsgamer.flexegames.hook.TickMonitorHook;
 import me.hsgamer.flexegames.lobby.Lobby;
 import me.hsgamer.flexegames.manager.GameArenaManager;
 import me.hsgamer.flexegames.manager.ReplacementManager;
@@ -64,7 +63,6 @@ public class GameServer {
         commandManager.register(new CreateArenaCommand(this));
         commandManager.register(new JoinArenaCommand(this));
         commandManager.register(new ListPlayerCommand());
-        commandManager.register(new TickMonitorCommand());
 
         // GLOBAL EVENT
         EventNode<Event> globalNode = MinecraftServer.getGlobalEventHandler();
@@ -80,7 +78,6 @@ public class GameServer {
         PerInstanceTabListHook.hook(globalNode);
         Board.hook(globalNode);
         ChatHook.hook(globalNode);
-        TickMonitorHook.hook();
         PvpExtension.init();
         PlacementRules.init();
         OptifineSupport.enable();

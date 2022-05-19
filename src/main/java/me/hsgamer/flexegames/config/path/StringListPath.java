@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class StringListPath extends StringListToObjectPath<List<String>>{
+public class StringListPath extends StringListToObjectPath<List<String>> {
     public StringListPath(@NotNull String path, @Nullable List<String> def) {
         super(path, def);
     }
