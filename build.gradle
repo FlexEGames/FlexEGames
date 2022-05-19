@@ -17,7 +17,7 @@ ext {
     core = "4.0.8"
     minigameCore = "1.0.1"
     lombok = "1.18.24"
-    minestom = "83ff0daff7"
+    minestom = "f80f653ee0"
 }
 
 java {
@@ -67,7 +67,7 @@ dependencies {
 
     implementation "com.github.Minestom:Minestom:$minestom"
     implementation "com.github.CatDevz:SlimeLoader:a8e533636c"
-    implementation "com.github.Bloepiloepi:MinestomPvP:70671a3cf8"
+    implementation "com.github.Bloepiloepi:MinestomPvP:156e8db27b"
 
     compileOnly "org.projectlombok:lombok:$lombok"
     annotationProcessor "org.projectlombok:lombok:$lombok"
