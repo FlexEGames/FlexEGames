@@ -1,7 +1,6 @@
 package me.hsgamer.flexegames.command;
 
 import me.hsgamer.flexegames.GameServer;
-import me.hsgamer.flexegames.api.game.ArenaGame;
 import me.hsgamer.flexegames.api.game.JoinResponse;
 import me.hsgamer.flexegames.api.game.Template;
 import me.hsgamer.flexegames.command.argument.ArenaArgument;
@@ -41,8 +40,7 @@ public class JoinArenaCommand extends Command {
 
         addSyntax((sender, context) -> {
             Arena arena = context.get(arenaArgument);
-            ArenaGame arenaGame = arena.getArenaFeature(GameFeature.class).getGame();
-            JoinResponse response = arenaGame.join((Player) sender);
+            JoinResponse response = arena.getArenaFeature(GameFeature.class).joinGame((Player) sender);
             if (!response.success()) {
                 sender.sendMessage(response.getMessage((Player) sender));
             }

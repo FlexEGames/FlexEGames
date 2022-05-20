@@ -3,10 +3,12 @@ package me.hsgamer.flexegames.feature;
 import lombok.Getter;
 import lombok.Setter;
 import me.hsgamer.flexegames.api.game.ArenaGame;
+import me.hsgamer.flexegames.api.game.JoinResponse;
 import me.hsgamer.flexegames.api.game.Template;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaFeature;
 import me.hsgamer.minigamecore.base.Feature;
+import net.minestom.server.entity.Player;
 
 import java.util.UUID;
 
@@ -31,6 +33,13 @@ public class GameFeature extends ArenaFeature<GameFeature.ArenaGameFeature> {
 
         public void setGame(Template template) {
             this.game = template.createGame(arena);
+        }
+
+        public JoinResponse joinGame(Player player) {
+            if (game == null) {
+                return JoinResponse.INCOMPLETE_SETUP;
+            }
+            return game.join(player);
         }
     }
 }

@@ -433,22 +433,22 @@ public class Lobby extends InstanceContainer {
                     continue;
                 }
                 var arena = arenasList.get(index);
-                var game = arena.getArenaFeature(GameFeature.class).getGame();
-                if (game == null) {
+                var feature = arena.getArenaFeature(GameFeature.class);
+                if (feature.getGame() == null) {
                     buttons.put(i, airButton);
                     continue;
                 }
                 buttons.put(i, new Button() {
                     @Override
                     public ItemStack getItem() {
-                        return game.getDisplayItem().stripItalics();
+                        return feature.getGame().getDisplayItem().stripItalics();
                     }
 
                     @Override
                     public ClickConsumer getClickConsumer() {
                         return (player, clickType, result) -> {
                             result.setCancel(true);
-                            var response = game.join(player);
+                            var response = feature.joinGame(player);
                             if (!response.success()) {
                                 player.sendMessage(response.getMessage(player));
                             } else {
