@@ -68,6 +68,7 @@ dependencies {
     implementation "com.github.Minestom:Minestom:$minestom"
     implementation "com.github.CatDevz:SlimeLoader:a8e533636c"
     implementation "com.github.Bloepiloepi:MinestomPvP:a859478774"
+    implementation 'com.github.TogAr2.MinestomBlocks:MinestomBlocks:7f1b5afd5c'
 
     compileOnly "org.projectlombok:lombok:$lombok"
     annotationProcessor "org.projectlombok:lombok:$lombok"
