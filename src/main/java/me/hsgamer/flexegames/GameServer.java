@@ -30,7 +30,6 @@ import net.minestom.server.extras.PlacementRules;
 import net.minestom.server.extras.bungee.BungeeCordProxy;
 import net.minestom.server.extras.optifine.OptifineSupport;
 import net.minestom.server.extras.velocity.VelocityProxy;
-import net.minestom.server.permission.Permission;
 import org.jetbrains.annotations.ApiStatus;
 
 @Getter
@@ -70,7 +69,11 @@ public class GameServer {
         globalNode
                 .addListener(PlayerLoginEvent.class, event -> {
                     event.setSpawningInstance(lobby);
-                    event.getPlayer().setRespawnPoint(lobby.getPosition());
+                    var player = event.getPlayer();
+                    player.setRespawnPoint(lobby.getPosition());
+                    for (var permission : mainConfig.getPlayerPermissions(player.getUsername())) {
+                        player.addPermission(permission);
+                    }
                 })
                 .addListener(PlayerSpawnEvent.class, event -> event.getPlayer().refreshCommands());
 
@@ -90,7 +93,7 @@ public class GameServer {
         // Console
         var consoleSender = commandManager.getConsoleSender();
         for (var permission : MainConfig.CONSOLE_PERMISSIONS.getValue()) {
-            consoleSender.addPermission(new Permission(permission));
+            consoleSender.addPermission(permission);
         }
 
         // Replacement

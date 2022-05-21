@@ -21,8 +21,8 @@ public class NumberObjectMapPath extends SerializableMapConfigPath<Map<Number, M
         for (Map.Entry<String, Object> entry : rawValue.entrySet()) {
             List<Number> keys = getNumbers(entry.getKey());
             Map<String, Object> value = new LinkedHashMap<>();
-            if (entry.getValue() instanceof Map) {
-                ((Map<?, ?>) entry.getValue()).forEach((key, value1) -> value.put(key.toString(), value1));
+            if (entry.getValue() instanceof Map<?, ?> rawMap) {
+                rawMap.forEach((key, value1) -> value.put(key.toString(), value1));
             }
             for (Number key : keys) {
                 map.put(key, value);

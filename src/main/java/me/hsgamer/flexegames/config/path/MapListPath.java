@@ -22,9 +22,9 @@ public class MapListPath extends AdvancedConfigPath<Object, List<Map<String, Obj
 
     @Override
     public @Nullable List<Map<String, Object>> convert(@NotNull Object rawValue) {
-        if (rawValue instanceof List) {
+        if (rawValue instanceof List<?> rawList) {
             List<Map<String, Object>> list = new ArrayList<>();
-            for (Object o : (List<?>) rawValue) {
+            for (Object o : rawList) {
                 if (o instanceof Map) {
                     Map<String, Object> map = new LinkedHashMap<>();
                     for (Map.Entry<?, ?> entry : ((Map<?, ?>) o).entrySet()) {
@@ -34,9 +34,9 @@ public class MapListPath extends AdvancedConfigPath<Object, List<Map<String, Obj
                 }
             }
             return list;
-        } else if (rawValue instanceof Map) {
+        } else if (rawValue instanceof Map<?, ?> rawMap) {
             Map<String, Object> map = new LinkedHashMap<>();
-            for (Map.Entry<?, ?> entry : ((Map<?, ?>) rawValue).entrySet()) {
+            for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
                 map.put(entry.getKey().toString(), entry.getValue());
             }
             return List.of(map);
