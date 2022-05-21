@@ -95,6 +95,7 @@ public class GameServer {
 
         // Replacement
         ReplacementManager.addPlayerReplacement("player", Player::getName);
+        ReplacementManager.addPlayerReplacement("ping", player -> Component.text(Integer.toString(player.getLatency())));
         ReplacementManager.addGlobalReplacement("online", () -> Component.text(Integer.toString(MinecraftServer.getConnectionManager().getOnlinePlayers().size())));
         MainConfig.CUSTOM_PLACEHOLDERS.getValue().forEach((k, v) -> ReplacementManager.addGlobalReplacement(k, () -> v));
     }
