@@ -123,7 +123,7 @@ public class Lobby extends InstanceContainer {
         registerHotbarItemFromMap(LobbyConfig.HOTBAR_SELECTOR.getValue(), 4, player -> openArenaInventory(player, false));
         registerHotbarItemFromMap(LobbyConfig.HOTBAR_TOGGLE_PLAYER.getValue(), 7, player -> {
             player.setTag(hidePlayerTag, !player.getTag(hidePlayerTag));
-            updateView(player);
+            updateView(player, true);
         });
 
         instanceModifiers = new ArrayList<>();
@@ -184,12 +184,12 @@ public class Lobby extends InstanceContainer {
                         .build());
     }
 
-    private void updateView(Player player) {
+    private void updateView(Player player, boolean message) {
         if (Boolean.TRUE.equals(player.getTag(hidePlayerTag))) {
-            player.sendMessage(MessageConfig.LOBBY_HIDE_PLAYERS.getValue());
+            if (message) player.sendMessage(MessageConfig.LOBBY_HIDE_PLAYERS.getValue());
             player.updateViewerRule(entity -> !(entity instanceof Player));
         } else {
-            player.sendMessage(MessageConfig.LOBBY_SHOW_PLAYERS.getValue());
+            if (message) player.sendMessage(MessageConfig.LOBBY_SHOW_PLAYERS.getValue());
             player.updateViewerRule(entity -> true);
         }
     }
@@ -204,7 +204,7 @@ public class Lobby extends InstanceContainer {
     private void onBackSpawn(Player player) {
         onFirstSpawn(player);
         player.teleport(position);
-        updateView(player);
+        updateView(player, false);
     }
 
     private void onQuit(Player player) {
