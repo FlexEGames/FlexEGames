@@ -38,6 +38,7 @@ import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.tag.Tag;
+import net.minestom.server.timer.ExecutionType;
 import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskSchedule;
 
@@ -208,6 +209,7 @@ public class DuelGame implements ArenaGame {
         task = instance.scheduler()
                 .buildTask(board::updateAll)
                 .repeat(TaskSchedule.nextTick())
+                .executionType(ExecutionType.ASYNC)
                 .schedule();
     }
 
