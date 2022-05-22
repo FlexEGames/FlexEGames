@@ -4,6 +4,7 @@ import me.hsgamer.flexegames.api.chunk.ChunkLoaderType;
 import me.hsgamer.flexegames.config.path.*;
 import me.hsgamer.hscore.config.PathableConfig;
 import me.hsgamer.hscore.config.path.ConfigPath;
+import me.hsgamer.hscore.config.path.StickyConfigPath;
 import me.hsgamer.hscore.config.path.impl.MapConfigPath;
 import me.hsgamer.hscore.config.path.impl.Paths;
 import me.hsgamer.hscore.config.simplixstorage.YamlProvider;
@@ -21,12 +22,13 @@ public class LobbyConfig extends PathableConfig {
     public static final ConfigPath<ChunkLoaderType> WORLD_TYPE = new ChunkLoaderTypePath("world-type", ChunkLoaderType.ANVIL);
     public static final ConfigPath<String> WORLD_NAME = Paths.stringPath("world-name", "lobby");
     public static final ConfigPath<Pos> POSITION = new PosPath("position", new Pos(0, 0, 0));
-    public static final ConfigPath<Component> BOARD_TITLE = new ComponentPath("board.title", Component.text("Lobby").decorate(TextDecoration.BOLD).color(NamedTextColor.YELLOW));
-    public static final ConfigPath<List<Component>> BOARD_LINES = new ComponentListPath("board.lines", Arrays.asList(
+    public static final ConfigPath<Component> BOARD_TITLE = new StickyConfigPath<>(new ComponentPath("board.title", Component.text("Lobby").decorate(TextDecoration.BOLD).color(NamedTextColor.YELLOW)));
+    public static final ConfigPath<List<Component>> BOARD_LINES = new StickyConfigPath<>(new ComponentListPath("board.lines",Arrays.asList(
             Component.text("Welcome to the lobby!").color(NamedTextColor.WHITE),
             Component.text("You can play games here!").color(NamedTextColor.WHITE)
-    ));
+    )));
     public static final ConfigPath<Integer> BOARD_UPDATE_TIME = Paths.integerPath("board.update-time", 20);
+    public static final ConfigPath<Boolean> BOARD_ASYNC = Paths.booleanPath("board.async", true);
     public static final ConfigPath<Component> INVENTORY_TEMPLATE_TITLE = new ComponentPath("inventory.template.title", Component.text("Template").decorate(TextDecoration.BOLD).color(NamedTextColor.DARK_RED));
     public static final MapConfigPath INVENTORY_TEMPLATE_NEXT_PAGE = new MapConfigPath("inventory.template.next-page", Map.of(
             "material", Material.GREEN_STAINED_GLASS_PANE.name(),

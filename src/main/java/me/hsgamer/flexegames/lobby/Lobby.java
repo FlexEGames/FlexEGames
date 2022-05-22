@@ -42,6 +42,7 @@ import net.minestom.server.item.Material;
 import net.minestom.server.network.packet.server.play.TeamsPacket;
 import net.minestom.server.scoreboard.Team;
 import net.minestom.server.tag.Tag;
+import net.minestom.server.timer.ExecutionType;
 import net.minestom.server.timer.Task;
 import net.minestom.server.utils.StringUtils;
 
@@ -112,6 +113,7 @@ public class Lobby extends InstanceContainer {
                 });
         boardTask = scheduler().buildTask(board::updateAll)
                 .repeat(TaskUtil.tick(LobbyConfig.BOARD_UPDATE_TIME.getValue()))
+                .executionType(Boolean.TRUE.equals(LobbyConfig.BOARD_ASYNC.getValue()) ? ExecutionType.ASYNC : ExecutionType.SYNC)
                 .schedule();
         lobbyTeam = MinecraftServer.getTeamManager().createBuilder("lobbyTeam")
                 .collisionRule(TeamsPacket.CollisionRule.NEVER)
