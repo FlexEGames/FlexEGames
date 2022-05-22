@@ -186,11 +186,11 @@ public class Lobby extends InstanceContainer {
 
     private void updateView(Player player) {
         if (Boolean.TRUE.equals(player.getTag(hidePlayerTag))) {
-            player.sendMessage(MessageConfig.LOBBY_SHOW_PLAYERS.getValue());
-            player.updateViewerRule(entity -> true);
-        } else {
             player.sendMessage(MessageConfig.LOBBY_HIDE_PLAYERS.getValue());
             player.updateViewerRule(entity -> !(entity instanceof Player));
+        } else {
+            player.sendMessage(MessageConfig.LOBBY_SHOW_PLAYERS.getValue());
+            player.updateViewerRule(entity -> true);
         }
     }
 
