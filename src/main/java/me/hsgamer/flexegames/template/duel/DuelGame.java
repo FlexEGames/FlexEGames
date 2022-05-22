@@ -55,8 +55,8 @@ public class DuelGame implements ArenaGame {
     private final TimerFeature timerFeature;
     private final InstanceContainer instance;
     private final AtomicBoolean isFinished = new AtomicBoolean(false);
-    private final Tag<Boolean> deadTag = Tag.Boolean("dead").defaultValue(false);
-    private final Tag<Boolean> playerBlockTag = Tag.Boolean("playerBlock").defaultValue(false);
+    private final Tag<Boolean> deadTag = Tag.Boolean("duel:dead").defaultValue(false);
+    private final Tag<Boolean> playerBlockTag = Tag.Boolean("duel:playerBlock").defaultValue(false);
     private final AtomicReference<Player> winner = new AtomicReference<>();
     private final Board board;
     private final EventNode<EntityEvent> entityEventNode;

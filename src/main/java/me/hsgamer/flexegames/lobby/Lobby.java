@@ -60,7 +60,7 @@ public class Lobby extends InstanceContainer {
     private final Team lobbyTeam;
     private final GameServer gameServer;
     private final List<InstanceModifier> instanceModifiers;
-    private final Tag<Boolean> hidePlayerTag = Tag.Boolean("lobbyHidePlayer").defaultValue(false);
+    private final Tag<Boolean> hidePlayerTag = Tag.Boolean("lobby:HidePlayer").defaultValue(false);
 
     public Lobby(GameServer gameServer) {
         super(LobbyConfig.UNIQUE_ID.getValue(), FullBrightDimension.INSTANCE);
@@ -122,15 +122,8 @@ public class Lobby extends InstanceContainer {
         registerHotbarItemFromMap(LobbyConfig.HOTBAR_CREATOR.getValue(), 1, this::openTemplateInventory);
         registerHotbarItemFromMap(LobbyConfig.HOTBAR_SELECTOR.getValue(), 4, player -> openArenaInventory(player, false));
         registerHotbarItemFromMap(LobbyConfig.HOTBAR_TOGGLE_PLAYER.getValue(), 7, player -> {
-            if (Boolean.TRUE.equals(player.getTag(hidePlayerTag))) {
-                player.sendMessage(MessageConfig.LOBBY_SHOW_PLAYERS.getValue());
-                player.updateViewerRule(entity -> true);
-                player.setTag(hidePlayerTag, false);
-            } else {
-                player.sendMessage(MessageConfig.LOBBY_HIDE_PLAYERS.getValue());
-                player.updateViewerRule(entity -> !(entity instanceof Player));
-                player.setTag(hidePlayerTag, true);
-            }
+            player.setTag(hidePlayerTag, !player.getTag(hidePlayerTag));
+            updateView(player);
         });
 
         instanceModifiers = new ArrayList<>();
@@ -191,6 +184,16 @@ public class Lobby extends InstanceContainer {
                         .build());
     }
 
+    private void updateView(Player player) {
+        if (Boolean.TRUE.equals(player.getTag(hidePlayerTag))) {
+            player.sendMessage(MessageConfig.LOBBY_SHOW_PLAYERS.getValue());
+            player.updateViewerRule(entity -> true);
+        } else {
+            player.sendMessage(MessageConfig.LOBBY_HIDE_PLAYERS.getValue());
+            player.updateViewerRule(entity -> !(entity instanceof Player));
+        }
+    }
+
     private void onFirstSpawn(Player player) {
         board.addPlayer(player);
         player.setRespawnPoint(position);
@@ -201,12 +204,12 @@ public class Lobby extends InstanceContainer {
     private void onBackSpawn(Player player) {
         onFirstSpawn(player);
         player.teleport(position);
+        updateView(player);
     }
 
     private void onQuit(Player player) {
         board.removePlayer(player);
         player.setTeam(null);
-        player.removeTag(hidePlayerTag);
         player.updateViewerRule(entity -> true);
     }
 
