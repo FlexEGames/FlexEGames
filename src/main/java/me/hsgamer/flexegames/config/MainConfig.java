@@ -36,7 +36,7 @@ public class MainConfig extends PathableConfig {
     }
 
     public List<Permission> getPlayerPermissions(String username) {
-        List<Permission> permissions = new ArrayList<>(PLAYER_PERMISSIONS.getValue());
+        var permissions = new ArrayList<>(PLAYER_PERMISSIONS.getValue());
         var permissionPath = new PermissionListPath("player.player-permissions." + username, Collections.emptyList());
         var permissionList = permissionPath.getValue(this);
         if (permissionList != null) {
