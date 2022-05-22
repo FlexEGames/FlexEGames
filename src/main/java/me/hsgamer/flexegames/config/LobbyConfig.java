@@ -23,7 +23,7 @@ public class LobbyConfig extends PathableConfig {
     public static final ConfigPath<String> WORLD_NAME = Paths.stringPath("world-name", "lobby");
     public static final ConfigPath<Pos> POSITION = new PosPath("position", new Pos(0, 0, 0));
     public static final ConfigPath<Component> BOARD_TITLE = new StickyConfigPath<>(new ComponentPath("board.title", Component.text("Lobby").decorate(TextDecoration.BOLD).color(NamedTextColor.YELLOW)));
-    public static final ConfigPath<List<Component>> BOARD_LINES = new StickyConfigPath<>(new ComponentListPath("board.lines",Arrays.asList(
+    public static final ConfigPath<List<Component>> BOARD_LINES = new StickyConfigPath<>(new ComponentListPath("board.lines", Arrays.asList(
             Component.text("Welcome to the lobby!").color(NamedTextColor.WHITE),
             Component.text("You can play games here!").color(NamedTextColor.WHITE)
     )));

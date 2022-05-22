@@ -2,6 +2,7 @@ package me.hsgamer.flexegames.config;
 
 import me.hsgamer.flexegames.FlexEGames;
 import me.hsgamer.flexegames.config.path.ComponentMapPath;
+import me.hsgamer.flexegames.config.path.PermissionListMapPath;
 import me.hsgamer.flexegames.config.path.PermissionListPath;
 import me.hsgamer.hscore.config.PathableConfig;
 import me.hsgamer.hscore.config.path.ConfigPath;
@@ -11,10 +12,7 @@ import net.kyori.adventure.text.Component;
 import net.minestom.server.permission.Permission;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MainConfig extends PathableConfig {
     public static final ConfigPath<String> SERVER_IP = Paths.stringPath("server.ip", "0.0.0.0");
@@ -29,19 +27,16 @@ public class MainConfig extends PathableConfig {
     public static final ConfigPath<Integer> ARENA_AMOUNT_PER_PLAYER = Paths.integerPath("arena.amount-per-player", -1);
     public static final ConfigPath<Map<String, Component>> CUSTOM_PLACEHOLDERS = new ComponentMapPath("custom-placeholders", Collections.emptyMap());
     public static final ConfigPath<List<Permission>> CONSOLE_PERMISSIONS = Paths.sticky(new PermissionListPath("console.permissions", Collections.emptyList()));
-    public static final ConfigPath<List<Permission>> PLAYER_PERMISSIONS = Paths.sticky(new PermissionListPath("player.default-permissions", Collections.emptyList()));
+    public static final ConfigPath<List<Permission>> PLAYER_DEFAULT_PERMISSIONS = Paths.sticky(new PermissionListPath("player.default-permissions", Collections.emptyList()));
+    public static final ConfigPath<Map<String, List<Permission>>> PLAYER_PERMISSIONS = Paths.sticky(new PermissionListMapPath("player.permissions", Collections.emptyMap()));
 
     public MainConfig() {
         super(new YamlProvider().loadConfiguration(new File("config.yml")));
     }
 
-    public List<Permission> getPlayerPermissions(String username) {
-        var permissions = new ArrayList<>(PLAYER_PERMISSIONS.getValue());
-        var permissionPath = new PermissionListPath("player.player-permissions." + username, Collections.emptyList());
-        var permissionList = permissionPath.getValue(this);
-        if (permissionList != null) {
-            permissions.addAll(permissionList);
-        }
+    public static List<Permission> getPlayerPermissions(String username) {
+        var permissions = new ArrayList<>(PLAYER_DEFAULT_PERMISSIONS.getValue());
+        Optional.ofNullable(PLAYER_PERMISSIONS.getValue().get(username)).ifPresent(permissions::addAll);
         return permissions;
     }
 }

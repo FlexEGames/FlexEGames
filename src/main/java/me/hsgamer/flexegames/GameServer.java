@@ -71,7 +71,7 @@ public class GameServer {
                     event.setSpawningInstance(lobby);
                     var player = event.getPlayer();
                     player.setRespawnPoint(lobby.getPosition());
-                    for (var permission : mainConfig.getPlayerPermissions(player.getUsername())) {
+                    for (var permission : MainConfig.getPlayerPermissions(player.getUsername())) {
                         player.addPermission(permission);
                     }
                 })
