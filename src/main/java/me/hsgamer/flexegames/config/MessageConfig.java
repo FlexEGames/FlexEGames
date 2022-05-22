@@ -25,8 +25,8 @@ public class MessageConfig extends PathableConfig {
     public static final ConfigPath<String> STATE_ENDING = Paths.stringPath("state.ending", "Ending");
     public static final ConfigPath<String> STATE_KILLING = Paths.stringPath("state.killing", "Killing");
 
-    public static final ConfigPath<Component> LOBBY_HIDE_PLAYERS = new ComponentPath("lobby.hide-players", "&aYou now &ehide &a other players");
-    public static final ConfigPath<Component> LOBBY_SHOW_PLAYERS = new ComponentPath("lobby.show-players", "&aYou now &eshow &a other players");
+    public static final ConfigPath<Component> LOBBY_HIDE_PLAYERS = new ComponentPath("lobby.hide-players", "&aYou now &ehide &aother players");
+    public static final ConfigPath<Component> LOBBY_SHOW_PLAYERS = new ComponentPath("lobby.show-players", "&aYou now &eshow &aother players");
 
     public MessageConfig() {
         super(new YamlProvider().loadConfiguration(new File("messages.yml")));
