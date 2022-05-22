@@ -22,22 +22,22 @@ import java.util.List;
 import java.util.Map;
 
 public class DuelTemplate implements Template {
-    public static final ConfigPath<Component> winnerMessagePath = new ComponentPath("winner-message", Component.text("&a%winner% won the duel!"));
-    public static final ConfigPath<Component> noWinnerMessagePath = new ComponentPath("no-winner-message", Component.text("&cNo winner"));
-    public static final ConfigPath<Component> boardTitlePath = new ComponentPath("board.title", Component.text("&e&lDuel"));
-    public static final ConfigPath<List<Component>> boardLinesWaitingPath = new ComponentListPath("board.lines.waiting", List.of(
-            Component.text("&eWaiting for players"),
-            Component.text("&ePlayers: &a%players%"),
-            Component.text("&eTime Left: &a%time%")
+    public static final ConfigPath<Component> winnerMessagePath = new ComponentPath("winner-message", "&a%winner% won the duel!");
+    public static final ConfigPath<Component> noWinnerMessagePath = new ComponentPath("no-winner-message", "&cNo winner");
+    public static final ConfigPath<Component> boardTitlePath = new ComponentPath("board.title", "&e&lDuel");
+    public static final ConfigPath<List<Component>> boardLinesWaitingPath = new StringComponentListPath("board.lines.waiting", List.of(
+            "&eWaiting for players",
+            "&ePlayers: &a%players%",
+            "&eTime Left: &a%time%"
     ));
-    public static final ConfigPath<List<Component>> boardLinesIngamePath = new ComponentListPath("board.lines.ingame", List.of(
-            Component.text("&eAlive: &a%alive%")
+    public static final ConfigPath<List<Component>> boardLinesIngamePath = new StringComponentListPath("board.lines.ingame", List.of(
+            "&eAlive: &a%alive%"
     ));
-    public static final ConfigPath<List<Component>> boardLinesEndingPath = new ComponentListPath("board.lines.ending", List.of(
-            Component.text("&eEnding in: &a%time%"),
-            Component.text("&eWinner: &a%winner%")
+    public static final ConfigPath<List<Component>> boardLinesEndingPath = new StringComponentListPath("board.lines.ending", List.of(
+            "&eEnding in: &a%time%",
+            "&eWinner: &a%winner%"
     ));
-    public static final ConfigPath<Component> notEnoughPlayersPath = new ComponentPath("not-enough-players", Component.text("&cNot enough players"));
+    public static final ConfigPath<Component> notEnoughPlayersPath = new ComponentPath("not-enough-players", "&cNot enough players");
     private static final ConfigPath<Component> displayNamePath = new ComponentPath("display-name", "&e&lDuel");
     private static final ConfigPath<List<Component>> descriptionPath = new ComponentListPath("description", Collections.singletonList(
             Component.text("Kill other players to win").color(NamedTextColor.WHITE)
