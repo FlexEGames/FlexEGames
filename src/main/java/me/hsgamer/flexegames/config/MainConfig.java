@@ -11,7 +11,10 @@ import net.kyori.adventure.text.Component;
 import net.minestom.server.permission.Permission;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class MainConfig extends PathableConfig {
     public static final ConfigPath<String> SERVER_IP = Paths.stringPath("server.ip", "0.0.0.0");
