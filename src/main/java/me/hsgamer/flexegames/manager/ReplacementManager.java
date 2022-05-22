@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 public final class ReplacementManager {
+    private static final Pattern matchPattern = Pattern.compile("%([^%]+)%");
     private static final Map<String, Supplier<ComponentLike>> globalMap = new HashMap<>();
     private static final Map<String, Function<Player, ComponentLike>> playerMap = new HashMap<>();
 
@@ -29,10 +30,14 @@ public final class ReplacementManager {
     }
 
     public static Component replace(Component component, Map<String, Supplier<ComponentLike>> map) {
-        for (Map.Entry<String, Supplier<ComponentLike>> entry : map.entrySet()) {
-            component = component.replaceText(builder -> builder.match(Pattern.quote("%" + entry.getKey() + "%")).replacement(builder1 -> entry.getValue().get()));
-        }
-        return component;
+        return component.replaceText(builder -> builder.match(matchPattern).replacement((matchResult, builder1) -> {
+            String key = matchResult.group(1);
+            Supplier<ComponentLike> supplier = map.get(key);
+            if (supplier != null) {
+                return supplier.get();
+            }
+            return Component.text("%" + key + "%");
+        }));
     }
 
     public static Component replaceGlobal(Component component) {
