@@ -17,8 +17,7 @@ public class PermissionListMapPath extends AdvancedConfigPath<Map<String, List<M
     @Override
     public @Nullable Map<String, List<Map<String, Object>>> getFromConfig(@NotNull Config config) {
         if (!config.contains(getPath())) return null;
-        var rawValue = config.get(getPath());
-        if (!(rawValue instanceof Map<?, ?> rawMap)) return null;
+        var rawMap = config.getNormalizedValues(getPath(), false);
         Map<String, List<Map<String, Object>>> map = new LinkedHashMap<>();
         for (var entry : rawMap.entrySet()) {
             if (entry.getValue() instanceof List<?> valueList) {
@@ -34,15 +33,15 @@ public class PermissionListMapPath extends AdvancedConfigPath<Map<String, List<M
                         list.add(Map.of(PermissionUtil.PERMISSION_KEY, o));
                     }
                 }
-                map.put(Objects.toString(entry.getKey()), list);
+                map.put(entry.getKey(), list);
             } else if (entry.getValue() instanceof Map<?, ?>) {
                 Map<String, Object> map1 = new LinkedHashMap<>();
                 for (Map.Entry<?, ?> entry1 : ((Map<?, ?>) entry.getValue()).entrySet()) {
                     map1.put(Objects.toString(entry1.getKey()), entry1.getValue());
                 }
-                map.put(Objects.toString(entry.getKey()), List.of(map1));
+                map.put(entry.getKey(), List.of(map1));
             } else if (entry.getValue() instanceof String) {
-                map.put(Objects.toString(entry.getKey()), List.of(Map.of(PermissionUtil.PERMISSION_KEY, entry.getValue())));
+                map.put(entry.getKey(), List.of(Map.of(PermissionUtil.PERMISSION_KEY, entry.getValue())));
             }
         }
         return map;
