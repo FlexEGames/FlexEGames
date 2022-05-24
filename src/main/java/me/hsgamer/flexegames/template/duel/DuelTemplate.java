@@ -23,13 +23,13 @@ import java.util.List;
 import java.util.Map;
 
 public class DuelTemplate implements Template {
-    public static final ConfigPath<Component> winnerMessagePath = new ComponentPath("winner-message", "&a%winner% won the duel!");
-    public static final ConfigPath<Component> noWinnerMessagePath = new ComponentPath("no-winner-message", "&cNo winner");
-    public static final ConfigPath<Component> boardTitlePath = new ComponentPath("board.title", MessageConfig.GAME_DUEL_BOARD_TITLE.getValue());
-    public static final ConfigPath<List<Component>> boardLinesWaitingPath = new ComponentListPath("board.lines.waiting", MessageConfig.GAME_DUEL_BOARD_LINES_WAITING.getValue());
-    public static final ConfigPath<List<Component>> boardLinesIngamePath = new ComponentListPath("board.lines.ingame", MessageConfig.GAME_DUEL_BOARD_LINES_INGAME.getValue());
-    public static final ConfigPath<List<Component>> boardLinesEndingPath = new ComponentListPath("board.lines.ending", MessageConfig.GAME_DUEL_BOARD_LINES_ENDING.getValue());
-    public static final ConfigPath<Component> notEnoughPlayersPath = new ComponentPath("not-enough-players", "&cNot enough players");
+    private static final ConfigPath<Component> boardTitlePath = new ComponentPath("board.title", MessageConfig.GAME_DUEL_BOARD_TITLE.getValue());
+    private static final ConfigPath<List<Component>> boardLinesWaitingPath = new ComponentListPath("board.lines.waiting", MessageConfig.GAME_DUEL_BOARD_LINES_WAITING.getValue());
+    private static final ConfigPath<List<Component>> boardLinesIngamePath = new ComponentListPath("board.lines.ingame", MessageConfig.GAME_DUEL_BOARD_LINES_INGAME.getValue());
+    private static final ConfigPath<List<Component>> boardLinesEndingPath = new ComponentListPath("board.lines.ending", MessageConfig.GAME_DUEL_BOARD_LINES_ENDING.getValue());
+    private static final ConfigPath<Component> winnerMessagePath = new ComponentPath("winner-message", MessageConfig.GAME_DUEL_WINNER_MESSAGE.getValue());
+    private static final ConfigPath<Component> noWinnerMessagePath = new ComponentPath("no-winner-message", MessageConfig.GAME_DUEL_NO_WINNER_MESSAGE.getValue());
+    private static final ConfigPath<Component> notEnoughPlayersPath = new ComponentPath("not-enough-players", MessageConfig.GAME_DUEL_NOT_ENOUGH_PLAYERS.getValue());
     private static final ConfigPath<Component> displayNamePath = new ComponentPath("display-name", "&e&lDuel");
     private static final ConfigPath<List<Component>> descriptionPath = new ComponentListPath("description", Collections.singletonList(
             Component.text("Kill other players to win").color(NamedTextColor.WHITE)

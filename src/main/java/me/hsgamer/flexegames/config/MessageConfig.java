@@ -43,6 +43,9 @@ public class MessageConfig extends PathableConfig {
             "&eEnding in: &a%time%",
             "&eWinner: &a%winner%"
     ));
+    public static final ConfigPath<Component> GAME_DUEL_NOT_ENOUGH_PLAYERS = new ComponentPath("game.duel.not-enough-players", "&cNot enough players");
+    public static final ConfigPath<Component> GAME_DUEL_WINNER_MESSAGE = new ComponentPath("game.duel.winner-message", "&a%winner% won the duel!");
+    public static final ConfigPath<Component> GAME_DUEL_NO_WINNER_MESSAGE = new ComponentPath("game.duel.no-winner-message", "&cNo winner");
 
     public MessageConfig() {
         super(new YamlProvider().loadConfiguration(new File("messages.yml")));
