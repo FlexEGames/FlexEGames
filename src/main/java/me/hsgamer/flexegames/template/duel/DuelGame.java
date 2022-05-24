@@ -133,9 +133,14 @@ public class DuelGame implements ArenaGame {
         return ItemBuilder.buildItem(template.gameDisplayItem, getReplacements());
     }
 
+    @Override
+    public int getPlayers() {
+        return instance.getPlayers().size();
+    }
+
     private Map<String, Supplier<ComponentLike>> getReplacements() {
         return Map.of(
-                "players", () -> Component.text(Integer.toString(instance.getPlayers().size())),
+                "players", () -> Component.text(Integer.toString(getPlayers())),
                 "time", () -> Component.text(TimeUtil.format(timerFeature.getDuration(TimeUnit.MILLISECONDS))),
                 "max-players", () -> Component.text(Integer.toString(template.posList.size())),
                 "state", () -> ArenaUtil.getState(arena),
@@ -181,6 +186,7 @@ public class DuelGame implements ArenaGame {
         instance.eventNode()
                 .addListener(AddEntityToInstanceEvent.class, event -> {
                     if (event.getEntity() instanceof Player player) {
+                        ArenaUtil.callJoinEvent(arena, player);
                         player.setRespawnPoint(template.joinPos);
                         player.setGameMode(GameMode.SURVIVAL);
                         board.addPlayer(player);
@@ -195,6 +201,7 @@ public class DuelGame implements ArenaGame {
                 })
                 .addListener(RemoveEntityFromInstanceEvent.class, event -> {
                     if (event.getEntity() instanceof Player player) {
+                        ArenaUtil.callLeaveEvent(arena, player);
                         board.removePlayer(player);
                         player.removeTag(deadTag);
                         player.reset();

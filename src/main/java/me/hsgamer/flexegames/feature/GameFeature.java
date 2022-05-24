@@ -5,6 +5,7 @@ import lombok.Setter;
 import me.hsgamer.flexegames.api.game.ArenaGame;
 import me.hsgamer.flexegames.api.game.JoinResponse;
 import me.hsgamer.flexegames.api.game.Template;
+import me.hsgamer.flexegames.util.ArenaUtil;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaFeature;
 import me.hsgamer.minigamecore.base.Feature;
@@ -42,6 +43,10 @@ public class GameFeature extends ArenaFeature<GameFeature.ArenaGameFeature> {
         public JoinResponse joinGame(Player player) {
             if (game == null) {
                 return JoinResponse.INCOMPLETE_SETUP;
+            }
+            var event = ArenaUtil.callPreJoinEvent(arena, player);
+            if (!event.getResponse().success()) {
+                return event.getResponse();
             }
             return game.join(player);
         }

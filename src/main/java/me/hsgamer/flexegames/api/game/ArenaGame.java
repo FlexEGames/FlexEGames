@@ -9,6 +9,8 @@ public interface ArenaGame extends Initializer {
 
     ItemStack getDisplayItem();
 
+    int getPlayers();
+
     default JoinResponse join(Player player) {
         return JoinResponse.INCOMPLETE_SETUP;
     }
