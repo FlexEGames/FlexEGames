@@ -1,0 +1,2 @@
+org.tinylog.writers.RollingFileWriter
+net.minestom.server.terminal.MinestomConsoleWriter
