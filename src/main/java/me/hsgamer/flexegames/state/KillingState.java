@@ -10,7 +10,11 @@ public class KillingState implements GameState {
     @Override
     public void start(Arena arena) {
         arena.getArenaFeature(GameFeature.class).getGame().clear();
-        MinecraftServer.getSchedulerManager().scheduleNextTick(arena::removeFromManager);
+    }
+
+    @Override
+    public void update(Arena arena) {
+        arena.removeFromManager();
     }
 
     @Override
