@@ -4,6 +4,7 @@ import me.hsgamer.flexegames.api.chunk.ChunkLoaderType;
 import me.hsgamer.flexegames.api.game.ArenaGame;
 import me.hsgamer.flexegames.api.game.Template;
 import me.hsgamer.flexegames.builder.ItemBuilder;
+import me.hsgamer.flexegames.config.MessageConfig;
 import me.hsgamer.flexegames.config.path.*;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.path.ConfigPath;
@@ -24,19 +25,10 @@ import java.util.Map;
 public class DuelTemplate implements Template {
     public static final ConfigPath<Component> winnerMessagePath = new ComponentPath("winner-message", "&a%winner% won the duel!");
     public static final ConfigPath<Component> noWinnerMessagePath = new ComponentPath("no-winner-message", "&cNo winner");
-    public static final ConfigPath<Component> boardTitlePath = new ComponentPath("board.title", "&e&lDuel");
-    public static final ConfigPath<List<Component>> boardLinesWaitingPath = new StringComponentListPath("board.lines.waiting", List.of(
-            "&eWaiting for players",
-            "&ePlayers: &a%players%",
-            "&eTime Left: &a%time%"
-    ));
-    public static final ConfigPath<List<Component>> boardLinesIngamePath = new StringComponentListPath("board.lines.ingame", List.of(
-            "&eAlive: &a%alive%"
-    ));
-    public static final ConfigPath<List<Component>> boardLinesEndingPath = new StringComponentListPath("board.lines.ending", List.of(
-            "&eEnding in: &a%time%",
-            "&eWinner: &a%winner%"
-    ));
+    public static final ConfigPath<Component> boardTitlePath = new ComponentPath("board.title", MessageConfig.GAME_DUEL_BOARD_TITLE.getValue());
+    public static final ConfigPath<List<Component>> boardLinesWaitingPath = new ComponentListPath("board.lines.waiting", MessageConfig.GAME_DUEL_BOARD_LINES_WAITING.getValue());
+    public static final ConfigPath<List<Component>> boardLinesIngamePath = new ComponentListPath("board.lines.ingame", MessageConfig.GAME_DUEL_BOARD_LINES_INGAME.getValue());
+    public static final ConfigPath<List<Component>> boardLinesEndingPath = new ComponentListPath("board.lines.ending", MessageConfig.GAME_DUEL_BOARD_LINES_ENDING.getValue());
     public static final ConfigPath<Component> notEnoughPlayersPath = new ComponentPath("not-enough-players", "&cNot enough players");
     private static final ConfigPath<Component> displayNamePath = new ComponentPath("display-name", "&e&lDuel");
     private static final ConfigPath<List<Component>> descriptionPath = new ComponentListPath("description", Collections.singletonList(
