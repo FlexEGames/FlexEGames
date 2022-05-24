@@ -8,7 +8,7 @@ import me.hsgamer.minigamecore.base.GameState;
 public class ChoosingState implements GameState {
     @Override
     public void update(Arena arena) {
-        if (arena.getArenaFeature(GameFeature.class).getGame() != null) {
+        if (arena.getArenaFeature(GameFeature.class).isReady()) {
             arena.setNextState(WaitingState.class);
         }
     }

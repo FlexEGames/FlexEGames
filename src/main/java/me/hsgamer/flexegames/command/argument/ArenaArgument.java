@@ -25,7 +25,7 @@ public class ArenaArgument extends Argument<Arena> {
         setSuggestionCallback((sender, context, suggestion) -> {
             String raw = context.getRaw(this);
             gameServer.getGameArenaManager().getAllArenas().forEach(arena -> {
-                if (arena.getArenaFeature(GameFeature.class).getGame() == null) {
+                if (!arena.getArenaFeature(GameFeature.class).isReady()) {
                     return;
                 }
                 String s = arena.getName();
@@ -43,7 +43,7 @@ public class ArenaArgument extends Argument<Arena> {
             throw new ArgumentSyntaxException("Arena not found", input, ARENA_NOT_FOUND);
         }
         Arena arena = optional.get();
-        if (arena.getArenaFeature(GameFeature.class).getGame() == null) {
+        if (!arena.getArenaFeature(GameFeature.class).isReady()) {
             throw new ArgumentSyntaxException("Arena not setup", input, ARENA_NOT_SETUP);
         }
         return arena;

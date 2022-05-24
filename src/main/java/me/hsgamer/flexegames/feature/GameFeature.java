@@ -35,6 +35,10 @@ public class GameFeature extends ArenaFeature<GameFeature.ArenaGameFeature> {
             this.game = template.createGame(arena);
         }
 
+        public boolean isReady() {
+            return game != null;
+        }
+
         public JoinResponse joinGame(Player player) {
             if (game == null) {
                 return JoinResponse.INCOMPLETE_SETUP;

@@ -62,7 +62,7 @@ public class GameArenaManager extends ArenaManager {
     public List<Arena> findArenasByOwner(Predicate<UUID> ownerPredicate) {
         return getAllArenas().stream().filter(arena -> {
             GameFeature.ArenaGameFeature feature = arena.getArenaFeature(GameFeature.class);
-            if (feature.getGame() == null) {
+            if (!feature.isReady()) {
                 return false;
             }
             return ownerPredicate.test(feature.getOwner());
@@ -80,7 +80,7 @@ public class GameArenaManager extends ArenaManager {
     public List<Arena> findArenasByTemplate(Template template) {
         return getAllArenas().stream().filter(arena -> {
             GameFeature.ArenaGameFeature feature = arena.getArenaFeature(GameFeature.class);
-            return feature.getGame() != null && feature.getGame().getTemplate() == template;
+            return feature.isReady() && feature.getGame().getTemplate() == template;
         }).toList();
     }
 

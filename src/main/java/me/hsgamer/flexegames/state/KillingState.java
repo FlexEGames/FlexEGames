@@ -4,7 +4,6 @@ import me.hsgamer.flexegames.config.MessageConfig;
 import me.hsgamer.flexegames.feature.GameFeature;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.GameState;
-import net.minestom.server.MinecraftServer;
 
 public class KillingState implements GameState {
     @Override

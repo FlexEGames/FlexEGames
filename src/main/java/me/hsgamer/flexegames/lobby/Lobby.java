@@ -439,7 +439,7 @@ public class Lobby extends InstanceContainer {
                 }
                 var arena = arenasList.get(index);
                 var feature = arena.getArenaFeature(GameFeature.class);
-                if (feature.getGame() == null) {
+                if (!feature.isReady()) {
                     buttons.put(i, airButton);
                     continue;
                 }
