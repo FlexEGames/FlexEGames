@@ -1,8 +1,8 @@
 package me.hsgamer.flexegames.util;
 
 import lombok.experimental.UtilityClass;
-import me.hsgamer.flexegames.event.ArenaPreJoinEvent;
 import me.hsgamer.flexegames.event.ArenaLeaveEvent;
+import me.hsgamer.flexegames.event.ArenaPreJoinEvent;
 import me.hsgamer.flexegames.feature.GameFeature;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.GameState;

@@ -39,8 +39,6 @@ import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
-import net.minestom.server.network.packet.server.play.TeamsPacket;
-import net.minestom.server.scoreboard.Team;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.timer.ExecutionType;
 import net.minestom.server.timer.Task;
@@ -57,7 +55,6 @@ public class Lobby extends InstanceContainer {
     private final Pos position;
     private final Board board;
     private final Task boardTask;
-    private final Team lobbyTeam;
     private final GameServer gameServer;
     private final List<InstanceModifier> instanceModifiers;
     private final Tag<Boolean> hidePlayerTag = Tag.Boolean("lobby:HidePlayer").defaultValue(false);
@@ -115,9 +112,6 @@ public class Lobby extends InstanceContainer {
                 .repeat(TaskUtil.tick(LobbyConfig.BOARD_UPDATE_TIME.getValue()))
                 .executionType(Boolean.TRUE.equals(LobbyConfig.BOARD_ASYNC.getValue()) ? ExecutionType.ASYNC : ExecutionType.SYNC)
                 .schedule();
-        lobbyTeam = MinecraftServer.getTeamManager().createBuilder("lobbyTeam")
-                .collisionRule(TeamsPacket.CollisionRule.NEVER)
-                .build();
 
         registerHotbarItemFromMap(LobbyConfig.HOTBAR_CREATOR.getValue(), 1, this::openTemplateInventory);
         registerHotbarItemFromMap(LobbyConfig.HOTBAR_SELECTOR.getValue(), 4, player -> openArenaInventory(player, false));
@@ -198,7 +192,6 @@ public class Lobby extends InstanceContainer {
         board.addPlayer(player);
         player.setRespawnPoint(position);
         player.setGameMode(GameMode.ADVENTURE);
-        player.setTeam(lobbyTeam);
     }
 
     private void onBackSpawn(Player player) {
