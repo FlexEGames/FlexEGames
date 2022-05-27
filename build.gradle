@@ -17,7 +17,7 @@ ext {
     core = "4.0.8"
     minigameCore = "1.0.1"
     lombok = "1.18.24"
-    minestom = "f5dc048185"
+    minestom = "a4f392d116"
 }
 
 java {
