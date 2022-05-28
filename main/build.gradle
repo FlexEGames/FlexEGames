@@ -17,6 +17,7 @@ java {
 shadowJar {
     archiveClassifier.set(null)
     archiveBaseName.set(rootProject.name)
+    exclude 'extension.json'
 }
 
 tasks {
