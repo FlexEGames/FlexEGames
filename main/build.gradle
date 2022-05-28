@@ -17,10 +17,6 @@ java {
 shadowJar {
     archiveClassifier.set(null)
     archiveBaseName.set(rootProject.name)
-    minimize {
-        exclude(dependency('me.hsgamer:hscore-config.*:.*'))
-        exclude(dependency('com.github.Minestom:.*:.*'))
-    }
 }
 
 tasks {

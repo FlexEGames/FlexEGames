@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation project(":main")
+    compileOnly project(":main")
 }
 
 processResources {
