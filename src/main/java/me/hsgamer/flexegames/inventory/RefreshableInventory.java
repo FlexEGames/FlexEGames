@@ -26,6 +26,7 @@ public class RefreshableInventory extends Inventory {
     private final RefreshHandler refreshHandler;
     private final AtomicBoolean firstTime = new AtomicBoolean(true);
     private final boolean unregisterOnClose;
+    private final boolean autoRefresh;
 
     private RefreshableInventory(
             @NotNull InventoryType inventoryType,
@@ -36,12 +37,14 @@ public class RefreshableInventory extends Inventory {
             @NotNull OpenHandler openHandler,
             @NotNull CloseHandler closeHandler,
             @NotNull RefreshHandler refreshHandler,
-            @NotNull TaskSchedule updateSchedule
+            @NotNull TaskSchedule updateSchedule,
+            boolean autoRefresh
     ) {
         super(inventoryType, title);
         this.buttonMap = buttonMap;
         this.unregisterOnClose = unregisterOnClose;
         this.refreshHandler = refreshHandler;
+        this.autoRefresh = autoRefresh;
         this.eventNode = EventNode.event("inventory-" + UUID.randomUUID(), EventFilter.INVENTORY, event -> Objects.equals(event.getInventory(), this));
 
         addInventoryCondition((player, slot, clickType, inventoryConditionResult) -> {
@@ -115,7 +118,7 @@ public class RefreshableInventory extends Inventory {
                                 }
                                 return TaskSchedule.stop();
                             }
-                            refresh();
+                            if (autoRefresh) refresh();
                             return taskSchedule;
                         }
                     }));
@@ -136,6 +139,7 @@ public class RefreshableInventory extends Inventory {
         private CloseHandler closeHandler;
         private RefreshHandler refreshHandler;
         private TaskSchedule updateSchedule;
+        private boolean autoRefresh;
 
         private Builder() {
             cancelClickByDefault = true;
@@ -144,6 +148,7 @@ public class RefreshableInventory extends Inventory {
             closeHandler = player -> true;
             refreshHandler = (inv, b) -> true;
             updateSchedule = TaskSchedule.tick(20);
+            autoRefresh = false;
         }
 
         public Builder setInventoryType(@NotNull InventoryType inventoryType) {
@@ -191,6 +196,11 @@ public class RefreshableInventory extends Inventory {
             return this;
         }
 
+        public Builder setAutoRefresh(boolean autoRefresh) {
+            this.autoRefresh = autoRefresh;
+            return this;
+        }
+
         public RefreshableInventory build() {
             if (inventoryType == null) {
                 throw new IllegalStateException("inventoryType is null");
@@ -210,7 +220,8 @@ public class RefreshableInventory extends Inventory {
                     openHandler,
                     closeHandler,
                     refreshHandler,
-                    updateSchedule
+                    updateSchedule,
+                    autoRefresh
             );
         }
     }
