@@ -5,3 +5,12 @@ plugins {
 dependencies {
     implementation project(":main")
 }
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        expand (
+                'version': project.version
+        )
+        include 'extension.json'
+    }
+}

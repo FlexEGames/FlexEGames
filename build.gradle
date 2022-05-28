@@ -12,4 +12,8 @@ subprojects {
         maven { url 'https://jitpack.io' }
         maven { url 'https://repo.codemc.io/repository/maven-public/' }
     }
+
+    processResources {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
 }
