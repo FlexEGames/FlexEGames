@@ -32,7 +32,7 @@ publishing {
             project.shadow.component(publication)
             artifactId = rootProject.name
             pom {
-                name = 'FlexEGames'
+                name = rootProject.name
             }
         }
     }
