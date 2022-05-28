@@ -1,80 +1,15 @@
-plugins {
-    id 'java-library'
-    id 'maven-publish'
-    id "com.github.johnrengelman.shadow" version "7.1.2"
+allprojects {
+    group 'me.hsgamer'
+    version '1.0-SNAPSHOT'
 }
 
-group 'me.hsgamer'
-version '1.0-SNAPSHOT'
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'java-library'
 
-repositories {
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
-    maven { url 'https://repo.codemc.io/repository/maven-public/'}
-}
-
-ext {
-    core = "4.0.8"
-    minigameCore = "1.0.1"
-    lombok = "1.18.24"
-    minestom = "a4f392d116"
-}
-
-java {
-    withSourcesJar()
-}
-
-shadowJar {
-    archiveClassifier.set(null)
-    minimize {
-        exclude(dependency('me.hsgamer:hscore-config.*:.*'))
-        exclude(dependency('com.github.Minestom:.*:.*'))
-    }
-}
-
-tasks {
-    build {
-        dependsOn(tasks.shadowJar)
-    }
-}
-
-publishing {
-    publications {
-        shadow(MavenPublication) { publication ->
-            project.shadow.component(publication)
-            artifactId = project.name
-            pom {
-                name = 'FlexEGames'
-            }
-        }
-    }
-}
-
-dependencies {
-    implementation "me.hsgamer:hscore-config-simplixstorage:$core"
-    implementation "me.hsgamer:hscore-config-proxy:$core"
-    implementation "me.hsgamer:hscore-config-path:$core"
-    implementation "me.hsgamer:hscore-config-annotated:$core"
-    implementation "me.hsgamer:hscore-builder:$core"
-    implementation "me.hsgamer:hscore-common:$core"
-    implementation "me.hsgamer:hscore-collections:$core"
-
-    implementation "me.hsgamer:minigamecore-base:$minigameCore"
-    implementation "me.hsgamer:minigamecore-implementation:$minigameCore"
-
-    implementation "com.github.Minestom:Minestom:$minestom"
-    implementation "com.github.CatDevz:SlimeLoader:a8e533636c"
-    implementation "com.github.Bloepiloepi:MinestomPvP:a859478774"
-    implementation 'com.github.TogAr2.MinestomBlocks:MinestomBlocks:7f1b5afd5c'
-
-    compileOnly "org.projectlombok:lombok:$lombok"
-    annotationProcessor "org.projectlombok:lombok:$lombok"
-    testCompileOnly "org.projectlombok:lombok:$lombok"
-    testAnnotationProcessor "org.projectlombok:lombok:$lombok"
-}
-
-jar {
-    manifest {
-        attributes 'Main-Class': 'me.hsgamer.flexegames.FlexEGames', "Multi-Release": true
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://repo.codemc.io/repository/maven-public/' }
     }
 }

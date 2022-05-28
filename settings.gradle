@@ -1,2 +1,4 @@
 rootProject.name = 'FlexEGames'
+include 'main'
+include 'duel'
 

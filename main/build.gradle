@@ -1,0 +1,71 @@
+plugins {
+    id 'maven-publish'
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+ext {
+    core = "4.0.8"
+    minigameCore = "1.0.1"
+    lombok = "1.18.24"
+    minestom = "a4f392d116"
+}
+
+java {
+    withSourcesJar()
+}
+
+shadowJar {
+    archiveClassifier.set(null)
+    archiveBaseName.set(rootProject.name)
+    minimize {
+        exclude(dependency('me.hsgamer:hscore-config.*:.*'))
+        exclude(dependency('com.github.Minestom:.*:.*'))
+    }
+}
+
+tasks {
+    build {
+        dependsOn(tasks.shadowJar)
+    }
+}
+
+publishing {
+    publications {
+        shadow(MavenPublication) { publication ->
+            project.shadow.component(publication)
+            artifactId = rootProject.name
+            pom {
+                name = 'FlexEGames'
+            }
+        }
+    }
+}
+
+dependencies {
+    api "me.hsgamer:hscore-config-simplixstorage:$core"
+    api "me.hsgamer:hscore-config-proxy:$core"
+    api "me.hsgamer:hscore-config-path:$core"
+    api "me.hsgamer:hscore-config-annotated:$core"
+    api "me.hsgamer:hscore-builder:$core"
+    api "me.hsgamer:hscore-common:$core"
+    api "me.hsgamer:hscore-collections:$core"
+
+    api "me.hsgamer:minigamecore-base:$minigameCore"
+    api "me.hsgamer:minigamecore-implementation:$minigameCore"
+
+    api "com.github.Minestom:Minestom:$minestom"
+    api "com.github.CatDevz:SlimeLoader:a8e533636c"
+    api "com.github.Bloepiloepi:MinestomPvP:a859478774"
+    api 'com.github.TogAr2.MinestomBlocks:MinestomBlocks:7f1b5afd5c'
+
+    compileOnly "org.projectlombok:lombok:$lombok"
+    annotationProcessor "org.projectlombok:lombok:$lombok"
+    testCompileOnly "org.projectlombok:lombok:$lombok"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombok"
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'me.hsgamer.flexegames.FlexEGames', "Multi-Release": true
+    }
+}
