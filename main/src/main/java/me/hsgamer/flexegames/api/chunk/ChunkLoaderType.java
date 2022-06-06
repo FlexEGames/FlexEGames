@@ -1,26 +1,14 @@
 package me.hsgamer.flexegames.api.chunk;
 
-import gg.astromc.slimeloader.loader.SlimeLoader;
-import gg.astromc.slimeloader.source.FileSlimeSource;
-import gg.astromc.slimeloader.source.SlimeSource;
 import net.minestom.server.instance.AnvilLoader;
 import net.minestom.server.instance.IChunkLoader;
 import net.minestom.server.instance.Instance;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.nio.file.Path;
 
 public enum ChunkLoaderType {
-    ANVIL((instance, path, readOnly) -> new AnvilLoader(path)),
-    SLIME((instance, path, readOnly) -> {
-        File file = path.toFile();
-        if (!file.exists()) {
-            return null;
-        }
-        SlimeSource slimeSource = new FileSlimeSource(file);
-        return new SlimeLoader(instance, slimeSource, readOnly);
-    });
+    ANVIL((instance, path, readOnly) -> new AnvilLoader(path));
 
     private final ChunkLoaderProvider provider;
 

@@ -7,7 +7,6 @@ ext {
     core = "4.0.8"
     minigameCore = "1.0.1"
     lombok = "1.18.24"
-    minestom = "58b6e90142"
 }
 
 java {
@@ -50,10 +49,9 @@ dependencies {
     api "me.hsgamer:minigamecore-base:$minigameCore"
     api "me.hsgamer:minigamecore-implementation:$minigameCore"
 
-    api "com.github.Minestom:Minestom:$minestom"
-    api "com.github.CatDevz:SlimeLoader:a8e533636c"
-    api "com.github.Bloepiloepi:MinestomPvP:a859478774"
-    api 'com.github.TogAr2.MinestomBlocks:MinestomBlocks:7f1b5afd5c'
+    api "com.github.Minestom:Minestom:b112248ae8"
+    api "com.github.Bloepiloepi:MinestomPvP:eaf2166b50"
+    api 'com.github.TogAr2.MinestomBlocks:MinestomBlocks:9ecfb613dc'
 
     compileOnly "org.projectlombok:lombok:$lombok"
     annotationProcessor "org.projectlombok:lombok:$lombok"
