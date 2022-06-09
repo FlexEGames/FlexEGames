@@ -1,7 +1,6 @@
 package me.hsgamer.flexegames;
 
 import io.github.bloepiloepi.pvp.PvpExtension;
-import io.github.togar2.blocks.MinestomBlocks;
 import lombok.Getter;
 import me.hsgamer.flexegames.board.Board;
 import me.hsgamer.flexegames.command.*;
@@ -82,7 +81,6 @@ public class GameServer {
         PerInstanceTabListHook.hook(globalNode);
         Board.hook(globalNode);
         ChatHook.hook(globalNode);
-        MinestomBlocks.init();
         PvpExtension.init();
         PlacementRules.init();
         OptifineSupport.enable();
