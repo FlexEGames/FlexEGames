@@ -132,8 +132,8 @@ public class GameServer {
 
     @ApiStatus.Internal
     public void stop() {
-        MinecraftServer.stopCleanly();
         gameArenaManager.clear();
         lobby.clear();
+        MinecraftServer.stopCleanly();
     }
 }
