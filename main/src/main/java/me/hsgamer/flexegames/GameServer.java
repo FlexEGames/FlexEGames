@@ -17,6 +17,7 @@ import me.hsgamer.flexegames.manager.GameArenaManager;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.manager.TemplateManager;
 import me.hsgamer.flexegames.player.GamePlayer;
+import me.hsgamer.flexegames.util.SysOutErrRedirect;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
@@ -44,6 +45,9 @@ public class GameServer {
     private final Lobby lobby;
 
     public GameServer() {
+        // Redirect System.out and System.err to the logger
+        SysOutErrRedirect.init();
+
         // CONFIG
         mainConfig.setup();
         lobbyConfig.setup();
