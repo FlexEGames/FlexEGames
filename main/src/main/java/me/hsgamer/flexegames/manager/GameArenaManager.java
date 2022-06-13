@@ -15,6 +15,7 @@ import me.hsgamer.minigamecore.implementation.feature.arena.ArenaTimerFeature;
 import net.minestom.server.entity.Player;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -93,5 +94,13 @@ public class GameArenaManager extends ArenaManager {
         arena.getArenaFeature(GameFeature.class).setGame(template);
         arena.getArenaFeature(GameFeature.class).setOwner(player.getUuid());
         return true;
+    }
+
+
+    public Optional<Arena> getJoinedArena(Player player) {
+        return getAllArenas().parallelStream().filter(arena -> {
+            GameFeature.ArenaGameFeature feature = arena.getArenaFeature(GameFeature.class);
+            return feature.isReady() && feature.getGame().isInGame(player);
+        }).findFirst();
     }
 }

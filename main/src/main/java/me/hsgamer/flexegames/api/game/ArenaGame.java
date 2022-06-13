@@ -1,15 +1,32 @@
 package me.hsgamer.flexegames.api.game;
 
 import me.hsgamer.minigamecore.base.Initializer;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
+
+import java.util.Collection;
+import java.util.UUID;
 
 public interface ArenaGame extends Initializer {
     Template getTemplate();
 
     ItemStack getDisplayItem();
 
-    int getPlayers();
+    Collection<Player> getPlayers();
+
+    default boolean isInGame(Player player) {
+        return getPlayers().contains(player);
+    }
+
+    default boolean isInGame(UUID uuid) {
+        var player = MinecraftServer.getConnectionManager().getPlayer(uuid);
+        return player != null && isInGame(player);
+    }
+
+    default int getPlayerCount() {
+        return getPlayers().size();
+    }
 
     default JoinResponse join(Player player) {
         return JoinResponse.INCOMPLETE_SETUP;

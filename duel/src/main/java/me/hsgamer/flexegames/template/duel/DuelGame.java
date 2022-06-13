@@ -133,18 +133,18 @@ public class DuelGame implements ArenaGame {
     }
 
     @Override
-    public int getPlayers() {
-        return instance.getPlayers().size();
+    public Collection<Player> getPlayers() {
+        return instance.getPlayers();
     }
 
     private Map<String, Supplier<ComponentLike>> getReplacements() {
         return Map.of(
-                "players", () -> Component.text(Integer.toString(getPlayers())),
+                "players", () -> Component.text(Integer.toString(getPlayerCount())),
                 "time", () -> Component.text(TimeUtil.format(timerFeature.getDuration(TimeUnit.MILLISECONDS))),
                 "max-players", () -> Component.text(Integer.toString(template.posList.size())),
-                "state", () -> ArenaUtil.getState(arena),
+                "state", () -> ArenaUtil.getDisplayState(arena),
                 "template", () -> template.displayName,
-                "owner", () -> ArenaUtil.getOwner(arena),
+                "owner", () -> ArenaUtil.getDisplayOwner(arena),
                 "name", () -> Component.text(arena.getName()),
                 "winner", () -> Optional.ofNullable(winner.get()).map(Player::getName).orElse(Component.empty()),
                 "alive", () -> Component.text(Integer.toString(getAlivePlayers().size()))
