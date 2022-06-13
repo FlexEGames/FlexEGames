@@ -58,7 +58,7 @@ public class GameServer {
         // COMMAND
         CommandManager commandManager = MinecraftServer.getCommandManager();
         commandManager.setUnknownCommandCallback((sender, c) -> sender.sendMessage("Unknown command: " + c));
-        commandManager.register(new StopCommand(this));
+        commandManager.register(new StopCommand());
         commandManager.register(new LeaveCommand(this));
         commandManager.register(new CreateArenaCommand(this));
         commandManager.register(new JoinArenaCommand(this));
@@ -128,12 +128,10 @@ public class GameServer {
         templateManager.init();
         gameArenaManager.init();
         gameArenaManager.postInit();
-    }
 
-    @ApiStatus.Internal
-    public void stop() {
-        gameArenaManager.clear();
-        lobby.clear();
-        MinecraftServer.stopCleanly();
+        MinecraftServer.getSchedulerManager().buildShutdownTask(() -> {
+            gameArenaManager.clear();
+            lobby.clear();
+        });
     }
 }
