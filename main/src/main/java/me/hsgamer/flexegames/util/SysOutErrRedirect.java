@@ -1,12 +1,13 @@
 package me.hsgamer.flexegames.util;
 
 import lombok.experimental.UtilityClass;
-import net.minestom.server.MinecraftServer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
+
+import static net.minestom.server.MinecraftServer.LOGGER;
 
 @UtilityClass
 public final class SysOutErrRedirect {
@@ -32,9 +33,9 @@ public final class SysOutErrRedirect {
             }
             String format = prefix + x;
             if (isError) {
-                MinecraftServer.LOGGER.error(format);
+                LOGGER.error(format);
             } else {
-                MinecraftServer.LOGGER.info(format);
+                LOGGER.info(format);
             }
         }
     }
