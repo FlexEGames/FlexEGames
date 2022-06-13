@@ -118,6 +118,7 @@ public class DuelGame implements ArenaGame {
         if (!isFinished.get()) {
             player.setTag(deadTag, true);
             player.setGameMode(GameMode.SPECTATOR);
+            player.setInvisible(true);
         }
     }
 
