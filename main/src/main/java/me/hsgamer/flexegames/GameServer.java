@@ -48,6 +48,11 @@ public class GameServer {
         // Redirect System.out and System.err to the logger
         SysOutErrRedirect.init();
 
+        // Redirect Throwable handler
+        MinecraftServer.getExceptionManager().setExceptionHandler(throwable ->
+                MinecraftServer.LOGGER.error("Throwable: " + throwable.getMessage(), throwable)
+        );
+
         // CONFIG
         mainConfig.setup();
         lobbyConfig.setup();
