@@ -4,7 +4,7 @@ plugins {
 }
 
 ext {
-    core = "4.0.8"
+    core = "4.1.0-SNAPSHOT"
     minigameCore = "1.0.1"
     lombok = "1.18.24"
 }
@@ -41,10 +41,11 @@ dependencies {
     api "me.hsgamer:hscore-config-simplixstorage:$core"
     api "me.hsgamer:hscore-config-proxy:$core"
     api "me.hsgamer:hscore-config-path:$core"
-    api "me.hsgamer:hscore-config-annotated:$core"
     api "me.hsgamer:hscore-builder:$core"
     api "me.hsgamer:hscore-common:$core"
     api "me.hsgamer:hscore-collections:$core"
+    api "me.hsgamer:hscore-minestom-board:$core"
+    api "me.hsgamer:hscore-minestom-gui:$core"
 
     api "me.hsgamer:minigamecore-base:$minigameCore"
     api "me.hsgamer:minigamecore-implementation:$minigameCore"

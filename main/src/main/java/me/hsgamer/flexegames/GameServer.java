@@ -2,7 +2,6 @@ package me.hsgamer.flexegames;
 
 import io.github.bloepiloepi.pvp.PvpExtension;
 import lombok.Getter;
-import me.hsgamer.flexegames.board.Board;
 import me.hsgamer.flexegames.command.*;
 import me.hsgamer.flexegames.config.ChatConfig;
 import me.hsgamer.flexegames.config.LobbyConfig;
@@ -18,6 +17,7 @@ import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.manager.TemplateManager;
 import me.hsgamer.flexegames.player.GamePlayer;
 import me.hsgamer.flexegames.util.SysOutErrRedirect;
+import me.hsgamer.hscore.minestom.board.Board;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;

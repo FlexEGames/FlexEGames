@@ -1,10 +1,12 @@
 package me.hsgamer.flexegames.util;
 
 import lombok.experimental.UtilityClass;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.attribute.Attribute;
 import net.minestom.server.entity.Player;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @UtilityClass
 public final class PlayerUtil {
@@ -35,5 +37,9 @@ public final class PlayerUtil {
         player.askSynchronization();
         player.updateViewerRule(entity -> true);
         player.updateViewableRule(player1 -> true);
+    }
+
+    public static Player getPlayer(UUID uuid) {
+        return MinecraftServer.getConnectionManager().getPlayer(uuid);
     }
 }

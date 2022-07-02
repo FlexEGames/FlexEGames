@@ -2,23 +2,21 @@ package me.hsgamer.flexegames.lobby;
 
 import lombok.experimental.ExtensionMethod;
 import me.hsgamer.flexegames.GameServer;
+import me.hsgamer.flexegames.api.game.Template;
 import me.hsgamer.flexegames.api.modifier.InstanceModifier;
-import me.hsgamer.flexegames.board.Board;
 import me.hsgamer.flexegames.builder.InstanceModifierBuilder;
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.config.LobbyConfig;
 import me.hsgamer.flexegames.config.MessageConfig;
 import me.hsgamer.flexegames.feature.GameFeature;
-import me.hsgamer.flexegames.inventory.Button;
-import me.hsgamer.flexegames.inventory.ButtonMap;
-import me.hsgamer.flexegames.inventory.ClickConsumer;
-import me.hsgamer.flexegames.inventory.RefreshableInventory;
 import me.hsgamer.flexegames.manager.ReplacementManager;
-import me.hsgamer.flexegames.util.AssetUtil;
-import me.hsgamer.flexegames.util.FullBrightDimension;
-import me.hsgamer.flexegames.util.ItemUtil;
-import me.hsgamer.flexegames.util.TaskUtil;
+import me.hsgamer.flexegames.util.*;
 import me.hsgamer.hscore.common.Validate;
+import me.hsgamer.hscore.minestom.board.Board;
+import me.hsgamer.hscore.minestom.gui.GUIDisplay;
+import me.hsgamer.hscore.minestom.gui.GUIHolder;
+import me.hsgamer.hscore.minestom.gui.button.Button;
+import me.hsgamer.hscore.minestom.gui.button.ButtonMap;
 import me.hsgamer.minigamecore.base.Arena;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
@@ -42,15 +40,17 @@ import net.minestom.server.item.Material;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.timer.ExecutionType;
 import net.minestom.server.timer.Task;
+import net.minestom.server.timer.TaskSchedule;
 import net.minestom.server.utils.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
-@ExtensionMethod({ItemUtil.class})
+@ExtensionMethod({ItemUtil.class, PlayerUtil.class})
 public class Lobby extends InstanceContainer {
     private final Pos position;
     private final Board board;
@@ -58,6 +58,9 @@ public class Lobby extends InstanceContainer {
     private final GameServer gameServer;
     private final List<InstanceModifier> instanceModifiers;
     private final Tag<Boolean> hidePlayerTag = Tag.Boolean("lobby:HidePlayer").defaultValue(false);
+    private final Map<UUID, Supplier<List<Arena>>> arenaSupplierRefMap = new ConcurrentHashMap<>();
+    private GUIHolder arenaGUIHolder;
+    private GUIHolder templateGUIHolder;
 
     public Lobby(GameServer gameServer) {
         super(LobbyConfig.UNIQUE_ID.getValue(), FullBrightDimension.INSTANCE);
@@ -126,6 +129,9 @@ public class Lobby extends InstanceContainer {
                         .map(provider -> provider.getInstanceModifier(this))
                         .ifPresent(instanceModifiers::add)
                 );
+
+        setupArenaGUIHolder();
+        setupTemplateGUIHolder();
     }
 
     public void registerHotbarItemFromMap(Map<String, Object> map, int defaultSlot, Consumer<Player> consumer) {
@@ -215,6 +221,12 @@ public class Lobby extends InstanceContainer {
     }
 
     public void clear() {
+        if (templateGUIHolder != null) {
+            templateGUIHolder.stop();
+        }
+        if (arenaGUIHolder != null) {
+            arenaGUIHolder.stop();
+        }
         boardTask.cancel();
         instanceModifiers.forEach(InstanceModifier::clear);
     }
@@ -223,263 +235,273 @@ public class Lobby extends InstanceContainer {
         return player.getInstance() == null || player.getInstance() == this;
     }
 
-    public void openTemplateInventory(Player openPlayer) {
-        var templates = new ArrayList<>(gameServer.getTemplateManager().getTemplateMap().values());
-        var maxPage = getMaxPage(templates.size());
-        var pages = new AtomicReference<>(0);
+    private void setupTemplateGUIHolder() {
+        templateGUIHolder = new GUIHolder();
+        Supplier<List<Template>> templates = () -> new ArrayList<>(gameServer.getTemplateManager().getTemplateMap().values());
+        IntSupplier maxPage = () -> getMaxPage(templates.get().size());
+        var uuidPage = new HashMap<UUID, Integer>();
         Button nextPageButton = new Button() {
             @Override
-            public ItemStack getItem() {
+            public ItemStack getItemStack(UUID uuid) {
                 return ItemBuilder.buildItem(LobbyConfig.INVENTORY_TEMPLATE_NEXT_PAGE.getValue()).stripItalics();
             }
 
             @Override
-            public ClickConsumer getClickConsumer() {
-                return (player, clickType, result) -> {
-                    result.setCancel(true);
-                    var page = pages.get();
-                    if (page < maxPage - 1) {
-                        pages.set(page + 1);
+            public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
+                uuidPage.compute(uuid, (key, oldPage) -> {
+                    if (oldPage == null)
+                        oldPage = 0;
+                    if (oldPage < maxPage.getAsInt() - 1) {
+                        return oldPage + 1;
+                    } else {
+                        return oldPage;
                     }
-                    return true;
-                };
+                });
+                templateGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
+                return false;
             }
         };
         Button previousPageButton = new Button() {
             @Override
-            public ItemStack getItem() {
+            public ItemStack getItemStack(UUID uuid) {
                 return ItemBuilder.buildItem(LobbyConfig.INVENTORY_TEMPLATE_PREVIOUS_PAGE.getValue()).stripItalics();
             }
 
             @Override
-            public ClickConsumer getClickConsumer() {
-                return (player, clickType, result) -> {
-                    result.setCancel(true);
-                    var page = pages.get();
-                    if (page > 0) {
-                        pages.set(page - 1);
+            public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
+                uuidPage.compute(uuid, (key, oldPage) -> {
+                    if (oldPage == null)
+                        oldPage = 0;
+                    if (oldPage > 0) {
+                        return oldPage - 1;
+                    } else {
+                        return oldPage;
                     }
-                    return true;
-                };
+                });
+                templateGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
+                return false;
             }
         };
         Button arenaButton = new Button() {
             @Override
-            public ItemStack getItem() {
+            public ItemStack getItemStack(UUID uuid) {
                 return ItemBuilder.buildItem(LobbyConfig.INVENTORY_TEMPLATE_ARENA.getValue()).stripItalics();
             }
 
             @Override
-            public ClickConsumer getClickConsumer() {
-                return (player, clickType, result) -> {
-                    result.setCancel(true);
-                    openArenaInventory(player, false);
-                    return false;
-                };
+            public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
+                openArenaInventory(uuid.getPlayer(), false);
+                return false;
             }
         };
-        Button dummyButton = () -> ItemStack.of(Material.BLACK_STAINED_GLASS_PANE).withDisplayName(Component.empty());
-        Button airButton = () -> ItemStack.AIR;
-        ButtonMap buttonMap = inventory -> {
-            var buttons = new HashMap<Integer, Button>();
-            var page = pages.get();
+        Button dummyButton = uuid -> ItemStack.of(Material.BLACK_STAINED_GLASS_PANE).withDisplayName(Component.empty());
+        ButtonMap buttonMap = uuid -> {
+            var buttons = new HashMap<Button, List<Integer>>();
+            var page = uuidPage.getOrDefault(uuid, 0);
             for (int i = 0; i < 18; i++) {
                 var index = i + page * 18;
-                if (index >= templates.size()) {
-                    buttons.put(i, airButton);
+                if (index >= templates.get().size()) {
                     continue;
                 }
-                var template = templates.get(index);
-                buttons.put(i, new Button() {
+                var template = templates.get().get(index);
+                buttons.put(new Button() {
                     @Override
-                    public ItemStack getItem() {
+                    public ItemStack getItemStack(UUID uuid) {
                         return template.getDisplayItem().stripItalics();
                     }
 
                     @Override
-                    public ClickConsumer getClickConsumer() {
-                        return (player, clickType, result) -> {
-                            result.setCancel(true);
-                            if (gameServer.getGameArenaManager().createArena(player, template)) {
-                                player.sendMessage(MessageConfig.RESPONSE_CREATE_ARENA_SUCCESSFUL.getValue());
-                                openArenaInventory(player, true);
-                            } else {
-                                player.sendMessage(MessageConfig.RESPONSE_CANNOT_CREATE_ARENA.getValue());
-                            }
-                            return false;
-                        };
+                    public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
+                        var player = uuid.getPlayer();
+                        if (gameServer.getGameArenaManager().createArena(player, template)) {
+                            player.sendMessage(MessageConfig.RESPONSE_CREATE_ARENA_SUCCESSFUL.getValue());
+                            openArenaInventory(player, true);
+                        } else {
+                            player.sendMessage(MessageConfig.RESPONSE_CANNOT_CREATE_ARENA.getValue());
+                        }
+                        return false;
                     }
-                });
+                }, Collections.singletonList(i));
             }
-            buttons.put(18, previousPageButton);
-            buttons.put(19, nextPageButton);
-            for (int i = 20; i < 26; i++) {
-                buttons.put(i, dummyButton);
-            }
-            buttons.put(26, arenaButton);
+            buttons.put(previousPageButton, Collections.singletonList(18));
+            buttons.put(nextPageButton, Collections.singletonList(19));
+            buttons.put(dummyButton, Arrays.asList(20, 21, 22, 23, 24, 25));
+            buttons.put(arenaButton, Collections.singletonList(26));
             return buttons;
         };
-        RefreshableInventory inventory = RefreshableInventory.builder()
-                .setInventoryType(InventoryType.CHEST_3_ROW)
-                .setTitle(LobbyConfig.INVENTORY_TEMPLATE_TITLE.getValue())
-                .setButtonMap(buttonMap)
-                .setUnregisterOnClose(true)
-                .build();
-        openPlayer.openInventory(inventory);
+        templateGUIHolder.setTitle(LobbyConfig.INVENTORY_TEMPLATE_TITLE.getValue());
+        templateGUIHolder.setInventoryType(InventoryType.CHEST_3_ROW);
+        templateGUIHolder.setRemoveDisplayOnClose(true);
+        templateGUIHolder.setButtonMap(buttonMap);
+        templateGUIHolder.init();
     }
 
-    public void openArenaInventory(Player openPlayer, Supplier<List<Arena>> arenaSupplier) {
-        var arenaSupplierRef = new AtomicReference<>(arenaSupplier);
-        var arenas = new AtomicReference<>(arenaSupplierRef.get().get());
-        var pages = new AtomicReference<>(0);
+    public void openTemplateInventory(Player openPlayer) {
+        templateGUIHolder.createDisplay(openPlayer.getUuid()).init();
+    }
 
+    public void setArenaSupplierRef(UUID uuid, Supplier<List<Arena>> arenaSupplierRef) {
+        arenaSupplierRefMap.put(uuid, arenaSupplierRef);
+    }
+
+    private void setupArenaGUIHolder() {
+        var uuidArenas = new ConcurrentHashMap<UUID, List<Arena>>();
+        var uuidPage = new ConcurrentHashMap<UUID, Integer>();
         Button nextPageButton = new Button() {
             @Override
-            public ItemStack getItem() {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_ARENA_NEXT_PAGE.getValue()).stripItalics();
+            public ItemStack getItemStack(UUID uuid) {
+                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_TEMPLATE_NEXT_PAGE.getValue()).stripItalics();
             }
 
             @Override
-            public ClickConsumer getClickConsumer() {
-                return (player, clickType, result) -> {
-                    result.setCancel(true);
-                    var page = pages.get() + 1;
-                    if (page >= getMaxPage(arenas.get().size())) {
-                        page = 0;
+            public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
+                uuidPage.compute(uuid, (key, oldPage) -> {
+                    if (oldPage == null)
+                        oldPage = 0;
+                    if (oldPage < getMaxPage(uuidArenas.getOrDefault(uuid, Collections.emptyList()).size()) - 1) {
+                        return oldPage + 1;
+                    } else {
+                        return oldPage;
                     }
-                    pages.set(page);
-                    return true;
-                };
+                });
+                templateGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
+                return false;
             }
         };
         Button previousPageButton = new Button() {
             @Override
-            public ItemStack getItem() {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_ARENA_PREVIOUS_PAGE.getValue()).stripItalics();
+            public ItemStack getItemStack(UUID uuid) {
+                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_TEMPLATE_PREVIOUS_PAGE.getValue()).stripItalics();
             }
 
             @Override
-            public ClickConsumer getClickConsumer() {
-                return (player, clickType, result) -> {
-                    result.setCancel(true);
-                    var page = pages.get() - 1;
-                    if (page < 0) {
-                        page = Math.max(getMaxPage(arenas.get().size()) - 1, 0);
+            public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
+                uuidPage.compute(uuid, (key, oldPage) -> {
+                    if (oldPage == null)
+                        oldPage = 0;
+                    if (oldPage > 0) {
+                        return oldPage - 1;
+                    } else {
+                        return oldPage;
                     }
-                    pages.set(page);
-                    return true;
-                };
+                });
+                templateGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
+                return false;
             }
         };
         Button globalArenaButton = new Button() {
             @Override
-            public ItemStack getItem() {
+            public ItemStack getItemStack(UUID uuid) {
                 return ItemBuilder.buildItem(LobbyConfig.INVENTORY_ARENA_GLOBAL_ARENA.getValue()).stripItalics();
             }
 
             @Override
-            public ClickConsumer getClickConsumer() {
-                return (player, clickType, result) -> {
-                    result.setCancel(true);
-                    pages.set(0);
-                    arenaSupplierRef.set(() -> gameServer.getGameArenaManager().getAllArenas());
-                    return true;
-                };
+            public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
+                uuidPage.put(uuid, 0);
+                setArenaSupplierRef(uuid, () -> gameServer.getGameArenaManager().getAllArenas());
+                return false;
             }
         };
         Button myArenaButton = new Button() {
             @Override
-            public ItemStack getItem() {
+            public ItemStack getItemStack(UUID uuid) {
                 return ItemBuilder.buildItem(LobbyConfig.INVENTORY_ARENA_MY_ARENA.getValue()).stripItalics();
             }
 
             @Override
-            public ClickConsumer getClickConsumer() {
-                return (player, clickType, result) -> {
-                    result.setCancel(true);
-                    pages.set(0);
-                    arenaSupplierRef.set(() -> gameServer.getGameArenaManager().findArenasByOwner(player));
-                    return true;
-                };
+            public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
+                uuidPage.put(uuid, 0);
+                setArenaSupplierRef(uuid, () -> gameServer.getGameArenaManager().findArenasByOwner(uuid1 -> uuid1.equals(uuid)));
+                return false;
             }
         };
         Button templateButton = new Button() {
             @Override
-            public ItemStack getItem() {
+            public ItemStack getItemStack(UUID uuid) {
                 return ItemBuilder.buildItem(LobbyConfig.INVENTORY_ARENA_TEMPLATE.getValue()).stripItalics();
             }
 
             @Override
-            public ClickConsumer getClickConsumer() {
-                return (player, clickType, result) -> {
-                    result.setCancel(true);
-                    openTemplateInventory(player);
-                    return false;
-                };
+            public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
+                openTemplateInventory(uuid.getPlayer());
+                return false;
             }
         };
-        Button dummyButton = () -> ItemStack.of(Material.BLACK_STAINED_GLASS_PANE).withDisplayName(Component.empty());
-        Button airButton = () -> ItemStack.AIR;
-        ButtonMap buttonMap = inventory -> {
-            var buttons = new HashMap<Integer, Button>();
-            var arenasList = arenas.get();
-            var page = pages.get();
+        Button dummyButton = uuid -> ItemStack.of(Material.BLACK_STAINED_GLASS_PANE).withDisplayName(Component.empty());
+        ButtonMap buttonMap = uuid -> {
+            var buttons = new HashMap<Button, List<Integer>>();
+            var arenasList = uuidArenas.getOrDefault(uuid, Collections.emptyList());
+            var page = uuidPage.getOrDefault(uuid, 0);
             for (int i = 0; i < 18; i++) {
                 var index = i + page * 18;
                 if (index >= arenasList.size()) {
-                    buttons.put(i, airButton);
                     continue;
                 }
                 var arena = arenasList.get(index);
                 var feature = arena.getArenaFeature(GameFeature.class);
                 if (!feature.isReady()) {
-                    buttons.put(i, airButton);
                     continue;
                 }
-                buttons.put(i, new Button() {
+                buttons.put(new Button() {
                     @Override
-                    public ItemStack getItem() {
+                    public ItemStack getItemStack(UUID uuid) {
                         return feature.getGame().getDisplayItem().stripItalics();
                     }
 
                     @Override
-                    public ClickConsumer getClickConsumer() {
-                        return (player, clickType, result) -> {
-                            result.setCancel(true);
-                            var response = feature.joinGame(player);
-                            if (!response.success()) {
-                                player.sendMessage(response.getMessage(player));
-                            } else {
-                                player.closeInventory();
-                            }
-                            return false;
-                        };
+                    public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
+                        var player = uuid.getPlayer();
+                        var response = feature.joinGame(player);
+                        if (!response.success()) {
+                            player.sendMessage(response.getMessage(player));
+                        } else {
+                            player.closeInventory();
+                        }
+                        return false;
                     }
-                });
+                }, Collections.singletonList(i));
             }
-            buttons.put(18, previousPageButton);
-            buttons.put(19, nextPageButton);
-            buttons.put(20, dummyButton);
-            buttons.put(21, dummyButton);
-            buttons.put(22, dummyButton);
-            buttons.put(23, dummyButton);
-            buttons.put(24, myArenaButton);
-            buttons.put(25, globalArenaButton);
-            buttons.put(26, templateButton);
+            buttons.put(previousPageButton, Collections.singletonList(18));
+            buttons.put(nextPageButton, Collections.singletonList(19));
+            buttons.put(dummyButton, Arrays.asList(20, 21, 22, 23));
+            buttons.put(myArenaButton, Collections.singletonList(24));
+            buttons.put(globalArenaButton, Collections.singletonList(25));
+            buttons.put(templateButton, Collections.singletonList(26));
             return buttons;
         };
-        RefreshableInventory inventory = RefreshableInventory.builder()
-                .setInventoryType(InventoryType.CHEST_3_ROW)
-                .setTitle(LobbyConfig.INVENTORY_ARENA_TITLE.getValue())
-                .setButtonMap(buttonMap)
-                .setRefreshHandler((inv, firstTime) -> {
-                    arenas.set(arenaSupplierRef.get().get());
-                    return true;
-                })
-                .setUnregisterOnClose(true)
-                .setAutoRefresh(true)
-                .build();
-        openPlayer.openInventory(inventory);
+
+
+        var updateTasks = new ConcurrentHashMap<UUID, Task>();
+        arenaGUIHolder = new GUIHolder() {
+            @Override
+            public GUIDisplay createDisplay(UUID uuid) {
+                GUIDisplay guiDisplay = super.createDisplay(uuid);
+                updateTasks.put(uuid, MinecraftServer.getSchedulerManager().scheduleTask(() -> {
+                    uuidArenas.put(uuid, arenaSupplierRefMap.get(uuid).get());
+                    guiDisplay.update();
+                }, TaskSchedule.nextTick(), TaskSchedule.nextTick()));
+                return guiDisplay;
+            }
+
+            @Override
+            public void removeDisplay(UUID uuid) {
+                super.removeDisplay(uuid);
+                var task = updateTasks.get(uuid);
+                if (task != null) {
+                    task.cancel();
+                }
+            }
+        };
+        arenaGUIHolder.setButtonMap(buttonMap);
+        arenaGUIHolder.setTitle(LobbyConfig.INVENTORY_ARENA_TITLE.getValue());
+        arenaGUIHolder.setInventoryType(InventoryType.CHEST_3_ROW);
+        arenaGUIHolder.setRemoveDisplayOnClose(true);
+        arenaGUIHolder.init();
+    }
+
+    public void openArenaInventory(Player openPlayer, Supplier<List<Arena>> arenaSupplier) {
+        arenaSupplierRefMap.put(openPlayer.getUuid(), arenaSupplier);
+        arenaGUIHolder.createDisplay(openPlayer.getUuid()).init();
     }
 
     public void openArenaInventory(Player openPlayer, String ownerQuery) {
