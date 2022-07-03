@@ -25,11 +25,9 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerLoginEvent;
-import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.extras.PlacementRules;
 import net.minestom.server.extras.bungee.BungeeCordProxy;
-import net.minestom.server.extras.optifine.OptifineSupport;
 import net.minestom.server.extras.velocity.VelocityProxy;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -83,8 +81,7 @@ public class GameServer {
                     for (var permission : MainConfig.getPlayerPermissions(player.getUsername())) {
                         player.addPermission(permission);
                     }
-                })
-                .addListener(PlayerSpawnEvent.class, event -> event.getPlayer().refreshCommands());
+                });
 
         // HOOK
         ServerListHook.hook(globalNode);
@@ -94,7 +91,6 @@ public class GameServer {
         UpdateViewHook.hook(globalNode);
         PvpExtension.init();
         PlacementRules.init();
-        OptifineSupport.enable();
 
         // Player
         MinecraftServer.getConnectionManager().setPlayerProvider(GamePlayer::new);

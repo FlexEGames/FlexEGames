@@ -18,8 +18,8 @@ public final class PerInstanceTabListHook {
     public static void hook(EventNode<Event> node) {
         node.addListener(PlayerLoginEvent.class, event -> event.getPlayer().scheduler()
                 .buildTask(new TabPlayerRunnable(event.getPlayer()))
-                .delay(TaskSchedule.tick(5))
-                .repeat(TaskSchedule.tick(5))
+                .delay(TaskSchedule.tick(10))
+                .repeat(TaskSchedule.tick(10))
                 .executionType(ExecutionType.ASYNC)
                 .schedule());
     }
