@@ -6,7 +6,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
-import net.minestom.server.event.player.PlayerLoginEvent;
+import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.network.packet.server.play.PlayerInfoPacket;
 import net.minestom.server.timer.ExecutionType;
 import net.minestom.server.timer.TaskSchedule;
@@ -16,7 +16,7 @@ import java.util.*;
 @UtilityClass
 public final class PerInstanceTabListHook {
     public static void hook(EventNode<Event> node) {
-        node.addListener(PlayerLoginEvent.class, event -> event.getPlayer().scheduler()
+        node.addListener(PlayerSpawnEvent.class, event -> event.getPlayer().scheduler()
                 .buildTask(new TabPlayerRunnable(event.getPlayer()))
                 .delay(TaskSchedule.tick(10))
                 .repeat(TaskSchedule.tick(10))
