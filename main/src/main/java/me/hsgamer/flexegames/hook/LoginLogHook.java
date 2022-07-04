@@ -6,6 +6,7 @@ import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.AsyncPlayerPreLoginEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerLoginEvent;
+import net.minestom.server.event.player.PlayerSpawnEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,10 @@ public final class LoginLogHook {
         node.addListener(PlayerLoginEvent.class, event -> {
             var player = event.getPlayer();
             LOGGER.info("{} ({}) logged in", player.getUsername(), player.getPlayerConnection().getRemoteAddress());
+        });
+        node.addListener(PlayerSpawnEvent.class, event -> {
+            var player = event.getPlayer();
+            LOGGER.info("{} ({}) spawned", player.getUsername(), player.getPlayerConnection().getRemoteAddress());
         });
         node.addListener(PlayerDisconnectEvent.class, event -> {
             var player = event.getPlayer();

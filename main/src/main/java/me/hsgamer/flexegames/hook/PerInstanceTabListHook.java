@@ -53,6 +53,9 @@ public final class PerInstanceTabListHook {
         @Override
         public void run() {
             for (Player player : MinecraftServer.getConnectionManager().getOnlinePlayers()) {
+                if (Objects.equals(player, owner)) {
+                    continue;
+                }
                 UUID uuid = player.getUuid();
                 if (canSee.contains(uuid)) {
                     if (!isSameInstance(player)) {
