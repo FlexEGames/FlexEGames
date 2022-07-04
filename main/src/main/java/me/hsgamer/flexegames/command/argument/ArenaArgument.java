@@ -3,12 +3,9 @@ package me.hsgamer.flexegames.command.argument;
 import me.hsgamer.flexegames.GameServer;
 import me.hsgamer.flexegames.feature.GameFeature;
 import me.hsgamer.minigamecore.base.Arena;
-import net.minestom.server.command.builder.NodeMaker;
 import net.minestom.server.command.builder.arguments.Argument;
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
-import net.minestom.server.network.packet.server.play.DeclareCommandsPacket;
-import net.minestom.server.utils.binary.BinaryWriter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -50,15 +47,8 @@ public class ArenaArgument extends Argument<Arena> {
     }
 
     @Override
-    public void processNodes(@NotNull NodeMaker nodeMaker, boolean executable) {
-        DeclareCommandsPacket.Node argumentNode = Argument.simpleArgumentNode(this, executable, false, false);
-
-        argumentNode.parser = "brigadier:string";
-        argumentNode.properties = BinaryWriter.makeArray(packetWriter -> {
-            packetWriter.writeVarInt(1); // Quotable phrase
-        });
-
-        nodeMaker.addNodes(new DeclareCommandsPacket.Node[]{argumentNode});
+    public String parser() {
+        return "brigadier:string";
     }
 
     @Override
