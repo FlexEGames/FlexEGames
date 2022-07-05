@@ -5,7 +5,9 @@ import me.hsgamer.flexegames.api.game.Template;
 import net.minestom.server.command.builder.arguments.Argument;
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
+import net.minestom.server.utils.binary.BinaryWriter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -34,6 +36,13 @@ public class TemplateArgument extends Argument<Template> {
             throw new ArgumentSyntaxException("Template not found", input, TEMPLATE_NOT_FOUND);
         }
         return template.get();
+    }
+
+    @Override
+    public byte @Nullable [] nodeProperties() {
+        return BinaryWriter.makeArray(packetWriter -> {
+            packetWriter.writeVarInt(1); // Quotable phrase
+        });
     }
 
     @Override

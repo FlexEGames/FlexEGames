@@ -6,7 +6,9 @@ import me.hsgamer.minigamecore.base.Arena;
 import net.minestom.server.command.builder.arguments.Argument;
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
+import net.minestom.server.utils.binary.BinaryWriter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -44,6 +46,13 @@ public class ArenaArgument extends Argument<Arena> {
             throw new ArgumentSyntaxException("Arena not setup", input, ARENA_NOT_SETUP);
         }
         return arena;
+    }
+
+    @Override
+    public byte @Nullable [] nodeProperties() {
+        return BinaryWriter.makeArray(packetWriter -> {
+            packetWriter.writeVarInt(1); // Quotable phrase
+        });
     }
 
     @Override
