@@ -24,6 +24,7 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
+import net.minestom.server.event.Event;
 import net.minestom.server.event.EventListener;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.instance.AddEntityToInstanceEvent;
@@ -89,7 +90,7 @@ public class Lobby extends InstanceContainer {
                         if (instance != null)
                             player.scheduler().scheduleNextTick(() -> onBackSpawn(player));
                         else
-                            onFirstSpawn(player);
+                            onFirstAdd(player);
                     }
                 })
                 .addListener(RemoveEntityFromInstanceEvent.class, event -> {
@@ -184,6 +185,15 @@ public class Lobby extends InstanceContainer {
                         .build());
     }
 
+    public void hook(EventNode<Event> node) {
+        node.addListener(PlayerSpawnEvent.class, event -> {
+            var player = event.getPlayer();
+            if (player.getInstance() == this) {
+                onFirstSpawn(player);
+            }
+        });
+    }
+
     private void updateView(Player player, boolean message) {
         if (Boolean.TRUE.equals(player.getTag(hidePlayerTag))) {
             if (message) player.sendMessage(MessageConfig.LOBBY_HIDE_PLAYERS.getValue());
@@ -194,14 +204,17 @@ public class Lobby extends InstanceContainer {
         }
     }
 
+    private void onFirstAdd(Player player) {
+        player.setRespawnPoint(position);
+    }
+
     private void onFirstSpawn(Player player) {
         board.addPlayer(player);
-        player.setRespawnPoint(position);
         player.setGameMode(GameMode.ADVENTURE);
     }
 
     private void onBackSpawn(Player player) {
-        onFirstSpawn(player);
+        onFirstAdd(player);
         player.teleport(position);
         updateView(player, false);
     }
