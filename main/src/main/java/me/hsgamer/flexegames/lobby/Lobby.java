@@ -79,6 +79,7 @@ public class Lobby extends InstanceContainer {
                 }
         );
         setTimeRate(0);
+        setTime(6000);
 
         var worldType = LobbyConfig.WORLD_TYPE.getValue();
         setChunkLoader(worldType.getLoader(this, AssetUtil.getWorldFile(LobbyConfig.WORLD_NAME.getValue()).toPath()));
