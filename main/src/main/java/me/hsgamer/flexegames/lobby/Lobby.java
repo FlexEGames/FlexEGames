@@ -363,7 +363,7 @@ public class Lobby extends InstanceContainer {
         Button nextPageButton = new Button() {
             @Override
             public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_TEMPLATE_NEXT_PAGE.getValue()).stripItalics();
+                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_ARENA_NEXT_PAGE.getValue()).stripItalics();
             }
 
             @Override
@@ -384,7 +384,7 @@ public class Lobby extends InstanceContainer {
         Button previousPageButton = new Button() {
             @Override
             public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_TEMPLATE_PREVIOUS_PAGE.getValue()).stripItalics();
+                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_ARENA_PREVIOUS_PAGE.getValue()).stripItalics();
             }
 
             @Override
