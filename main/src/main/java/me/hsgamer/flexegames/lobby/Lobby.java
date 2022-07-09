@@ -89,8 +89,6 @@ public class Lobby extends InstanceContainer {
                         Instance instance = player.getInstance();
                         if (instance != null)
                             player.scheduler().scheduleNextTick(() -> onBackSpawn(player));
-                        else
-                            onFirstAdd(player);
                     }
                 })
                 .addListener(RemoveEntityFromInstanceEvent.class, event -> {
@@ -192,6 +190,11 @@ public class Lobby extends InstanceContainer {
                 onFirstSpawn(player);
             }
         });
+        node.addListener(PlayerLoginEvent.class, event -> {
+            event.setSpawningInstance(this);
+            var player = event.getPlayer();
+            player.setRespawnPoint(position);
+        });
     }
 
     private void updateView(Player player, boolean message) {
@@ -204,18 +207,14 @@ public class Lobby extends InstanceContainer {
         }
     }
 
-    private void onFirstAdd(Player player) {
-        player.setRespawnPoint(position);
-    }
-
     private void onFirstSpawn(Player player) {
         board.addPlayer(player);
         player.setGameMode(GameMode.ADVENTURE);
     }
 
     private void onBackSpawn(Player player) {
-        onFirstAdd(player);
         player.teleport(position);
+        player.setRespawnPoint(position);
         updateView(player, false);
     }
 

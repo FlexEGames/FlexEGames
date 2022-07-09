@@ -70,9 +70,7 @@ public class GameServer {
         EventNode<Event> globalNode = MinecraftServer.getGlobalEventHandler();
         globalNode
                 .addListener(PlayerLoginEvent.class, event -> {
-                    event.setSpawningInstance(lobby);
                     var player = event.getPlayer();
-                    player.setRespawnPoint(lobby.getPosition());
                     for (var permission : MainConfig.getPlayerPermissions(player.getUsername())) {
                         player.addPermission(permission);
                     }
