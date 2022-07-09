@@ -194,6 +194,7 @@ public class Lobby extends InstanceContainer {
             event.setSpawningInstance(this);
             var player = event.getPlayer();
             player.setRespawnPoint(position);
+            player.setGameMode(GameMode.ADVENTURE);
         });
     }
 
@@ -209,7 +210,6 @@ public class Lobby extends InstanceContainer {
 
     private void onFirstSpawn(Player player) {
         board.addPlayer(player);
-        player.setGameMode(GameMode.ADVENTURE);
     }
 
     private void onBackSpawn(Player player) {

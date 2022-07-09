@@ -14,7 +14,6 @@ public final class UpdateViewHook {
                 .buildTask(() -> {
                     event.getPlayer().updateViewableRule();
                     event.getPlayer().updateViewerRule();
-                    event.getPlayer().askSynchronization();
                 })
                 .delay(TaskSchedule.tick(20))
                 .repeat(TaskSchedule.tick(20))
