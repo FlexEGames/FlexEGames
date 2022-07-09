@@ -33,7 +33,6 @@ import net.minestom.server.event.inventory.InventoryPreClickEvent;
 import net.minestom.server.event.item.ItemDropEvent;
 import net.minestom.server.event.player.*;
 import net.minestom.server.event.trait.InstanceEvent;
-import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.item.ItemStack;
@@ -62,6 +61,7 @@ public class Lobby extends InstanceContainer {
     private final GameServer gameServer;
     private final List<InstanceModifier> instanceModifiers;
     private final Tag<Boolean> hidePlayerTag = Tag.Boolean("lobby:HidePlayer").defaultValue(false);
+    private final Tag<Boolean> firstSpawnTag = Tag.Boolean("lobby:FirstSpawn").defaultValue(true);
     private final Map<UUID, Supplier<List<Arena>>> arenaSupplierRefMap = new ConcurrentHashMap<>();
     private GUIHolder arenaGUIHolder;
     private GUIHolder templateGUIHolder;
@@ -86,14 +86,6 @@ public class Lobby extends InstanceContainer {
 
         EventNode<InstanceEvent> eventNode = eventNode();
         eventNode
-                .addListener(AddEntityToInstanceEvent.class, event -> {
-                    Entity entity = event.getEntity();
-                    if (entity instanceof Player player) {
-                        Instance instance = player.getInstance();
-                        if (instance != null)
-                            player.scheduler().scheduleNextTick(() -> onBack(player));
-                    }
-                })
                 .addListener(RemoveEntityFromInstanceEvent.class, event -> {
                     Entity entity = event.getEntity();
                     if (entity instanceof Player player) {
@@ -201,21 +193,6 @@ public class Lobby extends InstanceContainer {
                         .build());
     }
 
-    public void hook(EventNode<Event> node) {
-        node.addListener(PlayerSpawnEvent.class, event -> {
-            var player = event.getPlayer();
-            if (player.getInstance() == this) {
-                onSpawn(player);
-            }
-        });
-        node.addListener(PlayerLoginEvent.class, event -> {
-            event.setSpawningInstance(this);
-            var player = event.getPlayer();
-            player.setRespawnPoint(position);
-            player.setGameMode(GameMode.ADVENTURE);
-        });
-    }
-
     private void updateView(Player player, boolean message) {
         if (Boolean.TRUE.equals(player.getTag(hidePlayerTag))) {
             if (message) player.sendMessage(MessageConfig.LOBBY_HIDE_PLAYERS.getValue());
@@ -226,29 +203,60 @@ public class Lobby extends InstanceContainer {
         }
     }
 
-    private void onSpawn(Player player) {
-        board.addPlayer(player);
+    public void init() {
+        instanceModifiers.forEach(InstanceModifier::init);
+        hook(MinecraftServer.getGlobalEventHandler());
     }
 
-    private void onBack(Player player) {
-        player.teleport(position);
+    private void hook(EventNode<Event> node) {
+        node.addListener(PlayerSpawnEvent.class, event -> {
+            var player = event.getPlayer();
+            if (player.getInstance() == this) {
+                onSpawn(player);
+            }
+        });
+        node.addListener(PlayerDisconnectEvent.class, event -> onDisconnect(event.getPlayer()));
+        node.addListener(PlayerLoginEvent.class, event -> {
+            event.setSpawningInstance(this);
+            var player = event.getPlayer();
+            player.setRespawnPoint(position);
+            player.setGameMode(GameMode.ADVENTURE);
+        });
+    }
+
+    private void onSpawn(Player player) {
+        if (Boolean.TRUE.equals(player.getTag(firstSpawnTag))) {
+            onFirstSpawn(player);
+            player.setTag(firstSpawnTag, false);
+        } else {
+            onBackSpawn(player);
+        }
+    }
+
+    private void onFirstSpawn(Player player) {
+        board.addPlayer(player);
+        updateView(player, false);
+    }
+
+    private void onBackSpawn(Player player) {
+        PlayerUtil.reset(player);
         player.setRespawnPoint(position);
         player.setGameMode(GameMode.ADVENTURE);
-        updateView(player, false);
+        onFirstSpawn(player);
     }
 
     private void onQuit(Player player) {
         board.removePlayer(player);
-        player.setTeam(null);
         player.updateViewerRule(entity -> true);
+    }
+
+    private void onDisconnect(Player player) {
+        player.removeTag(hidePlayerTag);
+        player.removeTag(firstSpawnTag);
     }
 
     public Pos getPosition() {
         return position;
-    }
-
-    public void init() {
-        instanceModifiers.forEach(InstanceModifier::init);
     }
 
     public void clear() {

@@ -85,7 +85,6 @@ public class GameServer {
         LoginLogHook.hook(globalNode);
         UpdateViewHook.hook(globalNode);
         PvpExtension.init();
-        lobby.hook(globalNode);
 
         // Player
         MinecraftServer.getConnectionManager().setPlayerProvider(GamePlayer::new);

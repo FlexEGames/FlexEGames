@@ -6,6 +6,6 @@ import net.minestom.server.entity.Player;
 
 public record LobbyFeature(GameServer gameServer) implements Feature {
     public void backToLobby(Player player) {
-        player.setInstance(gameServer.getLobby());
+        player.setInstance(gameServer.getLobby(), gameServer.getLobby().getPosition());
     }
 }

@@ -203,7 +203,6 @@ public class DuelGame implements ArenaGame {
                         ArenaUtil.callLeaveEvent(arena, player);
                         board.removePlayer(player);
                         player.removeTag(deadTag);
-                        PlayerUtil.reset(player);
                     }
                 })
                 .addListener(PlayerBlockBreakEvent.class, event -> {
@@ -317,9 +316,7 @@ public class DuelGame implements ArenaGame {
         if (task != null) {
             task.cancel();
         }
-        MinecraftServer.getSchedulerManager().scheduleNextTick(() -> {
-            MinecraftServer.getGlobalEventHandler().removeChild(entityEventNode);
-            MinecraftServer.getInstanceManager().unregisterInstance(instance);
-        });
+        MinecraftServer.getGlobalEventHandler().removeChild(entityEventNode);
+        MinecraftServer.getInstanceManager().unregisterInstance(instance);
     }
 }
