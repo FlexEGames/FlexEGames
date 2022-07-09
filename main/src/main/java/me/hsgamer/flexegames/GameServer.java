@@ -13,6 +13,7 @@ import me.hsgamer.flexegames.manager.GameArenaManager;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.manager.TemplateManager;
 import me.hsgamer.flexegames.player.GamePlayer;
+import me.hsgamer.flexegames.util.ProxyType;
 import me.hsgamer.flexegames.util.SysOutErrRedirect;
 import me.hsgamer.hscore.minestom.board.Board;
 import net.kyori.adventure.text.Component;
@@ -22,10 +23,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerLoginEvent;
-import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.extras.PlacementRules;
-import net.minestom.server.extras.bungee.BungeeCordProxy;
-import net.minestom.server.extras.velocity.VelocityProxy;
 import org.jetbrains.annotations.ApiStatus;
 
 @Getter
@@ -111,15 +109,9 @@ public class GameServer {
     public void start() {
         templateManager.prepare();
 
-        String secret = MainConfig.SERVER_VELOCITY_SECRET.getValue();
-        if (!secret.isBlank()) {
-            VelocityProxy.enable(secret);
-        } else if (Boolean.TRUE.equals(MainConfig.SERVER_BUNGEE.getValue())) {
-            BungeeCordProxy.enable();
-        }
-        if (Boolean.TRUE.equals(MainConfig.SERVER_ONLINE_MODE.getValue())) {
-            MojangAuth.init();
-        }
+        ProxyType proxyType = MainConfig.SERVER_TYPE.getValue();
+        proxyType.execute();
+
         MinecraftServer.setCompressionThreshold(MainConfig.SERVER_COMPRESSION_THRESHOLD.getValue());
         MinecraftServer.setBrandName(MainConfig.SERVER_BRAND_NAME.getValue());
         try {

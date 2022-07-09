@@ -1,6 +1,7 @@
 package me.hsgamer.flexegames.hook;
 
 import lombok.experimental.UtilityClass;
+import me.hsgamer.flexegames.config.MainConfig;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
@@ -16,7 +17,10 @@ public final class ServerListHook {
         node.addListener(ServerListPingEvent.class, event -> {
             ResponseData responseData = event.getResponseData();
             Collection<Player> players = MinecraftServer.getConnectionManager().getOnlinePlayers();
-            responseData.addEntries(players);
+            if (Boolean.TRUE.equals(MainConfig.SERVER_SHOW_PLAYERS.getValue())) {
+                responseData.addEntries(players);
+            }
+            responseData.setOnline(players.size());
             responseData.setMaxPlayer(players.size() + 1);
         });
     }
