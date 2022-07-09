@@ -10,6 +10,7 @@ import me.hsgamer.flexegames.config.MessageConfig;
 import me.hsgamer.flexegames.hook.ChatHook;
 import me.hsgamer.flexegames.hook.LoginLogHook;
 import me.hsgamer.flexegames.hook.ServerListHook;
+import me.hsgamer.flexegames.hook.UpdateViewHook;
 import me.hsgamer.flexegames.lobby.Lobby;
 import me.hsgamer.flexegames.manager.GameArenaManager;
 import me.hsgamer.flexegames.manager.ReplacementManager;
@@ -82,6 +83,7 @@ public class GameServer {
         Board.hook(globalNode);
         ChatHook.hook(globalNode);
         LoginLogHook.hook(globalNode);
+        UpdateViewHook.hook(globalNode);
         PvpExtension.init();
         lobby.hook(globalNode);
 
