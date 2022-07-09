@@ -12,7 +12,10 @@ import java.util.UUID;
 public final class PlayerUtil {
     public static void reset(Player player) {
         player.getInventory().clear();
+        player.clearEffects();
         player.setAutoViewable(true);
+        player.setFireForDuration(0);
+        player.setInvulnerable(false);
         player.getEntityMeta().setNotifyAboutChanges(false);
         player.setInvisible(false);
         player.setGlowing(false);
@@ -21,6 +24,7 @@ public final class PlayerUtil {
         player.setFlying(false);
         player.setNoGravity(false);
         player.setFood(20);
+        player.setFoodSaturation(5);
         player.setLevel(0);
         player.setExp(0);
         player.setEnableRespawnScreen(false);
@@ -32,12 +36,12 @@ public final class PlayerUtil {
         player.closeInventory();
         player.refreshCommands();
         player.heal();
-        player.clearEffects();
         player.setOnFire(false);
         player.getEntityMeta().setNotifyAboutChanges(true);
         player.askSynchronization();
         player.updateViewerRule(entity -> true);
         player.updateViewableRule(player1 -> true);
+        player.resetTitle();
     }
 
     public static Player getPlayer(UUID uuid) {

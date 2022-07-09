@@ -231,6 +231,7 @@ public class Lobby extends InstanceContainer {
         player.setGameMode(GameMode.ADVENTURE);
         updateView(player, false);
         onFirstSpawn(player);
+        player.teleport(position);
     }
 
     private void onQuit(Player player) {
