@@ -88,7 +88,7 @@ public class Lobby extends InstanceContainer {
                     if (entity instanceof Player player) {
                         Instance instance = player.getInstance();
                         if (instance != null)
-                            player.scheduler().scheduleNextTick(() -> onBackSpawn(player));
+                            player.scheduler().scheduleNextTick(() -> onBack(player));
                     }
                 })
                 .addListener(RemoveEntityFromInstanceEvent.class, event -> {
@@ -187,7 +187,7 @@ public class Lobby extends InstanceContainer {
         node.addListener(PlayerSpawnEvent.class, event -> {
             var player = event.getPlayer();
             if (player.getInstance() == this) {
-                onFirstSpawn(player);
+                onSpawn(player);
             }
         });
         node.addListener(PlayerLoginEvent.class, event -> {
@@ -208,13 +208,14 @@ public class Lobby extends InstanceContainer {
         }
     }
 
-    private void onFirstSpawn(Player player) {
+    private void onSpawn(Player player) {
         board.addPlayer(player);
     }
 
-    private void onBackSpawn(Player player) {
+    private void onBack(Player player) {
         player.teleport(position);
         player.setRespawnPoint(position);
+        player.setGameMode(GameMode.ADVENTURE);
         updateView(player, false);
     }
 

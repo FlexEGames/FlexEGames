@@ -7,7 +7,9 @@ import me.hsgamer.flexegames.config.ChatConfig;
 import me.hsgamer.flexegames.config.LobbyConfig;
 import me.hsgamer.flexegames.config.MainConfig;
 import me.hsgamer.flexegames.config.MessageConfig;
-import me.hsgamer.flexegames.hook.*;
+import me.hsgamer.flexegames.hook.ChatHook;
+import me.hsgamer.flexegames.hook.LoginLogHook;
+import me.hsgamer.flexegames.hook.ServerListHook;
 import me.hsgamer.flexegames.lobby.Lobby;
 import me.hsgamer.flexegames.manager.GameArenaManager;
 import me.hsgamer.flexegames.manager.ReplacementManager;
@@ -23,7 +25,6 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerLoginEvent;
-import net.minestom.server.extras.PlacementRules;
 import org.jetbrains.annotations.ApiStatus;
 
 @Getter
@@ -78,13 +79,10 @@ public class GameServer {
 
         // HOOK
         ServerListHook.hook(globalNode);
-        PerInstanceTabListHook.hook(globalNode);
         Board.hook(globalNode);
         ChatHook.hook(globalNode);
-        UpdateViewHook.hook(globalNode);
         LoginLogHook.hook(globalNode);
         PvpExtension.init();
-        PlacementRules.init();
         lobby.hook(globalNode);
 
         // Player
