@@ -50,7 +50,7 @@ dependencies {
     api "me.hsgamer:minigamecore-base:$minigameCore"
     api "me.hsgamer:minigamecore-implementation:$minigameCore"
 
-    api 'com.github.Minestom:Minestom:de5a396c15'
+    api 'com.github.Minestom:Minestom:0989c220f6'
     api 'com.github.Bloepiloepi:MinestomPvP:9726443594'
 
     compileOnly "org.projectlombok:lombok:$lombok"
