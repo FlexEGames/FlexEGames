@@ -27,7 +27,6 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventListener;
 import net.minestom.server.event.EventNode;
-import net.minestom.server.event.instance.AddEntityToInstanceEvent;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
 import net.minestom.server.event.inventory.InventoryPreClickEvent;
 import net.minestom.server.event.item.ItemDropEvent;
@@ -63,6 +62,7 @@ public class Lobby extends InstanceContainer {
     private final Tag<Boolean> hidePlayerTag = Tag.Boolean("lobby:HidePlayer").defaultValue(false);
     private final Tag<Boolean> firstSpawnTag = Tag.Boolean("lobby:FirstSpawn").defaultValue(true);
     private final Map<UUID, Supplier<List<Arena>>> arenaSupplierRefMap = new ConcurrentHashMap<>();
+    private final Map<Integer, ItemStack> lobbyItems = new HashMap<>();
     private GUIHolder arenaGUIHolder;
     private GUIHolder templateGUIHolder;
 
@@ -153,18 +153,8 @@ public class Lobby extends InstanceContainer {
     }
 
     public void registerHotbarItem(int slot, ItemStack itemStack, Consumer<Player> consumer) {
+        lobbyItems.put(slot, itemStack);
         eventNode()
-                .addListener(EventListener.builder(RemoveEntityFromInstanceEvent.class)
-                        .handler(event -> ((Player) event.getEntity()).getInventory().setItemStack(slot, ItemStack.AIR))
-                        .filter(event -> event.getEntity() instanceof Player)
-                        .build())
-                .addListener(EventListener.builder(AddEntityToInstanceEvent.class)
-                        .handler(event -> {
-                            Player player = (Player) event.getEntity();
-                            player.scheduler().scheduleNextTick(() -> player.getInventory().setItemStack(slot, itemStack));
-                        })
-                        .filter(event -> event.getEntity() instanceof Player)
-                        .build())
                 .addListener(EventListener.builder(ItemDropEvent.class)
                         .handler(event -> event.setCancelled(true))
                         .filter(event -> event.getItemStack().equals(itemStack))
@@ -235,19 +225,21 @@ public class Lobby extends InstanceContainer {
 
     private void onFirstSpawn(Player player) {
         board.addPlayer(player);
-        updateView(player, false);
+        lobbyItems.forEach((slot, itemStack) -> player.getInventory().setItemStack(slot, itemStack));
     }
 
     private void onBackSpawn(Player player) {
         PlayerUtil.reset(player);
         player.setRespawnPoint(position);
         player.setGameMode(GameMode.ADVENTURE);
+        updateView(player, false);
         onFirstSpawn(player);
     }
 
     private void onQuit(Player player) {
         board.removePlayer(player);
         player.updateViewerRule(entity -> true);
+        lobbyItems.keySet().forEach(slot -> player.getInventory().setItemStack(slot, ItemStack.AIR));
     }
 
     private void onDisconnect(Player player) {
