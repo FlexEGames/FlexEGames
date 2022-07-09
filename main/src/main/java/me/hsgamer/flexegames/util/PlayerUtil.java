@@ -33,6 +33,7 @@ public final class PlayerUtil {
         player.refreshCommands();
         player.heal();
         player.clearEffects();
+        player.setOnFire(false);
         player.getEntityMeta().setNotifyAboutChanges(true);
         player.askSynchronization();
         player.updateViewerRule(entity -> true);
