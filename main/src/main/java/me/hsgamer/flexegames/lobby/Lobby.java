@@ -195,10 +195,7 @@ public class Lobby extends InstanceContainer {
 
     public void init() {
         instanceModifiers.forEach(InstanceModifier::init);
-        hook(MinecraftServer.getGlobalEventHandler());
-    }
-
-    private void hook(EventNode<Event> node) {
+        var node = MinecraftServer.getGlobalEventHandler();
         node.addListener(PlayerSpawnEvent.class, event -> {
             var player = event.getPlayer();
             if (player.getInstance() == this) {
