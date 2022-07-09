@@ -64,7 +64,7 @@ public class LobbyConfig extends YamlPathableConfig {
     public static final MapConfigPath HOTBAR_CREATOR = new MapConfigPath("hotbar.creator", Map.of(
             "material", Material.ACACIA_SIGN.name(),
             "name", "&a&lTemplate",
-            "slot", 1
+            "slot", 2
     ));
     public static final MapConfigPath HOTBAR_SELECTOR = new MapConfigPath("hotbar.selector", Map.of(
             "material", Material.COMPASS.name(),
@@ -73,8 +73,15 @@ public class LobbyConfig extends YamlPathableConfig {
     ));
     public static final MapConfigPath HOTBAR_TOGGLE_PLAYER = new MapConfigPath("hotbar.toggle-player", Map.of(
             "material", Material.ENDER_EYE.name(),
-            "name", "&c&lToggle player",
-            "slot", 7
+            "name", "&b&lToggle player",
+            "slot", 6
+    ));
+    public static final MapConfigPath HOTBAR_SERVER_HUB = new MapConfigPath("hotbar.server-hub", Map.of(
+            "enable", false,
+            "material", Material.REDSTONE_BLOCK.name(),
+            "name", "&c&lBack To Hub",
+            "slot", 8,
+            "server", "hub"
     ));
     public static final MapListPath MODIFIERS = new MapListPath("modifiers", Collections.emptyList());
 

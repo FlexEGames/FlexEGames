@@ -44,6 +44,9 @@ import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskSchedule;
 import net.minestom.server.utils.StringUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -115,11 +118,26 @@ public class Lobby extends InstanceContainer {
                 .executionType(Boolean.TRUE.equals(LobbyConfig.BOARD_ASYNC.getValue()) ? ExecutionType.ASYNC : ExecutionType.SYNC)
                 .schedule();
 
-        registerHotbarItemFromMap(LobbyConfig.HOTBAR_CREATOR.getValue(), 1, this::openTemplateInventory);
+        registerHotbarItemFromMap(LobbyConfig.HOTBAR_CREATOR.getValue(), 2, this::openTemplateInventory);
         registerHotbarItemFromMap(LobbyConfig.HOTBAR_SELECTOR.getValue(), 4, player -> openArenaInventory(player, false));
-        registerHotbarItemFromMap(LobbyConfig.HOTBAR_TOGGLE_PLAYER.getValue(), 7, player -> {
+        registerHotbarItemFromMap(LobbyConfig.HOTBAR_TOGGLE_PLAYER.getValue(), 6, player -> {
             player.setTag(hidePlayerTag, !player.getTag(hidePlayerTag));
             updateView(player, true);
+        });
+
+        var hubHotbarMap = LobbyConfig.HOTBAR_SERVER_HUB.getValue();
+        var hubName = Objects.toString(hubHotbarMap.get("server"), "hub");
+        registerHotbarItemFromMap(hubHotbarMap, 8, player -> {
+            try (
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream)
+            ) {
+                dataOutputStream.writeUTF("Connect");
+                dataOutputStream.writeUTF(hubName);
+                player.sendPluginMessage("bungeecord:main", byteArrayOutputStream.toByteArray());
+            } catch (IOException e) {
+                MinecraftServer.LOGGER.warn("There is an exception when sending data", e);
+            }
         });
 
         instanceModifiers = new ArrayList<>();
