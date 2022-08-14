@@ -11,7 +11,7 @@ public abstract class SingleTemplateExtension extends Extension {
     @Override
     public final void initialize() {
         onEnable();
-        TemplateBuilder.INSTANCE.register(getInitializer(), getId(), getAliases());
+        TemplateBuilder.INSTANCE.register((s, config) -> getInitializer().apply(config), getId());
     }
 
     @Override
@@ -29,9 +29,5 @@ public abstract class SingleTemplateExtension extends Extension {
 
     public abstract Function<Config, Template> getInitializer();
 
-    public abstract String getId();
-
-    public String[] getAliases() {
-        return new String[0];
-    }
+    public abstract String[] getId();
 }

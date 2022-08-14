@@ -18,7 +18,7 @@ public class DuelExtension extends SingleTemplateExtension {
     }
 
     @Override
-    public String getId() {
-        return "duel";
+    public String[] getId() {
+        return new String[]{"duel"};
     }
 }
