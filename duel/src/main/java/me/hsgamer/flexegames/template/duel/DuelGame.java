@@ -92,25 +92,6 @@ public class DuelGame implements ArenaGame {
                 }
         );
         entityEventNode = EventNode.event("entityEvent-" + arena.getName(), EventFilter.ENTITY, entityEvent -> entityEvent.getEntity().getInstance() == instance);
-        PvpUtil.applyPvp(entityEventNode, template.useLegacyPvp);
-        entityEventNode
-                .addListener(EntityPreDeathEvent.class, event -> {
-                    if (event.getEntity() instanceof Player player) {
-                        event.setCancelled(true);
-                        onKill(player);
-                    }
-                })
-                .addListener(PlayerExhaustEvent.class, event -> {
-                    if (isFinished.get() || arena.getState() != InGameState.class || Boolean.TRUE.equals(event.getEntity().getTag(deadTag))) {
-                        event.setCancelled(true);
-                    }
-                })
-                .addListener(PlayerSpawnEvent.class, event -> event.getPlayer().teleport(template.joinPos))
-                .addListener(FinalDamageEvent.class, event -> {
-                    if (isFinished.get() || arena.getState() != InGameState.class || Boolean.TRUE.equals(event.getEntity().getTag(deadTag))) {
-                        event.setCancelled(true);
-                    }
-                });
     }
 
     private void onKill(Player player) {
@@ -183,8 +164,26 @@ public class DuelGame implements ArenaGame {
                 }
             });
         }
+        entityEventNode.addListener(PlayerSpawnEvent.class, event -> event.getPlayer().teleport(template.joinPos));
         MinecraftServer.getGlobalEventHandler().addChild(entityEventNode);
+        PvpUtil.applyPvp(instance.eventNode(), template.useLegacyPvp);
         instance.eventNode()
+                .addListener(EntityPreDeathEvent.class, event -> {
+                    if (event.getEntity() instanceof Player player) {
+                        event.setCancelled(true);
+                        onKill(player);
+                    }
+                })
+                .addListener(PlayerExhaustEvent.class, event -> {
+                    if (isFinished.get() || arena.getState() != InGameState.class || Boolean.TRUE.equals(event.getEntity().getTag(deadTag))) {
+                        event.setCancelled(true);
+                    }
+                })
+                .addListener(FinalDamageEvent.class, event -> {
+                    if (isFinished.get() || arena.getState() != InGameState.class || Boolean.TRUE.equals(event.getEntity().getTag(deadTag))) {
+                        event.setCancelled(true);
+                    }
+                })
                 .addListener(AddEntityToInstanceEvent.class, event -> {
                     if (event.getEntity() instanceof Player player) {
                         ArenaUtil.callJoinEvent(arena, player);
