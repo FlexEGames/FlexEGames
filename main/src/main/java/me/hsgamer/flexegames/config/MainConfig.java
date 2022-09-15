@@ -51,6 +51,7 @@ public class MainConfig extends YamlPathableConfig {
             Component.text("FlexEGames").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD),
             Component.text("A Minecraft server").color(NamedTextColor.GRAY)
     ));
+    public static final ConfigPath<String> SERVER_FAVICON = Paths.stringPath("server.favicon", "");
     public static final ConfigPath<Integer> ARENA_PERIOD = Paths.integerPath("arena.period", 0);
     public static final ConfigPath<Boolean> ARENA_ASYNC = Paths.booleanPath("arena.async", true);
     public static final ConfigPath<Integer> ARENA_AMOUNT_PER_PLAYER = Paths.integerPath("arena.amount-per-player", -1);
