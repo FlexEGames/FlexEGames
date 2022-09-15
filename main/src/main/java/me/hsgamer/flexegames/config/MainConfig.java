@@ -1,6 +1,7 @@
 package me.hsgamer.flexegames.config;
 
 import me.hsgamer.flexegames.FlexEGames;
+import me.hsgamer.flexegames.config.path.ComponentListPath;
 import me.hsgamer.flexegames.config.path.ComponentMapPath;
 import me.hsgamer.flexegames.config.path.PermissionListMapPath;
 import me.hsgamer.flexegames.config.path.PermissionListPath;
@@ -10,6 +11,8 @@ import me.hsgamer.hscore.config.path.AdvancedConfigPath;
 import me.hsgamer.hscore.config.path.ConfigPath;
 import me.hsgamer.hscore.config.path.impl.Paths;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.permission.Permission;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,6 +47,10 @@ public class MainConfig extends YamlPathableConfig {
     public static final ConfigPath<String> SERVER_BRAND_NAME = Paths.stringPath("server.brand-name", FlexEGames.class.getSimpleName());
     public static final ConfigPath<Integer> SERVER_COMPRESSION_THRESHOLD = Paths.integerPath("server.compression-threshold", 0);
     public static final ConfigPath<Boolean> SERVER_SHOW_PLAYERS = Paths.booleanPath("server.show-players", true);
+    public static final ConfigPath<List<Component>> SERVER_MOTD = new ComponentListPath("server.motd", Arrays.asList(
+            Component.text("FlexEGames").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD),
+            Component.text("A Minecraft server").color(NamedTextColor.GRAY)
+    ));
     public static final ConfigPath<Integer> ARENA_PERIOD = Paths.integerPath("arena.period", 0);
     public static final ConfigPath<Boolean> ARENA_ASYNC = Paths.booleanPath("arena.async", true);
     public static final ConfigPath<Integer> ARENA_AMOUNT_PER_PLAYER = Paths.integerPath("arena.amount-per-player", -1);
