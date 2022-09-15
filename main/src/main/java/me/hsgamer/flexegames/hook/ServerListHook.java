@@ -51,7 +51,7 @@ public final class ServerListHook {
 
     private static String getFavicon() {
         String favicon = MainConfig.SERVER_FAVICON.getValue();
-        if (favicon.isEmpty()) {
+        if (favicon.isBlank()) {
             return null;
         }
         if (favicon.startsWith("data:image/png;base64,")) {
