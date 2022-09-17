@@ -1,6 +1,7 @@
 package me.hsgamer.flexegames.template.duel;
 
 import io.github.bloepiloepi.pvp.events.EntityPreDeathEvent;
+import io.github.bloepiloepi.pvp.events.ExplosionEvent;
 import io.github.bloepiloepi.pvp.events.FinalDamageEvent;
 import io.github.bloepiloepi.pvp.events.PlayerExhaustEvent;
 import me.hsgamer.flexegames.api.game.ArenaGame;
@@ -167,6 +168,7 @@ public class DuelGame implements ArenaGame {
         entityEventNode.addListener(PlayerSpawnEvent.class, event -> event.getPlayer().teleport(template.joinPos));
         MinecraftServer.getGlobalEventHandler().addChild(entityEventNode);
         PvpUtil.applyPvp(instance.eventNode(), template.useLegacyPvp);
+        PvpUtil.applyExplosion(instance);
         instance.eventNode()
                 .addListener(EntityPreDeathEvent.class, event -> {
                     if (event.getEntity() instanceof Player player) {
@@ -211,6 +213,7 @@ public class DuelGame implements ArenaGame {
                         event.setCancelled(true);
                     }
                 })
+                .addListener(ExplosionEvent.class, event -> event.getAffectedBlocks().removeIf(point -> !Boolean.TRUE.equals(instance.getBlock(point).getTag(playerBlockTag))))
                 .addListener(PlayerBlockPlaceEvent.class, event -> event.setBlock(event.getBlock().withTag(playerBlockTag, true)));
         task = instance.scheduler()
                 .buildTask(board::updateAll)
@@ -270,7 +273,13 @@ public class DuelGame implements ArenaGame {
         return instance.getPlayers().stream().filter(player -> Boolean.FALSE.equals(player.tagHandler().getTag(deadTag))).toList();
     }
 
-    private void checkWinner() {
+    @Override
+    public boolean isInGameOver() {
+        return isFinished.get();
+    }
+
+    @Override
+    public void onInGameTick() {
         List<Player> alivePlayers = getAlivePlayers();
         if (alivePlayers.size() <= 1) {
             isFinished.set(true);
@@ -278,12 +287,6 @@ public class DuelGame implements ArenaGame {
                 winner.set(alivePlayers.get(0));
             }
         }
-    }
-
-    @Override
-    public boolean isInGameOver() {
-        checkWinner();
-        return isFinished.get();
     }
 
     @Override
