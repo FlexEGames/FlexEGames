@@ -9,8 +9,8 @@ import net.minestom.server.instance.Instance;
 
 @UtilityClass
 public final class PvpUtil {
-    public static EventNode<InstanceEvent> applyPvp(EventNode<InstanceEvent> node, boolean legacy) {
-        return node.addChild(legacy ? PvpExtension.legacyEvents() : PvpExtension.events());
+    public static void applyPvp(EventNode<InstanceEvent> node, boolean legacy) {
+        node.addChild(legacy ? PvpExtension.legacyEvents() : PvpExtension.events());
     }
 
     public static void applyExplosion(Instance instance) {

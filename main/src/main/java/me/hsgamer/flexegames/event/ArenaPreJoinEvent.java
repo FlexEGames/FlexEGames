@@ -12,12 +12,10 @@ import net.minestom.server.event.trait.CancellableEvent;
 import net.minestom.server.event.trait.PlayerEvent;
 
 @RequiredArgsConstructor
+@Getter
 public class ArenaPreJoinEvent implements PlayerEvent, CancellableEvent {
-    @Getter
     private final Arena arena;
-    @Getter
     private final Player player;
-    @Getter
     @Setter
     private JoinResponse response = JoinResponse.SUCCESSFUL_JOIN;
 
