@@ -27,6 +27,9 @@ public class GameFeature extends ArenaFeature<GameFeature.ArenaGameFeature> {
         @Getter
         @Setter
         private UUID owner;
+        @Getter
+        @Setter
+        private boolean isFailed = false;
 
         public ArenaGameFeature(Arena arena) {
             this.arena = arena;

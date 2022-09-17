@@ -44,6 +44,10 @@ public interface ArenaGame extends Initializer {
         return false;
     }
 
+    default void onWaitingTick() {
+        // EMPTY
+    }
+
     default void onWaitingEnd() {
         // EMPTY
     }
@@ -60,6 +64,10 @@ public interface ArenaGame extends Initializer {
         return true;
     }
 
+    default void onInGameTick() {
+        // EMPTY
+    }
+
     default void onInGameOver() {
         // EMPTY
     }
@@ -70,6 +78,10 @@ public interface ArenaGame extends Initializer {
 
     default boolean isEndingOver() {
         return true;
+    }
+
+    default void onEndingTick() {
+        // EMPTY
     }
 
     default void onEndingOver() {

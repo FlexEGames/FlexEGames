@@ -1,5 +1,6 @@
 package me.hsgamer.flexegames.state;
 
+import me.hsgamer.flexegames.api.game.ArenaGame;
 import me.hsgamer.flexegames.config.MessageConfig;
 import me.hsgamer.flexegames.feature.GameFeature;
 import me.hsgamer.minigamecore.base.Arena;
@@ -13,8 +14,11 @@ public class InGameState implements GameState {
 
     @Override
     public void update(Arena arena) {
-        if (arena.getArenaFeature(GameFeature.class).getGame().isInGameOver()) {
+        ArenaGame arenaGame = arena.getArenaFeature(GameFeature.class).getGame();
+        if (arenaGame.isInGameOver()) {
             arena.setNextState(EndingState.class);
+        } else {
+            arenaGame.onInGameTick();
         }
     }
 
