@@ -7,12 +7,11 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.timer.ExecutionType;
 import net.minestom.server.timer.Task;
 
-public class GameArena extends Arena {
+class GameArena extends Arena {
     private Task task;
 
-    public GameArena(String name, Game game) {
+    GameArena(String name, Game game) {
         super(name, game);
-        setNextState(game.getInitialState());
     }
 
     @Override
