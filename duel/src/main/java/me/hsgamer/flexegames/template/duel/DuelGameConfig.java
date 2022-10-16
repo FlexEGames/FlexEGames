@@ -5,6 +5,7 @@ import me.hsgamer.flexegames.config.converter.*;
 import me.hsgamer.flexegames.util.ChunkLoaderType;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.item.ItemStack;
 
@@ -122,5 +123,13 @@ public interface DuelGameConfig {
     @ConfigPath("world-name")
     default String getWorldName() {
         return "duel";
+    }
+
+    @ConfigPath(value = "chat-format", converter = ComponentConverter.class)
+    default Component getChatFormat() {
+        return Component.empty()
+                .append(Component.text("%player%").color(NamedTextColor.WHITE))
+                .append(Component.text(": ").color(NamedTextColor.YELLOW))
+                .append(Component.text("%message%").color(NamedTextColor.GOLD));
     }
 }

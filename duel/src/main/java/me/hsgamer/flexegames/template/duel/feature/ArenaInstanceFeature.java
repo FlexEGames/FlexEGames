@@ -5,10 +5,12 @@ import io.github.bloepiloepi.pvp.events.ExplosionEvent;
 import io.github.bloepiloepi.pvp.events.FinalDamageEvent;
 import io.github.bloepiloepi.pvp.events.PlayerExhaustEvent;
 import me.hsgamer.flexegames.feature.ConfigFeature;
+import me.hsgamer.flexegames.feature.DescriptionFeature;
 import me.hsgamer.flexegames.feature.LobbyFeature;
 import me.hsgamer.flexegames.template.duel.DuelGameConfig;
 import me.hsgamer.flexegames.template.duel.state.InGameState;
 import me.hsgamer.flexegames.util.AssetUtil;
+import me.hsgamer.flexegames.util.ChatUtil;
 import me.hsgamer.flexegames.util.FullBrightDimension;
 import me.hsgamer.flexegames.util.PvpUtil;
 import me.hsgamer.minigamecore.base.Arena;
@@ -77,6 +79,7 @@ public class ArenaInstanceFeature implements Feature {
         MinecraftServer.getGlobalEventHandler().addChild(entityEventNode);
         PvpUtil.applyPvp(instance.eventNode(), gameConfig.isUseLegacyPvp());
         PvpUtil.applyExplosion(instance);
+        ChatUtil.apply(instance.eventNode(), gameConfig.getChatFormat(), player -> arena.getArenaFeature(DescriptionFeature.class).getReplacements());
         instance.eventNode()
                 .addListener(EntityPreDeathEvent.class, event -> {
                     if (event.getEntity() instanceof Player player) {
