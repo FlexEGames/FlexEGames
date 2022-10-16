@@ -125,6 +125,7 @@ public class ArenaInstanceFeature implements Feature {
 
     @Override
     public void clear() {
+        backToLobby();
         MinecraftServer.getGlobalEventHandler().removeChild(entityEventNode);
         MinecraftServer.getInstanceManager().unregisterInstance(instance);
     }

@@ -36,6 +36,7 @@ public class GameManager {
             }
             String name = file.getName().replace(".yml", "");
             Config config = YamlConfigGenerator.createConfig(file);
+            config.setup();
             configMap.put(name, config);
         }
     }
