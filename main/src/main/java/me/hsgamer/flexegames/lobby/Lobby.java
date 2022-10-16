@@ -5,6 +5,9 @@ import me.hsgamer.flexegames.GameServer;
 import me.hsgamer.flexegames.api.modifier.InstanceModifier;
 import me.hsgamer.flexegames.builder.InstanceModifierBuilder;
 import me.hsgamer.flexegames.builder.ItemBuilder;
+import me.hsgamer.flexegames.feature.DescriptionFeature;
+import me.hsgamer.flexegames.feature.JoinFeature;
+import me.hsgamer.flexegames.game.Game;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.util.*;
 import me.hsgamer.hscore.common.Validate;
@@ -263,8 +266,8 @@ public class Lobby extends InstanceContainer {
 
     private void setupGameGUIHolder() {
         gameGUIHolder = new GUIHolder();
-        Supplier<List<Template>> templates = () -> new ArrayList<>(gameServer.getTemplateManager().getTemplateMap().values());
-        IntSupplier maxPage = () -> getMaxPage(templates.get().size());
+        Supplier<List<Game>> games = () -> new ArrayList<>(gameServer.getGameManager().getGameMap().values());
+        IntSupplier maxPage = () -> getMaxPage(games.get().size());
         var uuidPage = new HashMap<UUID, Integer>();
         Button nextPageButton = new Button() {
             @Override
@@ -326,25 +329,21 @@ public class Lobby extends InstanceContainer {
             var page = uuidPage.getOrDefault(uuid, 0);
             for (int i = 0; i < 18; i++) {
                 var index = i + page * 18;
-                if (index >= templates.get().size()) {
+                if (index >= games.get().size()) {
                     continue;
                 }
-                var template = templates.get().get(index);
+                var game = games.get().get(index);
                 buttons.put(new Button() {
                     @Override
                     public ItemStack getItemStack(UUID uuid) {
-                        return template.getDisplayItem().stripItalics();
+                        return game.getFeature(DescriptionFeature.class).getDisplayItem();
                     }
 
                     @Override
                     public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
                         var player = uuid.getPlayer();
-                        if (gameServer.getGameArenaManager().createArena(player, template)) {
-                            player.sendMessage(MessageConfig.RESPONSE_CREATE_ARENA_SUCCESSFUL.getValue());
-                            openArenaInventory(player, true);
-                        } else {
-                            player.sendMessage(MessageConfig.RESPONSE_CANNOT_CREATE_ARENA.getValue());
-                        }
+                        game.createArena(player.getUuid());
+                        openArenaInventory(player, true);
                         return false;
                     }
                 }, Collections.singletonList(i));
@@ -424,7 +423,7 @@ public class Lobby extends InstanceContainer {
             @Override
             public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
                 uuidPage.put(uuid, 0);
-                setArenaSupplierRef(uuid, () -> gameServer.getGameArenaManager().getAllArenas());
+                setArenaSupplierRef(uuid, () -> gameServer.getGameManager().getAllArenas());
                 return false;
             }
         };
@@ -437,7 +436,7 @@ public class Lobby extends InstanceContainer {
             @Override
             public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
                 uuidPage.put(uuid, 0);
-                setArenaSupplierRef(uuid, () -> gameServer.getGameArenaManager().findArenasByOwner(uuid1 -> uuid1.equals(uuid)));
+                setArenaSupplierRef(uuid, () -> gameServer.getGameManager().findArenasByOwner(uuid1 -> uuid1.equals(uuid)));
                 return false;
             }
         };
@@ -464,22 +463,18 @@ public class Lobby extends InstanceContainer {
                     continue;
                 }
                 var arena = arenasList.get(index);
-                var feature = arena.getArenaFeature(GameFeature.class);
-                if (!feature.isReady()) {
-                    continue;
-                }
                 buttons.put(new Button() {
                     @Override
                     public ItemStack getItemStack(UUID uuid) {
-                        return feature.getGame().getDisplayItem().stripItalics();
+                        return arena.getArenaFeature(DescriptionFeature.class).getDisplayItem();
                     }
 
                     @Override
                     public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
                         var player = uuid.getPlayer();
-                        var response = feature.joinGame(player);
+                        var response = arena.getArenaFeature(JoinFeature.class).join(player);
                         if (!response.success()) {
-                            player.sendMessage(response.getMessage(player));
+                            player.sendMessage(response.message());
                         } else {
                             player.closeInventory();
                         }
@@ -536,14 +531,14 @@ public class Lobby extends InstanceContainer {
                 .filter(player -> StringUtils.jaroWinklerScore(player.getUsername().toLowerCase(), ownerQuery.toLowerCase()) > 0)
                 .map(Player::getUuid)
                 .toList();
-        openArenaInventory(openPlayer, () -> gameServer.getGameArenaManager().findArenasByOwner(uuids));
+        openArenaInventory(openPlayer, () -> gameServer.getGameManager().findArenasByOwner(uuids));
     }
 
     public void openArenaInventory(Player openPlayer, boolean myArena) {
         if (myArena) {
-            openArenaInventory(openPlayer, () -> gameServer.getGameArenaManager().findArenasByOwner(openPlayer));
+            openArenaInventory(openPlayer, () -> gameServer.getGameManager().findArenasByOwner(openPlayer));
         } else {
-            openArenaInventory(openPlayer, () -> gameServer.getGameArenaManager().getAllArenas());
+            openArenaInventory(openPlayer, () -> gameServer.getGameManager().getAllArenas());
         }
     }
 

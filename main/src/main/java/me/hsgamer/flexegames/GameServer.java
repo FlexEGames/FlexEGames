@@ -11,6 +11,7 @@ import me.hsgamer.flexegames.config.MessageConfig;
 import me.hsgamer.flexegames.hook.LoginLogHook;
 import me.hsgamer.flexegames.hook.UpdateViewHook;
 import me.hsgamer.flexegames.lobby.Lobby;
+import me.hsgamer.flexegames.manager.GameManager;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.player.GamePlayer;
 import me.hsgamer.flexegames.util.AssetUtil;
@@ -41,6 +42,7 @@ public class GameServer {
     private final MainConfig mainConfig = YamlConfigGenerator.generate(MainConfig.class, new File("config.yml"), true, true);
     private final LobbyConfig lobbyConfig = YamlConfigGenerator.generate(LobbyConfig.class, new File("lobby.yml"), true, true);
     private final MessageConfig messageConfig = YamlConfigGenerator.generate(MessageConfig.class, new File("messages.yml"), true, true);
+    private final GameManager gameManager = new GameManager(this);
     private final Lobby lobby;
 
     public GameServer() {
@@ -99,6 +101,8 @@ public class GameServer {
 
     @ApiStatus.Internal
     public void start() {
+        gameManager.prepare();
+
         ProxyType proxyType = mainConfig.getProxyType();
         proxyType.execute(this);
 
@@ -110,10 +114,13 @@ public class GameServer {
             MinecraftServer.LOGGER.error("Failed to start server", e);
             System.exit(1);
         }
+
+        gameManager.init();
     }
 
     @ApiStatus.Internal
     public void stop() {
+        gameManager.clear();
         lobby.clear();
         MinecraftServer.stopCleanly();
     }

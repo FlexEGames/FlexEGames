@@ -63,8 +63,6 @@ public abstract class Game extends ArenaManager {
 
     protected abstract void configureArena(Arena arena);
 
-    public abstract Optional<Arena> getJoinedArena(Player player);
-
     public List<Arena> findArenas(Predicate<Arena> predicate) {
         return getAllArenas().stream().filter(predicate).toList();
     }
@@ -79,5 +77,9 @@ public abstract class Game extends ArenaManager {
 
     public List<Arena> findArenasByOwner(List<UUID> owners) {
         return findArenasByOwner(owners::contains);
+    }
+
+    public Optional<Arena> getJoinedArena(Player player) {
+        return getAllArenas().stream().filter(arena -> arena.getArenaFeature(JoinFeature.class).isJoined(player)).findFirst();
     }
 }

@@ -12,21 +12,18 @@ import me.hsgamer.minigamecore.base.ArenaFeature;
 import me.hsgamer.minigamecore.base.Feature;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
-import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.function.ToIntFunction;
 
 @ExtensionMethod({ItemUtil.class})
 public class DescriptionFeature extends ArenaFeature<DescriptionFeature.ArenaDescriptionFeature> {
     private final Game game;
-    @Setter
-    private Function<Arena, Collection<Player>> playersFunction = a -> Collections.emptyList();
-    @Setter
-    private ToIntFunction<Arena> maxPlayersFunction = a -> 0;
     @Setter
     private Function<Arena, Map<String, Supplier<ComponentLike>>> replacementsFunction = a -> Collections.emptyMap();
 
@@ -65,22 +62,11 @@ public class DescriptionFeature extends ArenaFeature<DescriptionFeature.ArenaDes
             this.arena = arena;
         }
 
-        public Collection<Player> getPlayers() {
-            return playersFunction.apply(arena);
-        }
-
-        public int getPlayerCount() {
-            return getPlayers().size();
-        }
-
-        public int getMaxPlayers() {
-            return maxPlayersFunction.applyAsInt(arena);
-        }
-
         public Map<String, Supplier<ComponentLike>> getReplacements() {
+            JoinFeature.ArenaJoinFeature joinFeature = arena.getArenaFeature(JoinFeature.class);
             Map<String, Supplier<ComponentLike>> replacements = new HashMap<>();
-            replacements.put("players", () -> Component.text(Integer.toString(getPlayerCount())));
-            replacements.put("max-players", () -> Component.text(Integer.toString(getMaxPlayers())));
+            replacements.put("players", () -> Component.text(Integer.toString(joinFeature.getPlayerCount())));
+            replacements.put("max-players", () -> Component.text(Integer.toString(joinFeature.getMaxPlayers())));
             replacements.put("state", () -> arena.getStateInstance()
                     .map(state -> {
                         if (state instanceof ComponentGameState componentGameState) {
