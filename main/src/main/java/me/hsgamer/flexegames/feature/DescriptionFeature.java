@@ -23,6 +23,12 @@ import java.util.function.ToIntFunction;
 @ExtensionMethod({ItemUtil.class})
 public class DescriptionFeature extends ArenaFeature<DescriptionFeature.ArenaDescriptionFeature> {
     private final Game game;
+    @Setter
+    private Function<Arena, Collection<Player>> playersFunction = a -> Collections.emptyList();
+    @Setter
+    private ToIntFunction<Arena> maxPlayersFunction = a -> 0;
+    @Setter
+    private Function<Arena, Map<String, Supplier<ComponentLike>>> replacementsFunction = a -> Collections.emptyMap();
 
     public DescriptionFeature(Game game) {
         this.game = game;
@@ -54,21 +60,27 @@ public class DescriptionFeature extends ArenaFeature<DescriptionFeature.ArenaDes
 
     public class ArenaDescriptionFeature implements Feature {
         private final Arena arena;
-        @Setter
-        private Function<Arena, Collection<Player>> playersSupplier = a -> Collections.emptyList();
-        @Setter
-        private ToIntFunction<Arena> maxPlayersSupplier = a -> 0;
-        @Setter
-        private Supplier<Map<String, Supplier<ComponentLike>>> replacementsSupplier = Collections::emptyMap;
 
         public ArenaDescriptionFeature(Arena arena) {
             this.arena = arena;
         }
 
-        public ItemStack getDisplayItem() {
+        public Collection<Player> getPlayers() {
+            return playersFunction.apply(arena);
+        }
+
+        public int getPlayerCount() {
+            return getPlayers().size();
+        }
+
+        public int getMaxPlayers() {
+            return maxPlayersFunction.applyAsInt(arena);
+        }
+
+        public Map<String, Supplier<ComponentLike>> getReplacements() {
             Map<String, Supplier<ComponentLike>> replacements = new HashMap<>();
-            replacements.put("players", () -> Component.text(playersSupplier.apply(arena).size()));
-            replacements.put("max-players", () -> Component.text(maxPlayersSupplier.applyAsInt(arena)));
+            replacements.put("players", () -> Component.text(Integer.toString(getPlayerCount())));
+            replacements.put("max-players", () -> Component.text(Integer.toString(getMaxPlayers())));
             replacements.put("state", () -> arena.getStateInstance()
                     .map(state -> {
                         if (state instanceof ComponentGameState componentGameState) {
@@ -79,8 +91,12 @@ public class DescriptionFeature extends ArenaFeature<DescriptionFeature.ArenaDes
                     .orElse(Component.empty())
             );
             replacements.put("game", DescriptionFeature.this::getDisplayName);
-            replacements.putAll(replacementsSupplier.get());
-            return ItemBuilder.buildItem(getConfig().getArenaDisplayItem(), replacements).stripItalics();
+            replacements.putAll(replacementsFunction.apply(arena));
+            return replacements;
+        }
+
+        public ItemStack getDisplayItem() {
+            return ItemBuilder.buildItem(getConfig().getArenaDisplayItem(), getReplacements()).stripItalics();
         }
     }
 }

@@ -11,15 +11,15 @@ import net.minestom.server.entity.Player;
 import java.util.function.BiFunction;
 
 public class JoinFeature extends ArenaFeature<JoinFeature.ArenaJoinFeature> {
+    @Setter
+    private BiFunction<Player, Arena, JoinResponse> joinResponseFunction = (p, a) -> new JoinResponse(false, Component.empty());
     @Override
     protected ArenaJoinFeature createFeature(Arena arena) {
         return new ArenaJoinFeature(arena);
     }
 
-    public static class ArenaJoinFeature implements Feature {
+    public class ArenaJoinFeature implements Feature {
         private final Arena arena;
-        @Setter
-        private BiFunction<Player, Arena, JoinResponse> joinResponseFunction = (p, a) -> new JoinResponse(false, Component.empty());
 
         public ArenaJoinFeature(Arena arena) {
             this.arena = arena;
