@@ -4,7 +4,7 @@ import lombok.Setter;
 import lombok.experimental.ExtensionMethod;
 import me.hsgamer.flexegames.api.game.ComponentGameState;
 import me.hsgamer.flexegames.builder.ItemBuilder;
-import me.hsgamer.flexegames.config.game.GameDescriptionConfig;
+import me.hsgamer.flexegames.config.GameDescriptionConfig;
 import me.hsgamer.flexegames.game.Game;
 import me.hsgamer.flexegames.util.ItemUtil;
 import me.hsgamer.minigamecore.base.Arena;
