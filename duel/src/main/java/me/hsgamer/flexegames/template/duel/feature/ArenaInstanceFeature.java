@@ -86,6 +86,31 @@ public class ArenaInstanceFeature implements Feature {
                 }
             });
         }
+
+        var descriptionFeature = arena.getArenaFeature(DescriptionFeature.class);
+        this.board = new Board(
+                player -> ReplacementManager.builder()
+                        .replaceGlobal()
+                        .replace(descriptionFeature.getReplacements())
+                        .replacePlayer(player)
+                        .build(gameConfig.getBoardTitle()),
+                player -> {
+                    ReplacementManager.Builder builder = ReplacementManager.builder()
+                            .replaceGlobal()
+                            .replace(descriptionFeature.getReplacements())
+                            .replacePlayer(player);
+                    List<Component> components = Collections.emptyList();
+                    if (arena.getState() == WaitingState.class) {
+                        components = gameConfig.getBoardLinesWaiting();
+                    } else if (arena.getState() == InGameState.class) {
+                        components = gameConfig.getBoardLinesIngame();
+                    } else if (arena.getState() == EndingState.class) {
+                        components = gameConfig.getBoardLinesEnding();
+                    }
+                    return components.stream().map(builder::build).toList();
+                }
+        );
+
         entityEventNode.addListener(PlayerSpawnEvent.class, event -> event.getPlayer().teleport(gameConfig.getJoinPos()));
         MinecraftServer.getGlobalEventHandler().addChild(entityEventNode);
         PvpUtil.applyPvp(instance.eventNode(), gameConfig.isUseLegacyPvp());
@@ -112,6 +137,7 @@ public class ArenaInstanceFeature implements Feature {
                     if (event.getEntity() instanceof Player player) {
                         player.setRespawnPoint(gameConfig.getJoinPos());
                         player.setGameMode(GameMode.SURVIVAL);
+                        board.addPlayer(player);
                     }
                 })
                 .addListener(PlayerMoveEvent.class, event -> {
@@ -124,6 +150,7 @@ public class ArenaInstanceFeature implements Feature {
                 .addListener(RemoveEntityFromInstanceEvent.class, event -> {
                     if (event.getEntity() instanceof Player player) {
                         player.removeTag(deadTag);
+                        board.removePlayer(player);
                     }
                 })
                 .addListener(PlayerBlockBreakEvent.class, event -> {
@@ -135,41 +162,6 @@ public class ArenaInstanceFeature implements Feature {
                 .addListener(PlayerBlockPlaceEvent.class, event -> event.setBlock(event.getBlock().withTag(playerBlockTag, true)));
 
         MinecraftServer.getInstanceManager().registerInstance(instance);
-
-        var descriptionFeature = arena.getArenaFeature(DescriptionFeature.class);
-        this.board = new Board(
-                player -> ReplacementManager.builder()
-                        .replaceGlobal()
-                        .replace(descriptionFeature.getReplacements())
-                        .replacePlayer(player)
-                        .build(gameConfig.getBoardTitle()),
-                player -> {
-                    ReplacementManager.Builder builder = ReplacementManager.builder()
-                            .replaceGlobal()
-                            .replace(descriptionFeature.getReplacements())
-                            .replacePlayer(player);
-                    List<Component> components = Collections.emptyList();
-                    if (arena.getState() == WaitingState.class) {
-                        components = gameConfig.getBoardLinesWaiting();
-                    } else if (arena.getState() == InGameState.class) {
-                        components = gameConfig.getBoardLinesIngame();
-                    } else if (arena.getState() == EndingState.class) {
-                        components = gameConfig.getBoardLinesEnding();
-                    }
-                    return components.stream().map(builder::build).toList();
-                }
-        );
-        instance.eventNode()
-                .addListener(AddEntityToInstanceEvent.class, event -> {
-                    if (event.getEntity() instanceof Player player) {
-                        board.addPlayer(player);
-                    }
-                })
-                .addListener(RemoveEntityFromInstanceEvent.class, event -> {
-                    if (event.getEntity() instanceof Player player) {
-                        board.removePlayer(player);
-                    }
-                });
         task = instance.scheduler()
                 .buildTask(board::updateAll)
                 .repeat(TaskSchedule.nextTick())
