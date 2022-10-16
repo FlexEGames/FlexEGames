@@ -67,7 +67,7 @@ public class Lobby extends InstanceContainer {
     public Lobby(GameServer gameServer) {
         super(gameServer.getLobbyConfig().getWorldId(), FullBrightDimension.INSTANCE);
         this.gameServer = gameServer;
-        position = gameServer.getLobby().getPosition();
+        position = gameServer.getLobbyConfig().getWorldSpawnPos();
         board = new Board(
                 player -> ReplacementManager.builder().replaceGlobal().replacePlayer(player).build(gameServer.getLobbyConfig().getBoardTitle()),
                 player -> {

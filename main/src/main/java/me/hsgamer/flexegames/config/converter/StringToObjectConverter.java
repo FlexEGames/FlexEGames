@@ -8,7 +8,7 @@ public abstract class StringToObjectConverter<T> implements Converter {
     @Override
     public Object convert(Object o) {
         if (o == null) return null;
-        return convert(Objects.toString(o));
+        return deserialize(Objects.toString(o));
     }
 
     @Override

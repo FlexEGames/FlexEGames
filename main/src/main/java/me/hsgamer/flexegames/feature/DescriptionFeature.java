@@ -77,6 +77,8 @@ public class DescriptionFeature extends ArenaFeature<DescriptionFeature.ArenaDes
                     .orElse(Component.empty())
             );
             replacements.put("game", DescriptionFeature.this::getDisplayName);
+            replacements.put("owner", () -> arena.getArenaFeature(OwnerFeature.class).getDisplayOwner());
+            replacements.put("name", () -> Component.text(arena.getName()));
             replacements.putAll(replacementsFunction.apply(arena));
             return replacements;
         }

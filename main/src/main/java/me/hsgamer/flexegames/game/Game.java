@@ -2,6 +2,7 @@ package me.hsgamer.flexegames.game;
 
 import me.hsgamer.flexegames.GameServer;
 import me.hsgamer.flexegames.feature.*;
+import me.hsgamer.hscore.common.Pair;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaManager;
@@ -19,6 +20,10 @@ public abstract class Game extends ArenaManager {
     protected Game(GameServer gameServer, Config gameConfig) {
         this.gameServer = gameServer;
         this.gameConfig = gameConfig;
+    }
+
+    protected Game(Pair<GameServer, Config> pair) {
+        this(pair.getKey(), pair.getValue());
     }
 
     @Override
@@ -61,7 +66,9 @@ public abstract class Game extends ArenaManager {
 
     protected abstract Class<? extends GameState> getInitialState();
 
-    protected abstract void configureArena(Arena arena);
+    protected void configureArena(Arena arena) {
+        // EMPTY
+    }
 
     public List<Arena> findArenas(Predicate<Arena> predicate) {
         return getAllArenas().stream().filter(predicate).toList();
