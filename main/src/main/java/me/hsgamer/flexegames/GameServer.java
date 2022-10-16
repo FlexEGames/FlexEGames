@@ -2,22 +2,21 @@ package me.hsgamer.flexegames;
 
 import io.github.bloepiloepi.pvp.PvpExtension;
 import lombok.Getter;
-import me.hsgamer.flexegames.command.*;
-import me.hsgamer.flexegames.config.ChatConfig;
+import me.hsgamer.flexegames.command.LeaveCommand;
+import me.hsgamer.flexegames.command.ListPlayerCommand;
+import me.hsgamer.flexegames.command.StopCommand;
 import me.hsgamer.flexegames.config.LobbyConfig;
 import me.hsgamer.flexegames.config.MainConfig;
 import me.hsgamer.flexegames.config.MessageConfig;
-import me.hsgamer.flexegames.hook.ChatHook;
 import me.hsgamer.flexegames.hook.LoginLogHook;
-import me.hsgamer.flexegames.hook.ServerListHook;
 import me.hsgamer.flexegames.hook.UpdateViewHook;
 import me.hsgamer.flexegames.lobby.Lobby;
-import me.hsgamer.flexegames.manager.GameArenaManager;
 import me.hsgamer.flexegames.manager.ReplacementManager;
-import me.hsgamer.flexegames.manager.TemplateManager;
 import me.hsgamer.flexegames.player.GamePlayer;
+import me.hsgamer.flexegames.util.AssetUtil;
 import me.hsgamer.flexegames.util.ProxyType;
 import me.hsgamer.flexegames.util.SysOutErrRedirect;
+import me.hsgamer.flexegames.util.YamlConfigGenerator;
 import me.hsgamer.hscore.minestom.board.Board;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
@@ -26,17 +25,22 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerLoginEvent;
+import net.minestom.server.event.server.ServerListPingEvent;
+import net.minestom.server.ping.ResponseData;
 import org.jetbrains.annotations.ApiStatus;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Base64;
+import java.util.Collection;
+import java.util.List;
 
 @Getter
 public class GameServer {
     private final MinecraftServer minecraftServer = MinecraftServer.init();
-    private final MainConfig mainConfig = new MainConfig();
-    private final LobbyConfig lobbyConfig = new LobbyConfig();
-    private final ChatConfig chatConfig = new ChatConfig();
-    private final MessageConfig messageConfig = new MessageConfig();
-    private final GameArenaManager gameArenaManager = new GameArenaManager(this);
-    private final TemplateManager templateManager = new TemplateManager();
+    private final MainConfig mainConfig = YamlConfigGenerator.generate(MainConfig.class, new File("config.yml"), true, true);
+    private final LobbyConfig lobbyConfig = YamlConfigGenerator.generate(LobbyConfig.class, new File("lobby.yml"), true, true);
+    private final MessageConfig messageConfig = YamlConfigGenerator.generate(MessageConfig.class, new File("messages.yml"), true, true);
     private final Lobby lobby;
 
     public GameServer() {
@@ -48,12 +52,6 @@ public class GameServer {
                 MinecraftServer.LOGGER.error("Throwable: " + throwable.getMessage(), throwable)
         );
 
-        // CONFIG
-        mainConfig.setup();
-        lobbyConfig.setup();
-        chatConfig.setup();
-        messageConfig.setup();
-
         // LOBBY
         lobby = new Lobby(this);
         MinecraftServer.getInstanceManager().registerInstance(lobby);
@@ -64,8 +62,6 @@ public class GameServer {
         commandManager.setUnknownCommandCallback((sender, c) -> sender.sendMessage("Unknown command: " + c));
         commandManager.register(new StopCommand(this));
         commandManager.register(new LeaveCommand(this));
-        commandManager.register(new CreateArenaCommand(this));
-        commandManager.register(new JoinArenaCommand(this));
         commandManager.register(new ListPlayerCommand());
 
         // GLOBAL EVENT
@@ -73,15 +69,14 @@ public class GameServer {
         globalNode
                 .addListener(PlayerLoginEvent.class, event -> {
                     var player = event.getPlayer();
-                    for (var permission : MainConfig.getPlayerPermissions(player.getUsername())) {
+                    for (var permission : mainConfig.getPlayerPermissions(player.getUsername())) {
                         player.addPermission(permission);
                     }
                 });
+        registerMOTDEvent(globalNode);
 
         // HOOK
-        ServerListHook.hook(globalNode);
         Board.hook(globalNode);
-        ChatHook.hook(globalNode);
         LoginLogHook.hook(globalNode);
         UpdateViewHook.hook(globalNode);
         PvpExtension.init();
@@ -91,7 +86,7 @@ public class GameServer {
 
         // Console
         var consoleSender = commandManager.getConsoleSender();
-        for (var permission : MainConfig.CONSOLE_PERMISSIONS.getValue()) {
+        for (var permission : mainConfig.getConsolePermissions()) {
             consoleSender.addPermission(permission);
         }
 
@@ -99,34 +94,78 @@ public class GameServer {
         ReplacementManager.addPlayerReplacement("player", Player::getName);
         ReplacementManager.addPlayerReplacement("ping", player -> Component.text(Integer.toString(player.getLatency())));
         ReplacementManager.addGlobalReplacement("online", () -> Component.text(Integer.toString(MinecraftServer.getConnectionManager().getOnlinePlayers().size())));
-        MainConfig.CUSTOM_PLACEHOLDERS.getValue().forEach((k, v) -> ReplacementManager.addGlobalReplacement(k, () -> v));
+        mainConfig.getCustomPlaceholders().forEach((k, v) -> ReplacementManager.addGlobalReplacement(k, () -> v));
     }
 
     @ApiStatus.Internal
     public void start() {
-        templateManager.prepare();
+        ProxyType proxyType = mainConfig.getProxyType();
+        proxyType.execute(this);
 
-        ProxyType proxyType = MainConfig.SERVER_TYPE.getValue();
-        proxyType.execute();
-
-        MinecraftServer.setCompressionThreshold(MainConfig.SERVER_COMPRESSION_THRESHOLD.getValue());
-        MinecraftServer.setBrandName(MainConfig.SERVER_BRAND_NAME.getValue());
+        MinecraftServer.setCompressionThreshold(mainConfig.getCompressionThreshold());
+        MinecraftServer.setBrandName(mainConfig.getServerBrand());
         try {
-            minecraftServer.start(MainConfig.SERVER_IP.getValue(), MainConfig.SERVER_PORT.getValue());
+            minecraftServer.start(mainConfig.getServerIp(), mainConfig.getServerPort());
         } catch (Exception e) {
             MinecraftServer.LOGGER.error("Failed to start server", e);
             System.exit(1);
         }
-
-        templateManager.init();
-        gameArenaManager.init();
-        gameArenaManager.postInit();
     }
 
     @ApiStatus.Internal
     public void stop() {
-        gameArenaManager.clear();
         lobby.clear();
         MinecraftServer.stopCleanly();
+    }
+
+    private void registerMOTDEvent(EventNode<Event> node) {
+        Component motd = getMotd();
+        String favicon = getFavicon();
+        node.addListener(ServerListPingEvent.class, event -> {
+            ResponseData responseData = event.getResponseData();
+            Collection<Player> players = MinecraftServer.getConnectionManager().getOnlinePlayers();
+            if (Boolean.TRUE.equals(mainConfig.isShowPlayers())) {
+                responseData.addEntries(players);
+            }
+            responseData.setOnline(players.size());
+            responseData.setMaxPlayer(players.size() + 1);
+            responseData.setDescription(motd);
+            if (favicon != null) {
+                responseData.setFavicon(favicon);
+            }
+        });
+    }
+
+    private Component getMotd() {
+        List<Component> motd = mainConfig.getServerMOTD();
+        if (motd.isEmpty()) {
+            return Component.empty();
+        }
+        Component component = motd.get(0);
+        for (int i = 1; i < motd.size(); i++) {
+            component = component.append(Component.newline()).append(motd.get(i));
+        }
+        return component;
+    }
+
+    private String getFavicon() {
+        String favicon = mainConfig.getServerFavicon();
+        if (favicon.isBlank()) {
+            return null;
+        }
+        if (favicon.startsWith("data:image/png;base64,")) {
+            return favicon;
+        }
+        File file = AssetUtil.getAssetFile(favicon);
+        if (!file.exists()) {
+            return null;
+        }
+        try (FileInputStream inputStream = new FileInputStream(file)) {
+            byte[] bytes = inputStream.readAllBytes();
+            return "data:image/png;base64," + Base64.getEncoder().encodeToString(bytes);
+        } catch (Exception e) {
+            MinecraftServer.LOGGER.error("Failed to read favicon", e);
+            return null;
+        }
     }
 }

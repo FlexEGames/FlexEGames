@@ -4,7 +4,7 @@ plugins {
 }
 
 ext {
-    core = "4.1.27"
+    core = "4.1.28"
     minigameCore = "1.0.1"
     lombok = "1.18.24"
     minestom = "caaad1693e"
@@ -40,9 +40,10 @@ publishing {
 }
 
 dependencies {
-    api "me.hsgamer:hscore-config-simplixstorage:$core"
+    api "me.hsgamer:hscore-config-configurate:$core"
     api "me.hsgamer:hscore-config-proxy:$core"
-    api "me.hsgamer:hscore-config-path:$core"
+    api 'org.spongepowered:configurate-yaml:4.1.2'
+
     api "me.hsgamer:hscore-builder:$core"
     api "me.hsgamer:hscore-common:$core"
     api "me.hsgamer:hscore-collections:$core"

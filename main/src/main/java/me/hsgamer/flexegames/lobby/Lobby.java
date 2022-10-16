@@ -2,13 +2,9 @@ package me.hsgamer.flexegames.lobby;
 
 import lombok.experimental.ExtensionMethod;
 import me.hsgamer.flexegames.GameServer;
-import me.hsgamer.flexegames.api.game.Template;
 import me.hsgamer.flexegames.api.modifier.InstanceModifier;
 import me.hsgamer.flexegames.builder.InstanceModifierBuilder;
 import me.hsgamer.flexegames.builder.ItemBuilder;
-import me.hsgamer.flexegames.config.LobbyConfig;
-import me.hsgamer.flexegames.config.MessageConfig;
-import me.hsgamer.flexegames.feature.GameFeature;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.util.*;
 import me.hsgamer.hscore.common.Validate;
@@ -63,17 +59,17 @@ public class Lobby extends InstanceContainer {
     private final Map<UUID, Supplier<List<Arena>>> arenaSupplierRefMap = new ConcurrentHashMap<>();
     private final Map<Integer, ItemStack> lobbyItems = new HashMap<>();
     private GUIHolder arenaGUIHolder;
-    private GUIHolder templateGUIHolder;
+    private GUIHolder gameGUIHolder;
 
     public Lobby(GameServer gameServer) {
-        super(LobbyConfig.UNIQUE_ID.getValue(), FullBrightDimension.INSTANCE);
+        super(gameServer.getLobbyConfig().getWorldId(), FullBrightDimension.INSTANCE);
         this.gameServer = gameServer;
-        position = LobbyConfig.POSITION.getValue();
+        position = gameServer.getLobby().getPosition();
         board = new Board(
-                player -> ReplacementManager.builder().replaceGlobal().replacePlayer(player).build(LobbyConfig.BOARD_TITLE.getValue()),
+                player -> ReplacementManager.builder().replaceGlobal().replacePlayer(player).build(gameServer.getLobbyConfig().getBoardTitle()),
                 player -> {
                     ReplacementManager.Builder builder = ReplacementManager.builder().replaceGlobal().replacePlayer(player);
-                    return LobbyConfig.BOARD_LINES.getValue().stream()
+                    return gameServer.getLobbyConfig().getBoardLines().stream()
                             .map(builder::build)
                             .toList();
                 }
@@ -81,8 +77,8 @@ public class Lobby extends InstanceContainer {
         setTimeRate(0);
         setTime(6000);
 
-        var worldType = LobbyConfig.WORLD_TYPE.getValue();
-        setChunkLoader(worldType.getLoader(this, AssetUtil.getWorldFile(LobbyConfig.WORLD_NAME.getValue()).toPath()));
+        var worldType = gameServer.getLobbyConfig().getWorldType();
+        setChunkLoader(worldType.getLoader(this, AssetUtil.getWorldFile(gameServer.getLobbyConfig().getWorldName()).toPath()));
 
         EventNode<InstanceEvent> eventNode = eventNode();
         eventNode
@@ -105,19 +101,20 @@ public class Lobby extends InstanceContainer {
                         event.setCancelled(true);
                     }
                 });
+        ChatUtil.apply(eventNode, gameServer.getLobbyConfig().getChatFormat());
         boardTask = scheduler().buildTask(board::updateAll)
-                .repeat(TaskUtil.tick(LobbyConfig.BOARD_UPDATE_TIME.getValue()))
-                .executionType(Boolean.TRUE.equals(LobbyConfig.BOARD_ASYNC.getValue()) ? ExecutionType.ASYNC : ExecutionType.SYNC)
+                .repeat(TaskUtil.tick(gameServer.getLobbyConfig().getBoardUpdateInterval()))
+                .executionType(gameServer.getLobbyConfig().isBoardAsync() ? ExecutionType.ASYNC : ExecutionType.SYNC)
                 .schedule();
 
-        registerHotbarItemFromMap(LobbyConfig.HOTBAR_CREATOR.getValue(), 2, this::openTemplateInventory);
-        registerHotbarItemFromMap(LobbyConfig.HOTBAR_SELECTOR.getValue(), 4, player -> openArenaInventory(player, false));
-        registerHotbarItemFromMap(LobbyConfig.HOTBAR_TOGGLE_PLAYER.getValue(), 6, player -> {
+        registerHotbarItemFromMap(gameServer.getLobbyConfig().getGameHotbar(), 2, this::openGameInventory);
+        registerHotbarItemFromMap(gameServer.getLobbyConfig().getArenaHotbar(), 4, player -> openArenaInventory(player, false));
+        registerHotbarItemFromMap(gameServer.getLobbyConfig().getTogglePlayerHotbar(), 6, player -> {
             player.setTag(hidePlayerTag, !player.getTag(hidePlayerTag));
             updateView(player, true);
         });
 
-        var hubHotbarMap = LobbyConfig.HOTBAR_SERVER_HUB.getValue();
+        var hubHotbarMap = gameServer.getLobbyConfig().getServerHubHotbar();
         var hubName = Objects.toString(hubHotbarMap.get("server"), "hub");
         registerHotbarItemFromMap(hubHotbarMap, 8, player -> {
             try (
@@ -133,14 +130,14 @@ public class Lobby extends InstanceContainer {
         });
 
         instanceModifiers = new ArrayList<>();
-        LobbyConfig.MODIFIERS.getValue()
+        gameServer.getLobbyConfig().getWorldModifiers()
                 .forEach(map -> InstanceModifierBuilder.buildInstanceModifier(map)
                         .map(provider -> provider.getInstanceModifier(this))
                         .ifPresent(instanceModifiers::add)
                 );
 
         setupArenaGUIHolder();
-        setupTemplateGUIHolder();
+        setupGameGUIHolder();
     }
 
     public void registerHotbarItemFromMap(Map<String, Object> map, int defaultSlot, Consumer<Player> consumer) {
@@ -185,10 +182,10 @@ public class Lobby extends InstanceContainer {
 
     private void updateView(Player player, boolean message) {
         if (Boolean.TRUE.equals(player.getTag(hidePlayerTag))) {
-            if (message) player.sendMessage(MessageConfig.LOBBY_HIDE_PLAYERS.getValue());
+            if (message) player.sendMessage(gameServer.getMessageConfig().getLobbyHidePlayers());
             player.updateViewerRule(entity -> !(entity instanceof Player));
         } else {
-            if (message) player.sendMessage(MessageConfig.LOBBY_SHOW_PLAYERS.getValue());
+            if (message) player.sendMessage(gameServer.getMessageConfig().getLobbyShowPlayers());
             player.updateViewerRule(entity -> true);
         }
     }
@@ -250,8 +247,8 @@ public class Lobby extends InstanceContainer {
     }
 
     public void clear() {
-        if (templateGUIHolder != null) {
-            templateGUIHolder.stop();
+        if (gameGUIHolder != null) {
+            gameGUIHolder.stop();
         }
         if (arenaGUIHolder != null) {
             arenaGUIHolder.stop();
@@ -264,15 +261,15 @@ public class Lobby extends InstanceContainer {
         return player.getInstance() == null || player.getInstance() == this;
     }
 
-    private void setupTemplateGUIHolder() {
-        templateGUIHolder = new GUIHolder();
+    private void setupGameGUIHolder() {
+        gameGUIHolder = new GUIHolder();
         Supplier<List<Template>> templates = () -> new ArrayList<>(gameServer.getTemplateManager().getTemplateMap().values());
         IntSupplier maxPage = () -> getMaxPage(templates.get().size());
         var uuidPage = new HashMap<UUID, Integer>();
         Button nextPageButton = new Button() {
             @Override
             public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_TEMPLATE_NEXT_PAGE.getValue()).stripItalics();
+                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getGameInventoryNextPage()).stripItalics();
             }
 
             @Override
@@ -286,14 +283,14 @@ public class Lobby extends InstanceContainer {
                         return oldPage;
                     }
                 });
-                templateGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
+                gameGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
                 return false;
             }
         };
         Button previousPageButton = new Button() {
             @Override
             public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_TEMPLATE_PREVIOUS_PAGE.getValue()).stripItalics();
+                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getGameInventoryPreviousPage()).stripItalics();
             }
 
             @Override
@@ -307,14 +304,14 @@ public class Lobby extends InstanceContainer {
                         return oldPage;
                     }
                 });
-                templateGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
+                gameGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
                 return false;
             }
         };
         Button arenaButton = new Button() {
             @Override
             public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_TEMPLATE_ARENA.getValue()).stripItalics();
+                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getGameInventoryArena()).stripItalics();
             }
 
             @Override
@@ -358,15 +355,15 @@ public class Lobby extends InstanceContainer {
             buttons.put(arenaButton, Collections.singletonList(26));
             return buttons;
         };
-        templateGUIHolder.setTitle(LobbyConfig.INVENTORY_TEMPLATE_TITLE.getValue());
-        templateGUIHolder.setInventoryType(InventoryType.CHEST_3_ROW);
-        templateGUIHolder.setRemoveDisplayOnClose(true);
-        templateGUIHolder.setButtonMap(buttonMap);
-        templateGUIHolder.init();
+        gameGUIHolder.setTitle(gameServer.getLobbyConfig().getGameInventoryTitle());
+        gameGUIHolder.setInventoryType(InventoryType.CHEST_3_ROW);
+        gameGUIHolder.setRemoveDisplayOnClose(true);
+        gameGUIHolder.setButtonMap(buttonMap);
+        gameGUIHolder.init();
     }
 
-    public void openTemplateInventory(Player openPlayer) {
-        templateGUIHolder.createDisplay(openPlayer.getUuid()).init();
+    public void openGameInventory(Player openPlayer) {
+        gameGUIHolder.createDisplay(openPlayer.getUuid()).init();
     }
 
     public void setArenaSupplierRef(UUID uuid, Supplier<List<Arena>> arenaSupplierRef) {
@@ -379,7 +376,7 @@ public class Lobby extends InstanceContainer {
         Button nextPageButton = new Button() {
             @Override
             public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_ARENA_NEXT_PAGE.getValue()).stripItalics();
+                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryNextPage()).stripItalics();
             }
 
             @Override
@@ -393,14 +390,14 @@ public class Lobby extends InstanceContainer {
                         return oldPage;
                     }
                 });
-                templateGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
+                gameGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
                 return false;
             }
         };
         Button previousPageButton = new Button() {
             @Override
             public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_ARENA_PREVIOUS_PAGE.getValue()).stripItalics();
+                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryPreviousPage()).stripItalics();
             }
 
             @Override
@@ -414,14 +411,14 @@ public class Lobby extends InstanceContainer {
                         return oldPage;
                     }
                 });
-                templateGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
+                gameGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
                 return false;
             }
         };
         Button globalArenaButton = new Button() {
             @Override
             public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_ARENA_GLOBAL_ARENA.getValue()).stripItalics();
+                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryGlobalArena()).stripItalics();
             }
 
             @Override
@@ -434,7 +431,7 @@ public class Lobby extends InstanceContainer {
         Button myArenaButton = new Button() {
             @Override
             public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_ARENA_MY_ARENA.getValue()).stripItalics();
+                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryMyArena()).stripItalics();
             }
 
             @Override
@@ -444,15 +441,15 @@ public class Lobby extends InstanceContainer {
                 return false;
             }
         };
-        Button templateButton = new Button() {
+        Button gameButton = new Button() {
             @Override
             public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_ARENA_TEMPLATE.getValue()).stripItalics();
+                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryGame()).stripItalics();
             }
 
             @Override
             public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
-                openTemplateInventory(uuid.getPlayer());
+                openGameInventory(uuid.getPlayer());
                 return false;
             }
         };
@@ -495,7 +492,7 @@ public class Lobby extends InstanceContainer {
             buttons.put(dummyButton, Arrays.asList(20, 21, 22, 23));
             buttons.put(myArenaButton, Collections.singletonList(24));
             buttons.put(globalArenaButton, Collections.singletonList(25));
-            buttons.put(templateButton, Collections.singletonList(26));
+            buttons.put(gameButton, Collections.singletonList(26));
             return buttons;
         };
 
@@ -522,7 +519,7 @@ public class Lobby extends InstanceContainer {
             }
         };
         arenaGUIHolder.setButtonMap(buttonMap);
-        arenaGUIHolder.setTitle(LobbyConfig.INVENTORY_ARENA_TITLE.getValue());
+        arenaGUIHolder.setTitle(gameServer.getLobbyConfig().getArenaInventoryTitle());
         arenaGUIHolder.setInventoryType(InventoryType.CHEST_3_ROW);
         arenaGUIHolder.setRemoveDisplayOnClose(true);
         arenaGUIHolder.init();
