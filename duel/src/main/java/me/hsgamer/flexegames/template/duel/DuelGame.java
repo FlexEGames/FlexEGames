@@ -6,7 +6,6 @@ import me.hsgamer.flexegames.feature.ConfigFeature;
 import me.hsgamer.flexegames.feature.DescriptionFeature;
 import me.hsgamer.flexegames.feature.JoinFeature;
 import me.hsgamer.flexegames.game.Game;
-import me.hsgamer.flexegames.template.duel.feature.BoardFeature;
 import me.hsgamer.flexegames.template.duel.feature.InstanceFeature;
 import me.hsgamer.flexegames.template.duel.feature.WinnerFeature;
 import me.hsgamer.flexegames.template.duel.state.EndingState;
@@ -82,7 +81,6 @@ public class DuelGame extends Game {
         return List.of(
                 new ArenaTimerFeature(),
                 new InstanceFeature(),
-                new BoardFeature(),
                 new WinnerFeature()
         );
     }

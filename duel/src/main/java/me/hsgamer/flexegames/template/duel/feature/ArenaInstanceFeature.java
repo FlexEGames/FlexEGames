@@ -7,14 +7,19 @@ import io.github.bloepiloepi.pvp.events.PlayerExhaustEvent;
 import me.hsgamer.flexegames.feature.ConfigFeature;
 import me.hsgamer.flexegames.feature.DescriptionFeature;
 import me.hsgamer.flexegames.feature.LobbyFeature;
+import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.template.duel.DuelGameConfig;
+import me.hsgamer.flexegames.template.duel.state.EndingState;
 import me.hsgamer.flexegames.template.duel.state.InGameState;
+import me.hsgamer.flexegames.template.duel.state.WaitingState;
 import me.hsgamer.flexegames.util.AssetUtil;
 import me.hsgamer.flexegames.util.ChatUtil;
 import me.hsgamer.flexegames.util.FullBrightDimension;
 import me.hsgamer.flexegames.util.PvpUtil;
+import me.hsgamer.hscore.minestom.board.Board;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.Feature;
+import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
@@ -31,7 +36,11 @@ import net.minestom.server.instance.IChunkLoader;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.tag.Tag;
+import net.minestom.server.timer.ExecutionType;
+import net.minestom.server.timer.Task;
+import net.minestom.server.timer.TaskSchedule;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ArenaInstanceFeature implements Feature {
@@ -40,6 +49,8 @@ public class ArenaInstanceFeature implements Feature {
     private final EventNode<EntityEvent> entityEventNode;
     private final Tag<Boolean> deadTag = Tag.Boolean("duel:dead").defaultValue(false);
     private final Tag<Boolean> playerBlockTag = Tag.Boolean("duel:playerBlock").defaultValue(false);
+    private Board board;
+    private Task task;
 
     public ArenaInstanceFeature(Arena arena) {
         this.arena = arena;
@@ -124,10 +135,52 @@ public class ArenaInstanceFeature implements Feature {
                 .addListener(PlayerBlockPlaceEvent.class, event -> event.setBlock(event.getBlock().withTag(playerBlockTag, true)));
 
         MinecraftServer.getInstanceManager().registerInstance(instance);
+
+        var descriptionFeature = arena.getArenaFeature(DescriptionFeature.class);
+        this.board = new Board(
+                player -> ReplacementManager.builder()
+                        .replaceGlobal()
+                        .replace(descriptionFeature.getReplacements())
+                        .replacePlayer(player)
+                        .build(gameConfig.getBoardTitle()),
+                player -> {
+                    ReplacementManager.Builder builder = ReplacementManager.builder()
+                            .replaceGlobal()
+                            .replace(descriptionFeature.getReplacements())
+                            .replacePlayer(player);
+                    List<Component> components = Collections.emptyList();
+                    if (arena.getState() == WaitingState.class) {
+                        components = gameConfig.getBoardLinesWaiting();
+                    } else if (arena.getState() == InGameState.class) {
+                        components = gameConfig.getBoardLinesIngame();
+                    } else if (arena.getState() == EndingState.class) {
+                        components = gameConfig.getBoardLinesEnding();
+                    }
+                    return components.stream().map(builder::build).toList();
+                }
+        );
+        instance.eventNode()
+                .addListener(AddEntityToInstanceEvent.class, event -> {
+                    if (event.getEntity() instanceof Player player) {
+                        board.addPlayer(player);
+                    }
+                })
+                .addListener(RemoveEntityFromInstanceEvent.class, event -> {
+                    if (event.getEntity() instanceof Player player) {
+                        board.removePlayer(player);
+                    }
+                });
+        task = instance.scheduler()
+                .buildTask(board::updateAll)
+                .repeat(TaskSchedule.nextTick())
+                .executionType(ExecutionType.ASYNC)
+                .schedule();
     }
 
     @Override
     public void clear() {
+        task.cancel();
+        board.removeAll();
         backToLobby();
         MinecraftServer.getGlobalEventHandler().removeChild(entityEventNode);
         MinecraftServer.getInstanceManager().unregisterInstance(instance);

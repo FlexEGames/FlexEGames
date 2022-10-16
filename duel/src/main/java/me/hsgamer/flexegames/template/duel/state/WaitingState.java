@@ -5,7 +5,6 @@ import me.hsgamer.flexegames.feature.ConfigFeature;
 import me.hsgamer.flexegames.feature.JoinFeature;
 import me.hsgamer.flexegames.template.duel.DuelExtension;
 import me.hsgamer.flexegames.template.duel.DuelGameConfig;
-import me.hsgamer.flexegames.template.duel.feature.BoardFeature;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.implementation.feature.arena.ArenaTimerFeature;
 import net.kyori.adventure.text.Component;
@@ -27,7 +26,6 @@ public class WaitingState implements ComponentGameState {
                         arena.getFeature(ConfigFeature.class).getConfig(DuelGameConfig.class).getWaitingTime(),
                         TimeUnit.SECONDS
                 );
-        arena.getArenaFeature(BoardFeature.class);
     }
 
     @Override
