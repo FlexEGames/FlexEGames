@@ -33,7 +33,7 @@ public class WaitingState implements ComponentGameState {
     @Override
     public void update(Arena arena) {
         if (arena.getArenaFeature(ArenaTimerFeature.class).getDuration(TimeUnit.MILLISECONDS) > 0) return;
-        if (arena.getArenaFeature(JoinFeature.class).getPlayerCount() >= 1) {
+        if (arena.getArenaFeature(JoinFeature.class).getPlayerCount() > 1) {
             arena.setNextState(InGameState.class);
         } else {
             Component component = duelExtension.getMessageConfig().getNotEnoughPlayers();
