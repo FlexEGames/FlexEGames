@@ -10,6 +10,7 @@ import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.minigamecore.base.Arena;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
@@ -18,16 +19,18 @@ import net.minestom.server.utils.StringUtils;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public class JoinArenaCommand extends Command {
     public JoinArenaCommand(GameServer gameServer) {
         super("joinarena", "join");
-        setCondition((sender, commandString) -> sender instanceof Player player && gameServer.getLobby().isInLobby(player));
         setDefaultExecutor((sender, context) -> {
             sender.sendMessage("Usage: /" + context.getCommandName() + " <game> <arena>");
             sender.sendMessage("Usage: /" + context.getCommandName() + " search <owner>");
             sender.sendMessage("Usage: /" + context.getCommandName() + " game <game>");
         });
+
+        Predicate<CommandSender> playerLobbyPredicate = sender -> sender instanceof Player player && gameServer.getLobby().isInLobby(player);
 
         var gameArgument = new GameArgument(gameServer, "game");
         setArgumentCallback((sender, exception) -> {
@@ -40,6 +43,7 @@ public class JoinArenaCommand extends Command {
         arenaArgument.setGameArgument(gameArgument);
 
         addSyntax((sender, context) -> {
+            if (!playerLobbyPredicate.test(sender)) return;
             Game game = context.get(gameArgument);
             Optional<Arena> optionalArena = context.get(arenaArgument).apply(game);
             if (optionalArena.isEmpty()) {
@@ -59,7 +63,10 @@ public class JoinArenaCommand extends Command {
             }
         }, gameArgument, arenaArgument);
 
-        addSyntax((sender, context) -> gameServer.getLobby().openArenaInventory((Player) sender, false));
+        addSyntax((sender, context) -> {
+            if (!playerLobbyPredicate.test(sender)) return;
+            gameServer.getLobby().openArenaInventory((Player) sender, false);
+        });
 
         var searchArgument = ArgumentType.Literal("search");
         var ownerQueryArgument = ArgumentType.StringArray("owner");
@@ -76,6 +83,7 @@ public class JoinArenaCommand extends Command {
             }
         });
         addSyntax((sender, context) -> {
+            if (!playerLobbyPredicate.test(sender)) return;
             String[] query = context.get(ownerQueryArgument);
             String queryString = String.join(" ", query);
             gameServer.getLobby().openArenaInventory((Player) sender, queryString);
@@ -83,6 +91,7 @@ public class JoinArenaCommand extends Command {
 
         var gameArgumentLiteral = ArgumentType.Literal("game");
         addSyntax((sender, context) -> {
+            if (!playerLobbyPredicate.test(sender)) return;
             Game game = context.get(gameArgument);
             gameServer.getLobby().openArenaInventory((Player) sender, game::getAllArenas);
         }, gameArgumentLiteral, gameArgument);
