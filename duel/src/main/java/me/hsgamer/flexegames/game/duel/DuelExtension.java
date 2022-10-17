@@ -14,7 +14,7 @@ public class DuelExtension extends SingleGameExtension {
 
     @Override
     public void onEnable() {
-        messageConfig = YamlConfigGenerator.generate(DuelMessageConfig.class, getDataDirectory().resolve("message.yml").toFile());
+        messageConfig = YamlConfigGenerator.generate(DuelMessageConfig.class, getDataDirectory().resolve("messages.yml").toFile());
     }
 
     @Override
