@@ -1,5 +1,5 @@
 {
-  "entrypoint": "me.hsgamer.flexegames.template.duel.DuelExtension",
-  "name": "DuelExtension",
+  "entrypoint": "${main}",
+  "name": "${name}",
   "version": "${version}"
 }

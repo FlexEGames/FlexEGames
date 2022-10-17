@@ -1,4 +1,4 @@
-package me.hsgamer.flexegames.template.duel.feature;
+package me.hsgamer.flexegames.game.duel.feature;
 
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaFeature;

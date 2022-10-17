@@ -1,7 +1,7 @@
-package me.hsgamer.flexegames.template.duel.state;
+package me.hsgamer.flexegames.game.duel.state;
 
 import me.hsgamer.flexegames.api.game.ComponentGameState;
-import me.hsgamer.flexegames.template.duel.DuelExtension;
+import me.hsgamer.flexegames.game.duel.DuelExtension;
 import me.hsgamer.minigamecore.base.Arena;
 import net.kyori.adventure.text.Component;
 

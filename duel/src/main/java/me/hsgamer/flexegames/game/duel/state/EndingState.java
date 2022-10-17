@@ -1,13 +1,13 @@
-package me.hsgamer.flexegames.template.duel.state;
+package me.hsgamer.flexegames.game.duel.state;
 
 import me.hsgamer.flexegames.api.game.ComponentGameState;
 import me.hsgamer.flexegames.feature.ConfigFeature;
 import me.hsgamer.flexegames.feature.DescriptionFeature;
 import me.hsgamer.flexegames.feature.JoinFeature;
+import me.hsgamer.flexegames.game.duel.DuelGameConfig;
 import me.hsgamer.flexegames.manager.ReplacementManager;
-import me.hsgamer.flexegames.template.duel.DuelExtension;
-import me.hsgamer.flexegames.template.duel.DuelGameConfig;
-import me.hsgamer.flexegames.template.duel.feature.WinnerFeature;
+import me.hsgamer.flexegames.game.duel.DuelExtension;
+import me.hsgamer.flexegames.game.duel.feature.WinnerFeature;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.implementation.feature.arena.ArenaTimerFeature;
 import net.kyori.adventure.text.Component;

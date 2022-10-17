@@ -9,7 +9,9 @@ dependencies {
 processResources {
     from(sourceSets.main.resources.srcDirs) {
         expand(
-                'version': project.version
+                'version': project.version,
+                'main': "me.hsgamer.flexegames.game.duel.DuelExtension",
+                'name': "DuelExtension",
         )
         include 'extension.json'
     }

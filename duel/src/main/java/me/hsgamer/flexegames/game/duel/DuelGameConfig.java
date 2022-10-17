@@ -1,4 +1,4 @@
-package me.hsgamer.flexegames.template.duel;
+package me.hsgamer.flexegames.game.duel;
 
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.config.converter.*;

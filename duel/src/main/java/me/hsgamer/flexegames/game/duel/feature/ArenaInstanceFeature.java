@@ -1,4 +1,4 @@
-package me.hsgamer.flexegames.template.duel.feature;
+package me.hsgamer.flexegames.game.duel.feature;
 
 import io.github.bloepiloepi.pvp.events.EntityPreDeathEvent;
 import io.github.bloepiloepi.pvp.events.ExplosionEvent;
@@ -7,11 +7,11 @@ import io.github.bloepiloepi.pvp.events.PlayerExhaustEvent;
 import me.hsgamer.flexegames.feature.ConfigFeature;
 import me.hsgamer.flexegames.feature.DescriptionFeature;
 import me.hsgamer.flexegames.feature.LobbyFeature;
+import me.hsgamer.flexegames.game.duel.DuelGameConfig;
+import me.hsgamer.flexegames.game.duel.state.EndingState;
+import me.hsgamer.flexegames.game.duel.state.InGameState;
+import me.hsgamer.flexegames.game.duel.state.WaitingState;
 import me.hsgamer.flexegames.manager.ReplacementManager;
-import me.hsgamer.flexegames.template.duel.DuelGameConfig;
-import me.hsgamer.flexegames.template.duel.state.EndingState;
-import me.hsgamer.flexegames.template.duel.state.InGameState;
-import me.hsgamer.flexegames.template.duel.state.WaitingState;
 import me.hsgamer.flexegames.util.AssetUtil;
 import me.hsgamer.flexegames.util.ChatUtil;
 import me.hsgamer.flexegames.util.FullBrightDimension;

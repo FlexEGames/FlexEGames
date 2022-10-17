@@ -21,10 +21,9 @@ shadowJar {
     exclude 'extension.json'
 }
 
-tasks {
-    build {
-        dependsOn(tasks.shadowJar)
-    }
+artifacts {
+    archives shadowJar
+    shadow shadowJar
 }
 
 publishing {

@@ -1,4 +1,4 @@
-package me.hsgamer.flexegames.template.duel;
+package me.hsgamer.flexegames.game.duel;
 
 import me.hsgamer.flexegames.GameServer;
 import me.hsgamer.flexegames.api.game.JoinResponse;
@@ -6,12 +6,12 @@ import me.hsgamer.flexegames.feature.ConfigFeature;
 import me.hsgamer.flexegames.feature.DescriptionFeature;
 import me.hsgamer.flexegames.feature.JoinFeature;
 import me.hsgamer.flexegames.game.Game;
-import me.hsgamer.flexegames.template.duel.feature.InstanceFeature;
-import me.hsgamer.flexegames.template.duel.feature.WinnerFeature;
-import me.hsgamer.flexegames.template.duel.state.EndingState;
-import me.hsgamer.flexegames.template.duel.state.InGameState;
-import me.hsgamer.flexegames.template.duel.state.KillingState;
-import me.hsgamer.flexegames.template.duel.state.WaitingState;
+import me.hsgamer.flexegames.game.duel.state.EndingState;
+import me.hsgamer.flexegames.game.duel.state.InGameState;
+import me.hsgamer.flexegames.game.duel.state.KillingState;
+import me.hsgamer.flexegames.game.duel.state.WaitingState;
+import me.hsgamer.flexegames.game.duel.feature.InstanceFeature;
+import me.hsgamer.flexegames.game.duel.feature.WinnerFeature;
 import me.hsgamer.flexegames.util.TimeUtil;
 import me.hsgamer.hscore.common.Pair;
 import me.hsgamer.hscore.config.Config;
