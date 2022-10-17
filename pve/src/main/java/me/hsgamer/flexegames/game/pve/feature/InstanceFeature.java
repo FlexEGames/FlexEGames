@@ -104,7 +104,7 @@ public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceF
                         }
                     })
                     .addListener(EntityAttackEvent.class, event -> {
-                        if (event.getEntity() instanceof LivingEntity attacker && event.getTarget() instanceof LivingEntity target) {
+                        if (event.getEntity() instanceof LivingEntity attacker && !(attacker instanceof Player) && event.getTarget() instanceof LivingEntity target) {
                             var damage = attacker.getAttributeValue(Attribute.ATTACK_DAMAGE);
                             target.damage(DamageType.fromEntity(attacker), damage);
                         }
