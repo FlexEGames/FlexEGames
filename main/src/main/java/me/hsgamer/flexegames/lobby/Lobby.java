@@ -1,5 +1,6 @@
 package me.hsgamer.flexegames.lobby;
 
+import lombok.Getter;
 import lombok.experimental.ExtensionMethod;
 import me.hsgamer.flexegames.GameServer;
 import me.hsgamer.flexegames.api.game.JoinResponse;
@@ -11,7 +12,6 @@ import me.hsgamer.flexegames.feature.JoinFeature;
 import me.hsgamer.flexegames.game.Game;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.util.*;
-import me.hsgamer.hscore.common.Validate;
 import me.hsgamer.hscore.minestom.board.Board;
 import me.hsgamer.hscore.minestom.gui.GUIDisplay;
 import me.hsgamer.hscore.minestom.gui.GUIHolder;
@@ -24,11 +24,9 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
-import net.minestom.server.event.EventListener;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
 import net.minestom.server.event.inventory.InventoryPreClickEvent;
-import net.minestom.server.event.item.ItemDropEvent;
 import net.minestom.server.event.player.*;
 import net.minestom.server.event.trait.InstanceEvent;
 import net.minestom.server.instance.InstanceContainer;
@@ -44,10 +42,8 @@ import net.minestom.server.utils.StringUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
@@ -61,13 +57,14 @@ public class Lobby extends InstanceContainer {
     private final Tag<Boolean> hidePlayerTag = Tag.Boolean("lobby:HidePlayer").defaultValue(false);
     private final Tag<Boolean> firstSpawnTag = Tag.Boolean("lobby:FirstSpawn").defaultValue(true);
     private final Map<UUID, Supplier<List<Arena>>> arenaSupplierRefMap = new ConcurrentHashMap<>();
-    private final Map<Integer, ItemStack> lobbyItems = new HashMap<>();
+    private final HotbarItemsHelper hotbarItemsHelper;
     private GUIHolder arenaGUIHolder;
     private GUIHolder gameGUIHolder;
 
     public Lobby(GameServer gameServer) {
         super(gameServer.getLobbyConfig().getWorldId(), FullBrightDimension.INSTANCE);
         this.gameServer = gameServer;
+        this.hotbarItemsHelper = new HotbarItemsHelper(this);
         position = gameServer.getLobbyConfig().getWorldSpawnPos();
         board = new Board(
                 player -> ReplacementManager.builder().replaceGlobal().replacePlayer(player).build(gameServer.getLobbyConfig().getBoardTitle()),
@@ -99,28 +96,23 @@ public class Lobby extends InstanceContainer {
                 })
                 .addListener(PlayerBlockBreakEvent.class, event -> event.setCancelled(true))
                 .addListener(PlayerBlockPlaceEvent.class, event -> event.setCancelled(true))
-                .addListener(PlayerSwapItemEvent.class, event -> event.setCancelled(true))
-                .addListener(InventoryPreClickEvent.class, event -> {
-                    if (event.getInventory() == null) {
-                        event.setCancelled(true);
-                    }
-                });
+                .addListener(PlayerSwapItemEvent.class, event -> event.setCancelled(true));
         ChatUtil.apply(eventNode, gameServer.getLobbyConfig().getChatFormat());
         boardTask = scheduler().buildTask(board::updateAll)
                 .repeat(TaskUtil.tick(gameServer.getLobbyConfig().getBoardUpdateInterval()))
                 .executionType(gameServer.getLobbyConfig().isBoardAsync() ? ExecutionType.ASYNC : ExecutionType.SYNC)
                 .schedule();
 
-        registerHotbarItemFromMap(gameServer.getLobbyConfig().getGameHotbar(), 2, this::openGameInventory);
-        registerHotbarItemFromMap(gameServer.getLobbyConfig().getArenaHotbar(), 4, player -> openArenaInventory(player, false));
-        registerHotbarItemFromMap(gameServer.getLobbyConfig().getTogglePlayerHotbar(), 6, player -> {
+        hotbarItemsHelper.registerHotbarItemFromMap(gameServer.getLobbyConfig().getGameHotbar(), 2, this::openGameInventory);
+        hotbarItemsHelper.registerHotbarItemFromMap(gameServer.getLobbyConfig().getArenaHotbar(), 4, player -> openArenaInventory(player, false));
+        hotbarItemsHelper.registerHotbarItemFromMap(gameServer.getLobbyConfig().getTogglePlayerHotbar(), 6, player -> {
             player.setTag(hidePlayerTag, !player.getTag(hidePlayerTag));
             updateView(player, true);
         });
 
         var hubHotbarMap = gameServer.getLobbyConfig().getServerHubHotbar();
         var hubName = Objects.toString(hubHotbarMap.get("server"), "hub");
-        registerHotbarItemFromMap(hubHotbarMap, 8, player -> {
+        hotbarItemsHelper.registerHotbarItemFromMap(hubHotbarMap, 8, player -> {
             try (
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                     DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream)
@@ -142,46 +134,6 @@ public class Lobby extends InstanceContainer {
 
         setupArenaGUIHolder();
         setupGameGUIHolder();
-    }
-
-    public void registerHotbarItemFromMap(Map<String, Object> map, int defaultSlot, Consumer<Player> consumer) {
-        var item = ItemBuilder.buildItem(map).stripItalics();
-        var slot = Optional.ofNullable(map.get("slot")).map(Objects::toString).flatMap(Validate::getNumber).map(BigDecimal::intValue).orElse(defaultSlot);
-        boolean enable = Optional.ofNullable(map.get("enable")).map(Objects::toString).map(Boolean::parseBoolean).orElse(true);
-        if (enable) {
-            registerHotbarItem(slot, item, consumer);
-        }
-    }
-
-    public void registerHotbarItem(int slot, ItemStack itemStack, Consumer<Player> consumer) {
-        lobbyItems.put(slot, itemStack);
-        eventNode()
-                .addListener(EventListener.builder(ItemDropEvent.class)
-                        .handler(event -> event.setCancelled(true))
-                        .filter(event -> event.getItemStack().equals(itemStack))
-                        .build())
-                .addListener(EventListener.builder(PlayerUseItemEvent.class)
-                        .handler(event -> {
-                            event.setCancelled(true);
-                            consumer.accept(event.getPlayer());
-                        })
-                        .filter(event -> event.getPlayer().getInventory().getItemInHand(event.getHand()).equals(itemStack))
-                        .build())
-                .addListener(EventListener.builder(PlayerBlockInteractEvent.class)
-                        .handler(event -> {
-                            event.setCancelled(true);
-                            event.setBlockingItemUse(true);
-                            consumer.accept(event.getPlayer());
-                        })
-                        .filter(event -> event.getPlayer().getInventory().getItemInHand(event.getHand()).equals(itemStack))
-                        .build())
-                .addListener(EventListener.builder(PlayerHandAnimationEvent.class)
-                        .handler(event -> {
-                            event.setCancelled(true);
-                            consumer.accept(event.getPlayer());
-                        })
-                        .filter(event -> event.getPlayer().getInventory().getItemInHand(event.getHand()).equals(itemStack))
-                        .build());
     }
 
     private void updateView(Player player, boolean message) {
@@ -210,6 +162,8 @@ public class Lobby extends InstanceContainer {
             player.setRespawnPoint(position);
             player.setGameMode(GameMode.ADVENTURE);
         });
+        hotbarItemsHelper.init();
+        hotbarItemsHelper.setEnabled(true);
     }
 
     private void onSpawn(Player player) {
@@ -223,7 +177,6 @@ public class Lobby extends InstanceContainer {
 
     private void onFirstSpawn(Player player) {
         board.addPlayer(player);
-        lobbyItems.forEach((slot, itemStack) -> player.getInventory().setItemStack(slot, itemStack));
     }
 
     private void onBackSpawn(Player player) {
@@ -238,7 +191,6 @@ public class Lobby extends InstanceContainer {
     private void onQuit(Player player) {
         board.removePlayer(player);
         player.updateViewerRule(entity -> true);
-        lobbyItems.keySet().forEach(slot -> player.getInventory().setItemStack(slot, ItemStack.AIR));
     }
 
     private void onDisconnect(Player player) {
@@ -250,6 +202,10 @@ public class Lobby extends InstanceContainer {
         return position;
     }
 
+    public HotbarItemsHelper getHotbarItemsHelper() {
+        return hotbarItemsHelper;
+    }
+
     public void clear() {
         if (gameGUIHolder != null) {
             gameGUIHolder.stop();
@@ -259,6 +215,7 @@ public class Lobby extends InstanceContainer {
         }
         boardTask.cancel();
         instanceModifiers.forEach(InstanceModifier::clear);
+        hotbarItemsHelper.clear();
     }
 
     public boolean isInLobby(Player player) {
