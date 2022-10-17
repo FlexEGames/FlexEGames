@@ -1,17 +1,17 @@
 package me.hsgamer.flexegames.lobby;
 
+import lombok.Getter;
 import lombok.experimental.ExtensionMethod;
 import me.hsgamer.flexegames.GameServer;
-import me.hsgamer.flexegames.api.game.Template;
+import me.hsgamer.flexegames.api.game.JoinResponse;
 import me.hsgamer.flexegames.api.modifier.InstanceModifier;
 import me.hsgamer.flexegames.builder.InstanceModifierBuilder;
 import me.hsgamer.flexegames.builder.ItemBuilder;
-import me.hsgamer.flexegames.config.LobbyConfig;
-import me.hsgamer.flexegames.config.MessageConfig;
-import me.hsgamer.flexegames.feature.GameFeature;
+import me.hsgamer.flexegames.feature.DescriptionFeature;
+import me.hsgamer.flexegames.feature.JoinFeature;
+import me.hsgamer.flexegames.game.Game;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.util.*;
-import me.hsgamer.hscore.common.Validate;
 import me.hsgamer.hscore.minestom.board.Board;
 import me.hsgamer.hscore.minestom.gui.GUIDisplay;
 import me.hsgamer.hscore.minestom.gui.GUIHolder;
@@ -24,11 +24,9 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
-import net.minestom.server.event.EventListener;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
 import net.minestom.server.event.inventory.InventoryPreClickEvent;
-import net.minestom.server.event.item.ItemDropEvent;
 import net.minestom.server.event.player.*;
 import net.minestom.server.event.trait.InstanceEvent;
 import net.minestom.server.instance.InstanceContainer;
@@ -44,10 +42,8 @@ import net.minestom.server.utils.StringUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
@@ -61,19 +57,20 @@ public class Lobby extends InstanceContainer {
     private final Tag<Boolean> hidePlayerTag = Tag.Boolean("lobby:HidePlayer").defaultValue(false);
     private final Tag<Boolean> firstSpawnTag = Tag.Boolean("lobby:FirstSpawn").defaultValue(true);
     private final Map<UUID, Supplier<List<Arena>>> arenaSupplierRefMap = new ConcurrentHashMap<>();
-    private final Map<Integer, ItemStack> lobbyItems = new HashMap<>();
+    private final HotbarItemsHelper hotbarItemsHelper;
     private GUIHolder arenaGUIHolder;
-    private GUIHolder templateGUIHolder;
+    private GUIHolder gameGUIHolder;
 
     public Lobby(GameServer gameServer) {
-        super(LobbyConfig.UNIQUE_ID.getValue(), FullBrightDimension.INSTANCE);
+        super(gameServer.getLobbyConfig().getWorldId(), FullBrightDimension.INSTANCE);
         this.gameServer = gameServer;
-        position = LobbyConfig.POSITION.getValue();
+        this.hotbarItemsHelper = new HotbarItemsHelper(this);
+        position = gameServer.getLobbyConfig().getWorldSpawnPos();
         board = new Board(
-                player -> ReplacementManager.builder().replaceGlobal().replacePlayer(player).build(LobbyConfig.BOARD_TITLE.getValue()),
+                player -> ReplacementManager.builder().replaceGlobal().replacePlayer(player).build(gameServer.getLobbyConfig().getBoardTitle()),
                 player -> {
                     ReplacementManager.Builder builder = ReplacementManager.builder().replaceGlobal().replacePlayer(player);
-                    return LobbyConfig.BOARD_LINES.getValue().stream()
+                    return gameServer.getLobbyConfig().getBoardLines().stream()
                             .map(builder::build)
                             .toList();
                 }
@@ -81,8 +78,8 @@ public class Lobby extends InstanceContainer {
         setTimeRate(0);
         setTime(6000);
 
-        var worldType = LobbyConfig.WORLD_TYPE.getValue();
-        setChunkLoader(worldType.getLoader(this, AssetUtil.getWorldFile(LobbyConfig.WORLD_NAME.getValue()).toPath()));
+        var worldType = gameServer.getLobbyConfig().getWorldType();
+        setChunkLoader(worldType.getLoader(this, AssetUtil.getWorldFile(gameServer.getLobbyConfig().getWorldName()).toPath()));
 
         EventNode<InstanceEvent> eventNode = eventNode();
         eventNode
@@ -99,27 +96,23 @@ public class Lobby extends InstanceContainer {
                 })
                 .addListener(PlayerBlockBreakEvent.class, event -> event.setCancelled(true))
                 .addListener(PlayerBlockPlaceEvent.class, event -> event.setCancelled(true))
-                .addListener(PlayerSwapItemEvent.class, event -> event.setCancelled(true))
-                .addListener(InventoryPreClickEvent.class, event -> {
-                    if (event.getInventory() == null) {
-                        event.setCancelled(true);
-                    }
-                });
+                .addListener(PlayerSwapItemEvent.class, event -> event.setCancelled(true));
+        ChatUtil.apply(eventNode, gameServer.getLobbyConfig().getChatFormat());
         boardTask = scheduler().buildTask(board::updateAll)
-                .repeat(TaskUtil.tick(LobbyConfig.BOARD_UPDATE_TIME.getValue()))
-                .executionType(Boolean.TRUE.equals(LobbyConfig.BOARD_ASYNC.getValue()) ? ExecutionType.ASYNC : ExecutionType.SYNC)
+                .repeat(TaskUtil.tick(gameServer.getLobbyConfig().getBoardUpdateInterval()))
+                .executionType(gameServer.getLobbyConfig().isBoardAsync() ? ExecutionType.ASYNC : ExecutionType.SYNC)
                 .schedule();
 
-        registerHotbarItemFromMap(LobbyConfig.HOTBAR_CREATOR.getValue(), 2, this::openTemplateInventory);
-        registerHotbarItemFromMap(LobbyConfig.HOTBAR_SELECTOR.getValue(), 4, player -> openArenaInventory(player, false));
-        registerHotbarItemFromMap(LobbyConfig.HOTBAR_TOGGLE_PLAYER.getValue(), 6, player -> {
+        hotbarItemsHelper.registerHotbarItemFromMap(gameServer.getLobbyConfig().getGameHotbar(), 2, this::openGameInventory);
+        hotbarItemsHelper.registerHotbarItemFromMap(gameServer.getLobbyConfig().getArenaHotbar(), 4, player -> openArenaInventory(player, false));
+        hotbarItemsHelper.registerHotbarItemFromMap(gameServer.getLobbyConfig().getTogglePlayerHotbar(), 6, player -> {
             player.setTag(hidePlayerTag, !player.getTag(hidePlayerTag));
             updateView(player, true);
         });
 
-        var hubHotbarMap = LobbyConfig.HOTBAR_SERVER_HUB.getValue();
+        var hubHotbarMap = gameServer.getLobbyConfig().getServerHubHotbar();
         var hubName = Objects.toString(hubHotbarMap.get("server"), "hub");
-        registerHotbarItemFromMap(hubHotbarMap, 8, player -> {
+        hotbarItemsHelper.registerHotbarItemFromMap(hubHotbarMap, 8, player -> {
             try (
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                     DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream)
@@ -133,62 +126,22 @@ public class Lobby extends InstanceContainer {
         });
 
         instanceModifiers = new ArrayList<>();
-        LobbyConfig.MODIFIERS.getValue()
+        gameServer.getLobbyConfig().getWorldModifiers()
                 .forEach(map -> InstanceModifierBuilder.buildInstanceModifier(map)
                         .map(provider -> provider.getInstanceModifier(this))
                         .ifPresent(instanceModifiers::add)
                 );
 
         setupArenaGUIHolder();
-        setupTemplateGUIHolder();
-    }
-
-    public void registerHotbarItemFromMap(Map<String, Object> map, int defaultSlot, Consumer<Player> consumer) {
-        var item = ItemBuilder.buildItem(map).stripItalics();
-        var slot = Optional.ofNullable(map.get("slot")).map(Objects::toString).flatMap(Validate::getNumber).map(BigDecimal::intValue).orElse(defaultSlot);
-        boolean enable = Optional.ofNullable(map.get("enable")).map(Objects::toString).map(Boolean::parseBoolean).orElse(true);
-        if (enable) {
-            registerHotbarItem(slot, item, consumer);
-        }
-    }
-
-    public void registerHotbarItem(int slot, ItemStack itemStack, Consumer<Player> consumer) {
-        lobbyItems.put(slot, itemStack);
-        eventNode()
-                .addListener(EventListener.builder(ItemDropEvent.class)
-                        .handler(event -> event.setCancelled(true))
-                        .filter(event -> event.getItemStack().equals(itemStack))
-                        .build())
-                .addListener(EventListener.builder(PlayerUseItemEvent.class)
-                        .handler(event -> {
-                            event.setCancelled(true);
-                            consumer.accept(event.getPlayer());
-                        })
-                        .filter(event -> event.getPlayer().getInventory().getItemInHand(event.getHand()).equals(itemStack))
-                        .build())
-                .addListener(EventListener.builder(PlayerBlockInteractEvent.class)
-                        .handler(event -> {
-                            event.setCancelled(true);
-                            event.setBlockingItemUse(true);
-                            consumer.accept(event.getPlayer());
-                        })
-                        .filter(event -> event.getPlayer().getInventory().getItemInHand(event.getHand()).equals(itemStack))
-                        .build())
-                .addListener(EventListener.builder(PlayerHandAnimationEvent.class)
-                        .handler(event -> {
-                            event.setCancelled(true);
-                            consumer.accept(event.getPlayer());
-                        })
-                        .filter(event -> event.getPlayer().getInventory().getItemInHand(event.getHand()).equals(itemStack))
-                        .build());
+        setupGameGUIHolder();
     }
 
     private void updateView(Player player, boolean message) {
         if (Boolean.TRUE.equals(player.getTag(hidePlayerTag))) {
-            if (message) player.sendMessage(MessageConfig.LOBBY_HIDE_PLAYERS.getValue());
+            if (message) player.sendMessage(gameServer.getMessageConfig().getLobbyHidePlayers());
             player.updateViewerRule(entity -> !(entity instanceof Player));
         } else {
-            if (message) player.sendMessage(MessageConfig.LOBBY_SHOW_PLAYERS.getValue());
+            if (message) player.sendMessage(gameServer.getMessageConfig().getLobbyShowPlayers());
             player.updateViewerRule(entity -> true);
         }
     }
@@ -209,6 +162,8 @@ public class Lobby extends InstanceContainer {
             player.setRespawnPoint(position);
             player.setGameMode(GameMode.ADVENTURE);
         });
+        hotbarItemsHelper.init();
+        hotbarItemsHelper.setEnabled(true);
     }
 
     private void onSpawn(Player player) {
@@ -222,7 +177,6 @@ public class Lobby extends InstanceContainer {
 
     private void onFirstSpawn(Player player) {
         board.addPlayer(player);
-        lobbyItems.forEach((slot, itemStack) -> player.getInventory().setItemStack(slot, itemStack));
     }
 
     private void onBackSpawn(Player player) {
@@ -237,7 +191,6 @@ public class Lobby extends InstanceContainer {
     private void onQuit(Player player) {
         board.removePlayer(player);
         player.updateViewerRule(entity -> true);
-        lobbyItems.keySet().forEach(slot -> player.getInventory().setItemStack(slot, ItemStack.AIR));
     }
 
     private void onDisconnect(Player player) {
@@ -249,30 +202,35 @@ public class Lobby extends InstanceContainer {
         return position;
     }
 
+    public HotbarItemsHelper getHotbarItemsHelper() {
+        return hotbarItemsHelper;
+    }
+
     public void clear() {
-        if (templateGUIHolder != null) {
-            templateGUIHolder.stop();
+        if (gameGUIHolder != null) {
+            gameGUIHolder.stop();
         }
         if (arenaGUIHolder != null) {
             arenaGUIHolder.stop();
         }
         boardTask.cancel();
         instanceModifiers.forEach(InstanceModifier::clear);
+        hotbarItemsHelper.clear();
     }
 
     public boolean isInLobby(Player player) {
         return player.getInstance() == null || player.getInstance() == this;
     }
 
-    private void setupTemplateGUIHolder() {
-        templateGUIHolder = new GUIHolder();
-        Supplier<List<Template>> templates = () -> new ArrayList<>(gameServer.getTemplateManager().getTemplateMap().values());
-        IntSupplier maxPage = () -> getMaxPage(templates.get().size());
+    private void setupGameGUIHolder() {
+        gameGUIHolder = new GUIHolder();
+        Supplier<List<Game>> games = () -> new ArrayList<>(gameServer.getGameManager().getGameMap().values());
+        IntSupplier maxPage = () -> getMaxPage(games.get().size());
         var uuidPage = new HashMap<UUID, Integer>();
         Button nextPageButton = new Button() {
             @Override
             public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_TEMPLATE_NEXT_PAGE.getValue()).stripItalics();
+                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getGameInventoryNextPage()).stripItalics();
             }
 
             @Override
@@ -286,14 +244,14 @@ public class Lobby extends InstanceContainer {
                         return oldPage;
                     }
                 });
-                templateGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
+                gameGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
                 return false;
             }
         };
         Button previousPageButton = new Button() {
             @Override
             public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_TEMPLATE_PREVIOUS_PAGE.getValue()).stripItalics();
+                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getGameInventoryPreviousPage()).stripItalics();
             }
 
             @Override
@@ -307,14 +265,14 @@ public class Lobby extends InstanceContainer {
                         return oldPage;
                     }
                 });
-                templateGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
+                gameGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
                 return false;
             }
         };
         Button arenaButton = new Button() {
             @Override
             public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_TEMPLATE_ARENA.getValue()).stripItalics();
+                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getGameInventoryArena()).stripItalics();
             }
 
             @Override
@@ -329,25 +287,21 @@ public class Lobby extends InstanceContainer {
             var page = uuidPage.getOrDefault(uuid, 0);
             for (int i = 0; i < 18; i++) {
                 var index = i + page * 18;
-                if (index >= templates.get().size()) {
+                if (index >= games.get().size()) {
                     continue;
                 }
-                var template = templates.get().get(index);
+                var game = games.get().get(index);
                 buttons.put(new Button() {
                     @Override
                     public ItemStack getItemStack(UUID uuid) {
-                        return template.getDisplayItem().stripItalics();
+                        return game.getFeature(DescriptionFeature.class).getDisplayItem();
                     }
 
                     @Override
                     public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
                         var player = uuid.getPlayer();
-                        if (gameServer.getGameArenaManager().createArena(player, template)) {
-                            player.sendMessage(MessageConfig.RESPONSE_CREATE_ARENA_SUCCESSFUL.getValue());
-                            openArenaInventory(player, true);
-                        } else {
-                            player.sendMessage(MessageConfig.RESPONSE_CANNOT_CREATE_ARENA.getValue());
-                        }
+                        game.createArena(player.getUuid());
+                        openArenaInventory(player, true);
                         return false;
                     }
                 }, Collections.singletonList(i));
@@ -358,15 +312,15 @@ public class Lobby extends InstanceContainer {
             buttons.put(arenaButton, Collections.singletonList(26));
             return buttons;
         };
-        templateGUIHolder.setTitle(LobbyConfig.INVENTORY_TEMPLATE_TITLE.getValue());
-        templateGUIHolder.setInventoryType(InventoryType.CHEST_3_ROW);
-        templateGUIHolder.setRemoveDisplayOnClose(true);
-        templateGUIHolder.setButtonMap(buttonMap);
-        templateGUIHolder.init();
+        gameGUIHolder.setTitle(gameServer.getLobbyConfig().getGameInventoryTitle());
+        gameGUIHolder.setInventoryType(InventoryType.CHEST_3_ROW);
+        gameGUIHolder.setRemoveDisplayOnClose(true);
+        gameGUIHolder.setButtonMap(buttonMap);
+        gameGUIHolder.init();
     }
 
-    public void openTemplateInventory(Player openPlayer) {
-        templateGUIHolder.createDisplay(openPlayer.getUuid()).init();
+    public void openGameInventory(Player openPlayer) {
+        gameGUIHolder.createDisplay(openPlayer.getUuid()).init();
     }
 
     public void setArenaSupplierRef(UUID uuid, Supplier<List<Arena>> arenaSupplierRef) {
@@ -379,7 +333,7 @@ public class Lobby extends InstanceContainer {
         Button nextPageButton = new Button() {
             @Override
             public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_ARENA_NEXT_PAGE.getValue()).stripItalics();
+                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryNextPage()).stripItalics();
             }
 
             @Override
@@ -393,14 +347,14 @@ public class Lobby extends InstanceContainer {
                         return oldPage;
                     }
                 });
-                templateGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
+                gameGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
                 return false;
             }
         };
         Button previousPageButton = new Button() {
             @Override
             public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_ARENA_PREVIOUS_PAGE.getValue()).stripItalics();
+                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryPreviousPage()).stripItalics();
             }
 
             @Override
@@ -414,45 +368,45 @@ public class Lobby extends InstanceContainer {
                         return oldPage;
                     }
                 });
-                templateGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
+                gameGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
                 return false;
             }
         };
         Button globalArenaButton = new Button() {
             @Override
             public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_ARENA_GLOBAL_ARENA.getValue()).stripItalics();
+                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryGlobalArena()).stripItalics();
             }
 
             @Override
             public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
                 uuidPage.put(uuid, 0);
-                setArenaSupplierRef(uuid, () -> gameServer.getGameArenaManager().getAllArenas());
+                setArenaSupplierRef(uuid, () -> gameServer.getGameManager().getAllArenas());
                 return false;
             }
         };
         Button myArenaButton = new Button() {
             @Override
             public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_ARENA_MY_ARENA.getValue()).stripItalics();
+                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryMyArena()).stripItalics();
             }
 
             @Override
             public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
                 uuidPage.put(uuid, 0);
-                setArenaSupplierRef(uuid, () -> gameServer.getGameArenaManager().findArenasByOwner(uuid1 -> uuid1.equals(uuid)));
+                setArenaSupplierRef(uuid, () -> gameServer.getGameManager().findArenasByOwner(uuid1 -> uuid1.equals(uuid)));
                 return false;
             }
         };
-        Button templateButton = new Button() {
+        Button gameButton = new Button() {
             @Override
             public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(LobbyConfig.INVENTORY_ARENA_TEMPLATE.getValue()).stripItalics();
+                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryGame()).stripItalics();
             }
 
             @Override
             public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
-                openTemplateInventory(uuid.getPlayer());
+                openGameInventory(uuid.getPlayer());
                 return false;
             }
         };
@@ -467,24 +421,25 @@ public class Lobby extends InstanceContainer {
                     continue;
                 }
                 var arena = arenasList.get(index);
-                var feature = arena.getArenaFeature(GameFeature.class);
-                if (!feature.isReady()) {
-                    continue;
-                }
                 buttons.put(new Button() {
                     @Override
                     public ItemStack getItemStack(UUID uuid) {
-                        return feature.getGame().getDisplayItem().stripItalics();
+                        return arena.getArenaFeature(DescriptionFeature.class).getDisplayItem();
                     }
 
                     @Override
                     public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
                         var player = uuid.getPlayer();
-                        var response = feature.joinGame(player);
-                        if (!response.success()) {
-                            player.sendMessage(response.getMessage(player));
+                        var joinFeature = arena.getArenaFeature(JoinFeature.class);
+                        if (joinFeature.isJoined(player)) {
+                            player.sendMessage(gameServer.getMessageConfig().getErrorArenaJoined());
                         } else {
-                            player.closeInventory();
+                            JoinResponse response = joinFeature.join(player);
+                            if (response.success()) {
+                                player.closeInventory();
+                            } else {
+                                player.sendMessage(response.message());
+                            }
                         }
                         return false;
                     }
@@ -495,7 +450,7 @@ public class Lobby extends InstanceContainer {
             buttons.put(dummyButton, Arrays.asList(20, 21, 22, 23));
             buttons.put(myArenaButton, Collections.singletonList(24));
             buttons.put(globalArenaButton, Collections.singletonList(25));
-            buttons.put(templateButton, Collections.singletonList(26));
+            buttons.put(gameButton, Collections.singletonList(26));
             return buttons;
         };
 
@@ -522,7 +477,7 @@ public class Lobby extends InstanceContainer {
             }
         };
         arenaGUIHolder.setButtonMap(buttonMap);
-        arenaGUIHolder.setTitle(LobbyConfig.INVENTORY_ARENA_TITLE.getValue());
+        arenaGUIHolder.setTitle(gameServer.getLobbyConfig().getArenaInventoryTitle());
         arenaGUIHolder.setInventoryType(InventoryType.CHEST_3_ROW);
         arenaGUIHolder.setRemoveDisplayOnClose(true);
         arenaGUIHolder.init();
@@ -539,14 +494,14 @@ public class Lobby extends InstanceContainer {
                 .filter(player -> StringUtils.jaroWinklerScore(player.getUsername().toLowerCase(), ownerQuery.toLowerCase()) > 0)
                 .map(Player::getUuid)
                 .toList();
-        openArenaInventory(openPlayer, () -> gameServer.getGameArenaManager().findArenasByOwner(uuids));
+        openArenaInventory(openPlayer, () -> gameServer.getGameManager().findArenasByOwner(uuids));
     }
 
     public void openArenaInventory(Player openPlayer, boolean myArena) {
         if (myArena) {
-            openArenaInventory(openPlayer, () -> gameServer.getGameArenaManager().findArenasByOwner(openPlayer));
+            openArenaInventory(openPlayer, () -> gameServer.getGameManager().findArenasByOwner(openPlayer));
         } else {
-            openArenaInventory(openPlayer, () -> gameServer.getGameArenaManager().getAllArenas());
+            openArenaInventory(openPlayer, () -> gameServer.getGameManager().getAllArenas());
         }
     }
 

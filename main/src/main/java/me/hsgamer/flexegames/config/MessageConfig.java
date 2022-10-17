@@ -1,32 +1,38 @@
 package me.hsgamer.flexegames.config;
 
-import me.hsgamer.flexegames.config.path.ComponentPath;
-import me.hsgamer.hscore.config.path.ConfigPath;
-import me.hsgamer.hscore.config.path.impl.Paths;
+import me.hsgamer.flexegames.config.converter.ComponentConverter;
+import me.hsgamer.hscore.config.annotation.ConfigPath;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
-import java.io.File;
+public interface MessageConfig {
+    @ConfigPath(value = "error.game-not-found", converter = ComponentConverter.class)
+    default Component getErrorGameNotFound() {
+        return Component.text("Game not found").color(NamedTextColor.RED);
+    }
 
-public class MessageConfig extends YamlPathableConfig {
-    public static final ConfigPath<Component> ERROR_TEMPLATE_NOT_FOUND = new ComponentPath("error.template-not-found", "&cTemplate not found");
-    public static final ConfigPath<Component> ERROR_ARENA_NOT_FOUND = new ComponentPath("error.arena-not-found", "&cArena not found");
-    public static final ConfigPath<Component> ERROR_ARENA_NOT_SETUP = new ComponentPath("error.arena-not-setup", "&cArena not setup");
-    public static final ConfigPath<Component> RESPONSE_MAX_PLAYERS_REACH = new ComponentPath("response.max-players-reach", "&cMax players reached");
-    public static final ConfigPath<Component> RESPONSE_INCOMPLETE_SETUP = new ComponentPath("response.incomplete-setup", "&cIncomplete setup");
-    public static final ConfigPath<Component> RESPONSE_NOT_WAITING = new ComponentPath("response.not-waiting", "&cArena not waiting");
-    public static final ConfigPath<Component> RESPONSE_CREATE_ARENA_SUCCESSFUL = new ComponentPath("response.create-arena-successful", "&aArena created successfully");
-    public static final ConfigPath<Component> RESPONSE_CANNOT_CREATE_ARENA = new ComponentPath("response.cannot-create-arena", "&cYou cannot create arena");
+    @ConfigPath(value = "error.arena-not-found", converter = ComponentConverter.class)
+    default Component getErrorArenaNotFound() {
+        return Component.text("Arena not found").color(NamedTextColor.RED);
+    }
 
-    public static final ConfigPath<String> STATE_CHOOSING = Paths.stringPath("state.choosing", "Choosing");
-    public static final ConfigPath<String> STATE_WAITING = Paths.stringPath("state.waiting", "Waiting");
-    public static final ConfigPath<String> STATE_IN_GAME = Paths.stringPath("state.in-game", "In game");
-    public static final ConfigPath<String> STATE_ENDING = Paths.stringPath("state.ending", "Ending");
-    public static final ConfigPath<String> STATE_KILLING = Paths.stringPath("state.killing", "Killing");
+    @ConfigPath(value = "error.arena-joined", converter = ComponentConverter.class)
+    default Component getErrorArenaJoined() {
+        return Component.text("You have already joined the arena").color(NamedTextColor.RED);
+    }
 
-    public static final ConfigPath<Component> LOBBY_HIDE_PLAYERS = new ComponentPath("lobby.hide-players", "&aYou now &ehide &aother players");
-    public static final ConfigPath<Component> LOBBY_SHOW_PLAYERS = new ComponentPath("lobby.show-players", "&aYou now &eshow &aother players");
+    @ConfigPath(value = "response.create-arena-successful", converter = ComponentConverter.class)
+    default Component getResponseCreateArenaSuccessful() {
+        return Component.text("Arena created").color(NamedTextColor.GREEN);
+    }
 
-    public MessageConfig() {
-        super(new File("messages.yml"));
+    @ConfigPath(value = "lobby.hide-players", converter = ComponentConverter.class)
+    default Component getLobbyHidePlayers() {
+        return Component.text("You now hide other players").color(NamedTextColor.GREEN);
+    }
+
+    @ConfigPath(value = "lobby.show-players", converter = ComponentConverter.class)
+    default Component getLobbyShowPlayers() {
+        return Component.text("You now show other players").color(NamedTextColor.GREEN);
     }
 }

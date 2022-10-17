@@ -1,22 +1,13 @@
 package me.hsgamer.flexegames.api.game;
 
-import me.hsgamer.flexegames.config.MessageConfig;
 import net.kyori.adventure.text.Component;
-import net.minestom.server.entity.Player;
 
-import java.util.function.Function;
-
-public record JoinResponse(boolean success, Function<Player, Component> message) {
-    public static final JoinResponse SUCCESSFUL_JOIN = new JoinResponse(true, player -> Component.empty());
-    public static final JoinResponse MAX_PLAYER_REACHED = new JoinResponse(false, player -> MessageConfig.RESPONSE_MAX_PLAYERS_REACH.getValue());
-    public static final JoinResponse NOT_WAITING = new JoinResponse(false, player -> MessageConfig.RESPONSE_NOT_WAITING.getValue());
-    public static final JoinResponse INCOMPLETE_SETUP = new JoinResponse(false, player -> MessageConfig.RESPONSE_INCOMPLETE_SETUP.getValue());
-
-    public static JoinResponse of(boolean success, Component component) {
-        return new JoinResponse(success, player -> component);
+public record JoinResponse(boolean success, Component message) {
+    public static JoinResponse fail(Component message) {
+        return new JoinResponse(false, message);
     }
 
-    public Component getMessage(Player player) {
-        return message.apply(player);
+    public static JoinResponse successful() {
+        return new JoinResponse(true, Component.empty());
     }
 }

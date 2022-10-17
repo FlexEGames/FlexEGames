@@ -1,32 +1,43 @@
 package me.hsgamer.flexegames.template.duel;
 
-import me.hsgamer.flexegames.config.YamlPathableConfig;
-import me.hsgamer.flexegames.config.path.ComponentPath;
-import me.hsgamer.flexegames.config.path.StringComponentListPath;
-import me.hsgamer.hscore.config.path.ConfigPath;
+import me.hsgamer.flexegames.config.converter.ComponentConverter;
+import me.hsgamer.hscore.config.annotation.ConfigPath;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
-import java.util.List;
+public interface DuelMessageConfig {
+    @ConfigPath(value = "max-players-reached", converter = ComponentConverter.class)
+    default Component getMaxPlayersReached() {
+        return Component.text("The arena is full").color(NamedTextColor.RED);
+    }
 
-public class DuelMessageConfig extends YamlPathableConfig {
-    public static final ConfigPath<Component> BOARD_TITLE = new ComponentPath("board.title", "&e&lDuel");
-    public static final ConfigPath<List<Component>> BOARD_LINES_WAITING = new StringComponentListPath("board.lines.waiting", List.of(
-            "&eWaiting for players",
-            "&ePlayers: &a%players%",
-            "&eTime Left: &a%time%"
-    ));
-    public static final ConfigPath<List<Component>> BOARD_LINES_INGAME = new StringComponentListPath("board.lines.ingame", List.of(
-            "&eAlive: &a%alive%"
-    ));
-    public static final ConfigPath<List<Component>> BOARD_LINES_ENDING = new StringComponentListPath("board.lines.ending", List.of(
-            "&eEnding in: &a%time%",
-            "&eWinner: &a%winner%"
-    ));
-    public static final ConfigPath<Component> NOT_ENOUGH_PLAYERS = new ComponentPath("not-enough-players", "&cNot enough players");
-    public static final ConfigPath<Component> WINNER_MESSAGE = new ComponentPath("winner-message", "&a%winner% won the duel!");
-    public static final ConfigPath<Component> NO_WINNER_MESSAGE = new ComponentPath("no-winner-message", "&cNo winner");
+    @ConfigPath(value = "not-waiting", converter = ComponentConverter.class)
+    default Component getNotWaiting() {
+        return Component.text("The arena is not waiting").color(NamedTextColor.RED);
+    }
 
-    public DuelMessageConfig(DuelExtension extension) {
-        super(extension.getDataDirectory().resolve("messages.yml").toFile());
+    @ConfigPath(value = "not-enough-players", converter = ComponentConverter.class)
+    default Component getNotEnoughPlayers() {
+        return Component.text("Not enough players to start the game").color(NamedTextColor.RED);
+    }
+
+    @ConfigPath(value = "state.waiting", converter = ComponentConverter.class)
+    default Component getStateWaiting() {
+        return Component.text("Waiting");
+    }
+
+    @ConfigPath(value = "state.ingame", converter = ComponentConverter.class)
+    default Component getStateInGame() {
+        return Component.text("In Game");
+    }
+
+    @ConfigPath(value = "state.ending", converter = ComponentConverter.class)
+    default Component getStateEnding() {
+        return Component.text("Ending");
+    }
+
+    @ConfigPath(value = "state.killing", converter = ComponentConverter.class)
+    default Component getStateKilling() {
+        return Component.text("Killing");
     }
 }

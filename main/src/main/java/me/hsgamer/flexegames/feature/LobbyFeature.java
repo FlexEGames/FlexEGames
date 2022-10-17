@@ -4,8 +4,23 @@ import me.hsgamer.flexegames.GameServer;
 import me.hsgamer.minigamecore.base.Feature;
 import net.minestom.server.entity.Player;
 
-public record LobbyFeature(GameServer gameServer) implements Feature {
-    public void backToLobby(Player player) {
-        player.setInstance(gameServer.getLobby(), gameServer.getLobby().getPosition());
+import java.util.Collection;
+import java.util.List;
+
+public final class LobbyFeature implements Feature {
+    private final GameServer gameServer;
+
+    public LobbyFeature(GameServer gameServer) {
+        this.gameServer = gameServer;
+    }
+
+    public void send(Collection<Player> players) {
+        for (Player player : players) {
+            player.setInstance(gameServer.getLobby(), gameServer.getLobby().getPosition());
+        }
+    }
+
+    public void send(Player... players) {
+        send(List.of(players));
     }
 }

@@ -4,10 +4,10 @@ plugins {
 }
 
 ext {
-    core = "4.1.27"
+    core = "4.1.28"
     minigameCore = "1.0.1"
     lombok = "1.18.24"
-    minestom = "caaad1693e"
+    minestom = "9dab3183e5"
     pvp = "388378a6d6"
 }
 
@@ -40,9 +40,10 @@ publishing {
 }
 
 dependencies {
-    api "me.hsgamer:hscore-config-simplixstorage:$core"
+    api "me.hsgamer:hscore-config-configurate:$core"
     api "me.hsgamer:hscore-config-proxy:$core"
-    api "me.hsgamer:hscore-config-path:$core"
+    api 'org.spongepowered:configurate-yaml:4.1.2'
+
     api "me.hsgamer:hscore-builder:$core"
     api "me.hsgamer:hscore-common:$core"
     api "me.hsgamer:hscore-collections:$core"
@@ -52,7 +53,7 @@ dependencies {
     api "me.hsgamer:minigamecore-base:$minigameCore"
     api "me.hsgamer:minigamecore-implementation:$minigameCore"
 
-    api "com.github.Minestom:Minestom:$minestom"
+    api "com.github.Minestom.Minestom:Minestom:$minestom"
     api "com.github.Bloepiloepi:MinestomPvP:$pvp"
 
     compileOnly "org.projectlombok:lombok:$lombok"

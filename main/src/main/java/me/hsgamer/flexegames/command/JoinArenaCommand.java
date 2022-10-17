@@ -2,15 +2,15 @@ package me.hsgamer.flexegames.command;
 
 import me.hsgamer.flexegames.GameServer;
 import me.hsgamer.flexegames.api.game.JoinResponse;
-import me.hsgamer.flexegames.api.game.Template;
 import me.hsgamer.flexegames.command.argument.ArenaArgument;
-import me.hsgamer.flexegames.command.argument.TemplateArgument;
-import me.hsgamer.flexegames.config.MessageConfig;
-import me.hsgamer.flexegames.feature.GameFeature;
+import me.hsgamer.flexegames.command.argument.GameArgument;
+import me.hsgamer.flexegames.feature.JoinFeature;
+import me.hsgamer.flexegames.game.Game;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.minigamecore.base.Arena;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
@@ -18,35 +18,60 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.utils.StringUtils;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 public class JoinArenaCommand extends Command {
     public JoinArenaCommand(GameServer gameServer) {
         super("joinarena", "join");
-        setCondition((sender, commandString) -> sender instanceof Player player && gameServer.getLobby().isInLobby(player));
         setDefaultExecutor((sender, context) -> {
-            sender.sendMessage("Usage: /" + context.getCommandName() + " <arena>");
+            sender.sendMessage("Usage: /" + context.getCommandName() + " <game>");
+            sender.sendMessage("Usage: /" + context.getCommandName() + " <game> <arena>");
             sender.sendMessage("Usage: /" + context.getCommandName() + " search <owner>");
-            sender.sendMessage("Usage: /" + context.getCommandName() + " template <template>");
         });
 
-        var arenaArgument = new ArenaArgument(gameServer, "arena");
-        setArgumentCallback((sender, exception) -> {
-            if (exception.getErrorCode() == ArenaArgument.ARENA_NOT_FOUND) {
-                sender.sendMessage(ReplacementManager.replace(MessageConfig.ERROR_ARENA_NOT_FOUND.getValue(), Map.of("input", () -> Component.text(exception.getInput()))));
-            } else if (exception.getErrorCode() == ArenaArgument.ARENA_NOT_SETUP) {
-                sender.sendMessage(ReplacementManager.replace(MessageConfig.ERROR_ARENA_NOT_SETUP.getValue(), Map.of("input", () -> Component.text(exception.getInput()))));
-            }
-        }, arenaArgument);
+        Predicate<CommandSender> playerLobbyPredicate = sender -> sender instanceof Player player && gameServer.getLobby().isInLobby(player);
 
         addSyntax((sender, context) -> {
-            Arena arena = context.get(arenaArgument);
-            JoinResponse response = arena.getArenaFeature(GameFeature.class).joinGame((Player) sender);
-            if (!response.success()) {
-                sender.sendMessage(response.getMessage((Player) sender));
-            }
-        }, arenaArgument);
+            if (!playerLobbyPredicate.test(sender)) return;
+            gameServer.getLobby().openArenaInventory((Player) sender, false);
+        });
 
-        addSyntax((sender, context) -> gameServer.getLobby().openArenaInventory((Player) sender, false));
+        var gameArgument = new GameArgument(gameServer, "game");
+        setArgumentCallback((sender, exception) -> {
+            if (exception.getErrorCode() == GameArgument.GAME_NOT_FOUND) {
+                sender.sendMessage(ReplacementManager.replace(gameServer.getMessageConfig().getErrorGameNotFound(), Map.of("input", () -> Component.text(exception.getInput()))));
+            }
+        }, gameArgument);
+
+        var arenaArgument = new ArenaArgument("arena");
+        arenaArgument.setGameArgument(gameArgument);
+
+        addSyntax((sender, context) -> {
+            if (!playerLobbyPredicate.test(sender)) return;
+            Game game = context.get(gameArgument);
+            gameServer.getLobby().openArenaInventory((Player) sender, game::getAllArenas);
+        }, gameArgument);
+        addSyntax((sender, context) -> {
+            if (!playerLobbyPredicate.test(sender)) return;
+            Game game = context.get(gameArgument);
+            Optional<Arena> optionalArena = context.get(arenaArgument).apply(game);
+            if (optionalArena.isEmpty()) {
+                sender.sendMessage(ReplacementManager.replace(gameServer.getMessageConfig().getErrorArenaNotFound(), Map.of("input", () -> Component.text(context.getInput()))));
+                return;
+            }
+            Player player = (Player) sender;
+            Arena arena = optionalArena.get();
+            var joinFeature = arena.getArenaFeature(JoinFeature.class);
+            if (joinFeature.isJoined(player)) {
+                sender.sendMessage(gameServer.getMessageConfig().getErrorArenaJoined());
+                return;
+            }
+            JoinResponse response = optionalArena.get().getArenaFeature(JoinFeature.class).join((Player) sender);
+            if (!response.success()) {
+                sender.sendMessage(response.message());
+            }
+        }, gameArgument, arenaArgument);
 
         var searchArgument = ArgumentType.Literal("search");
         var ownerQueryArgument = ArgumentType.StringArray("owner");
@@ -63,16 +88,10 @@ public class JoinArenaCommand extends Command {
             }
         });
         addSyntax((sender, context) -> {
+            if (!playerLobbyPredicate.test(sender)) return;
             String[] query = context.get(ownerQueryArgument);
             String queryString = String.join(" ", query);
             gameServer.getLobby().openArenaInventory((Player) sender, queryString);
         }, searchArgument, ownerQueryArgument);
-
-        var templateArgument = ArgumentType.Literal("template");
-        var templateNameArgument = new TemplateArgument(gameServer, "templateName");
-        addSyntax((sender, context) -> {
-            Template template = context.get(templateNameArgument);
-            gameServer.getLobby().openArenaInventory((Player) sender, () -> gameServer.getGameArenaManager().findArenasByTemplate(template));
-        }, templateArgument, templateNameArgument);
     }
 }
