@@ -12,8 +12,8 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         expand(
                 'version': project.version,
-                'main': "me.hsgamer.flexegames.game.pve.PvEExtension",
-                'name': "PvEExtension",
+                'main': "me.hsgamer.flexegames.game.pve.PveExtension",
+                'name': "PveExtension",
         )
         include 'extension.json'
     }

@@ -8,10 +8,10 @@ import me.hsgamer.hscore.config.Config;
 
 import java.util.function.Function;
 
-public class PvEExtension extends SingleGameExtension {
+public class PveExtension extends SingleGameExtension {
     @Override
     public Function<Pair<GameServer, Config>, Game> getInitializer() {
-        return PveGame::new;
+        return pair -> new PveGame(pair, this);
     }
 
     @Override
