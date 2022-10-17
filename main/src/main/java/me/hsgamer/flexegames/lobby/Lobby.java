@@ -2,6 +2,7 @@ package me.hsgamer.flexegames.lobby;
 
 import lombok.experimental.ExtensionMethod;
 import me.hsgamer.flexegames.GameServer;
+import me.hsgamer.flexegames.api.game.JoinResponse;
 import me.hsgamer.flexegames.api.modifier.InstanceModifier;
 import me.hsgamer.flexegames.builder.InstanceModifierBuilder;
 import me.hsgamer.flexegames.builder.ItemBuilder;
@@ -472,11 +473,16 @@ public class Lobby extends InstanceContainer {
                     @Override
                     public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
                         var player = uuid.getPlayer();
-                        var response = arena.getArenaFeature(JoinFeature.class).join(player);
-                        if (!response.success()) {
-                            player.sendMessage(response.message());
+                        var joinFeature = arena.getArenaFeature(JoinFeature.class);
+                        if (joinFeature.isJoined(player)) {
+                            player.sendMessage(gameServer.getMessageConfig().getErrorArenaJoined());
                         } else {
-                            player.closeInventory();
+                            JoinResponse response = joinFeature.join(player);
+                            if (response.success()) {
+                                player.closeInventory();
+                            } else {
+                                player.sendMessage(response.message());
+                            }
                         }
                         return false;
                     }

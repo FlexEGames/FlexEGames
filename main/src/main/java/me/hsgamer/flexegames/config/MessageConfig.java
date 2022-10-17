@@ -16,9 +16,14 @@ public interface MessageConfig {
         return Component.text("Arena not found").color(NamedTextColor.RED);
     }
 
-    @ConfigPath(value = "error.arena-not-setup", converter = ComponentConverter.class)
-    default Component getErrorArenaNotSetup() {
-        return Component.text("Arena not setup").color(NamedTextColor.RED);
+    @ConfigPath(value = "error.arena-joined", converter = ComponentConverter.class)
+    default Component getErrorArenaJoined() {
+        return Component.text("You have already joined the arena").color(NamedTextColor.RED);
+    }
+
+    @ConfigPath(value = "response.create-arena-successful", converter = ComponentConverter.class)
+    default Component getResponseCreateArenaSuccessful() {
+        return Component.text("Arena created").color(NamedTextColor.GREEN);
     }
 
     @ConfigPath(value = "lobby.hide-players", converter = ComponentConverter.class)
