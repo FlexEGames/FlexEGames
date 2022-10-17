@@ -58,7 +58,7 @@ public class ArenaInstanceFeature implements Feature {
         entityEventNode = EventNode.event("entityEvent-" + arena.getName(), EventFilter.ENTITY, entityEvent -> entityEvent.getEntity().getInstance() == instance);
     }
 
-    private boolean isFinished() {
+    private boolean isInGame() {
         return arena.getState() == InGameState.class;
     }
 
@@ -124,12 +124,12 @@ public class ArenaInstanceFeature implements Feature {
                     }
                 })
                 .addListener(PlayerExhaustEvent.class, event -> {
-                    if (isFinished() || Boolean.TRUE.equals(event.getEntity().getTag(deadTag))) {
+                    if (!isInGame() || Boolean.TRUE.equals(event.getEntity().getTag(deadTag))) {
                         event.setCancelled(true);
                     }
                 })
                 .addListener(FinalDamageEvent.class, event -> {
-                    if (isFinished() || Boolean.TRUE.equals(event.getEntity().getTag(deadTag))) {
+                    if (!isInGame() || Boolean.TRUE.equals(event.getEntity().getTag(deadTag))) {
                         event.setCancelled(true);
                     }
                 })
@@ -194,7 +194,7 @@ public class ArenaInstanceFeature implements Feature {
         player.heal();
         player.setFood(20);
         player.getInventory().clear();
-        if (isFinished()) {
+        if (isInGame()) {
             player.setTag(deadTag, true);
             player.setGameMode(GameMode.SPECTATOR);
             player.setInvisible(true);
