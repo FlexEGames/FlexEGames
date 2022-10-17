@@ -25,9 +25,9 @@ public class JoinArenaCommand extends Command {
     public JoinArenaCommand(GameServer gameServer) {
         super("joinarena", "join");
         setDefaultExecutor((sender, context) -> {
+            sender.sendMessage("Usage: /" + context.getCommandName() + " <game>");
             sender.sendMessage("Usage: /" + context.getCommandName() + " <game> <arena>");
             sender.sendMessage("Usage: /" + context.getCommandName() + " search <owner>");
-            sender.sendMessage("Usage: /" + context.getCommandName() + " game <game>");
         });
 
         Predicate<CommandSender> playerLobbyPredicate = sender -> sender instanceof Player player && gameServer.getLobby().isInLobby(player);
@@ -89,11 +89,10 @@ public class JoinArenaCommand extends Command {
             gameServer.getLobby().openArenaInventory((Player) sender, queryString);
         }, searchArgument, ownerQueryArgument);
 
-        var gameArgumentLiteral = ArgumentType.Literal("game");
         addSyntax((sender, context) -> {
             if (!playerLobbyPredicate.test(sender)) return;
             Game game = context.get(gameArgument);
             gameServer.getLobby().openArenaInventory((Player) sender, game::getAllArenas);
-        }, gameArgumentLiteral, gameArgument);
+        }, gameArgument);
     }
 }
