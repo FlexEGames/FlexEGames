@@ -15,11 +15,15 @@ import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaFeature;
 import me.hsgamer.minigamecore.base.Feature;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.attribute.Attribute;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.GameMode;
+import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
+import net.minestom.server.entity.damage.DamageType;
 import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
+import net.minestom.server.event.entity.EntityAttackEvent;
 import net.minestom.server.event.instance.AddEntityToInstanceEvent;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
 import net.minestom.server.event.player.PlayerBlockBreakEvent;
@@ -33,7 +37,7 @@ import net.minestom.server.tag.Tag;
 public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceFeature> {
     private static final Pos SPAWN_POS = new Pos(0, PveGame.HEIGHT, 0);
     private static final Tag<Boolean> DEAD_TAG = Tag.Boolean("pve:dead").defaultValue(false);
-    private static final Tag<Boolean> playerBlockTag = Tag.Boolean("pve:playerBlock").defaultValue(false);
+    private static final Tag<Boolean> PLAYER_BLOCK_TAG = Tag.Boolean("pve:playerBlock").defaultValue(false);
 
     @Override
     protected ArenaInstanceFeature createFeature(Arena arena) {
@@ -99,18 +103,24 @@ public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceF
                             event.setCancelled(true);
                         }
                     })
+                    .addListener(EntityAttackEvent.class, event -> {
+                        if (event.getEntity() instanceof LivingEntity attacker && event.getTarget() instanceof LivingEntity target) {
+                            var damage = attacker.getAttributeValue(Attribute.ATTACK_DAMAGE);
+                            target.damage(DamageType.fromEntity(attacker), damage);
+                        }
+                    })
                     .addListener(FinalAttackEvent.class, event -> {
-                        if (event.getEntity() instanceof Player && event.getTarget() instanceof Player) {
+                        if (event.getTarget() instanceof Player) {
                             event.setCancelled(true);
                         }
                     })
                     .addListener(PlayerBlockBreakEvent.class, event -> {
-                        if (Boolean.FALSE.equals(event.getBlock().getTag(playerBlockTag))) {
+                        if (Boolean.FALSE.equals(event.getBlock().getTag(PLAYER_BLOCK_TAG))) {
                             event.setCancelled(true);
                         }
                     })
-                    .addListener(ExplosionEvent.class, event -> event.getAffectedBlocks().removeIf(point -> !Boolean.TRUE.equals(instance.getBlock(point).getTag(playerBlockTag))))
-                    .addListener(PlayerBlockPlaceEvent.class, event -> event.setBlock(event.getBlock().withTag(playerBlockTag, true)));
+                    .addListener(ExplosionEvent.class, event -> event.getAffectedBlocks().removeIf(point -> !Boolean.TRUE.equals(instance.getBlock(point).getTag(PLAYER_BLOCK_TAG))))
+                    .addListener(PlayerBlockPlaceEvent.class, event -> event.setBlock(event.getBlock().withTag(PLAYER_BLOCK_TAG, true)));
 
             MinecraftServer.getInstanceManager().registerInstance(instance);
             MinecraftServer.getGlobalEventHandler().addChild(entityEventNode);

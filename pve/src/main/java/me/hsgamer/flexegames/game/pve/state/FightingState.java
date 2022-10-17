@@ -42,13 +42,13 @@ public class FightingState implements ComponentGameState {
             return;
         }
 
-        arena.getArenaFeature(StageFeature.class).increaseStage();
-        arena.setNextState(RestingState.class);
-
         var gameConfig = arena.getFeature(ConfigFeature.class).getConfig(PveGameConfig.class);
         var descriptionFeature = arena.getArenaFeature(DescriptionFeature.class);
         Component message = ReplacementManager.replace(gameConfig.getStageEndMessage(), descriptionFeature.getReplacements());
         arena.getArenaFeature(JoinFeature.class).getPlayers().forEach(player -> player.sendMessage(message));
+
+        arena.getArenaFeature(StageFeature.class).increaseStage();
+        arena.setNextState(RestingState.class);
     }
 
     @Override
