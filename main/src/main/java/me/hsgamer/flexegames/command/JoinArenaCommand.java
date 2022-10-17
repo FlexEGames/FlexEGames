@@ -32,6 +32,11 @@ public class JoinArenaCommand extends Command {
 
         Predicate<CommandSender> playerLobbyPredicate = sender -> sender instanceof Player player && gameServer.getLobby().isInLobby(player);
 
+        addSyntax((sender, context) -> {
+            if (!playerLobbyPredicate.test(sender)) return;
+            gameServer.getLobby().openArenaInventory((Player) sender, false);
+        });
+
         var gameArgument = new GameArgument(gameServer, "game");
         setArgumentCallback((sender, exception) -> {
             if (exception.getErrorCode() == GameArgument.GAME_NOT_FOUND) {
@@ -42,6 +47,11 @@ public class JoinArenaCommand extends Command {
         var arenaArgument = new ArenaArgument("arena");
         arenaArgument.setGameArgument(gameArgument);
 
+        addSyntax((sender, context) -> {
+            if (!playerLobbyPredicate.test(sender)) return;
+            Game game = context.get(gameArgument);
+            gameServer.getLobby().openArenaInventory((Player) sender, game::getAllArenas);
+        }, gameArgument);
         addSyntax((sender, context) -> {
             if (!playerLobbyPredicate.test(sender)) return;
             Game game = context.get(gameArgument);
@@ -63,11 +73,6 @@ public class JoinArenaCommand extends Command {
             }
         }, gameArgument, arenaArgument);
 
-        addSyntax((sender, context) -> {
-            if (!playerLobbyPredicate.test(sender)) return;
-            gameServer.getLobby().openArenaInventory((Player) sender, false);
-        });
-
         var searchArgument = ArgumentType.Literal("search");
         var ownerQueryArgument = ArgumentType.StringArray("owner");
         ownerQueryArgument.setSuggestionCallback((sender, context, suggestion) -> {
@@ -88,11 +93,5 @@ public class JoinArenaCommand extends Command {
             String queryString = String.join(" ", query);
             gameServer.getLobby().openArenaInventory((Player) sender, queryString);
         }, searchArgument, ownerQueryArgument);
-
-        addSyntax((sender, context) -> {
-            if (!playerLobbyPredicate.test(sender)) return;
-            Game game = context.get(gameArgument);
-            gameServer.getLobby().openArenaInventory((Player) sender, game::getAllArenas);
-        }, gameArgument);
     }
 }
