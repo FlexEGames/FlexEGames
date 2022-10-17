@@ -5,7 +5,9 @@ import me.hsgamer.minigamecore.base.Arena;
 import net.minestom.server.command.builder.arguments.Argument;
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
+import net.minestom.server.utils.binary.BinaryWriter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -22,7 +24,7 @@ public class ArenaArgument extends Argument<Function<Game, Optional<Arena>>> {
             String raw = context.getRaw(this);
             game.getAllArenas().forEach(arena -> {
                 String s = arena.getName();
-                if (raw == null || raw.isBlank() || s.startsWith(raw)) {
+                if (raw == null || raw.isEmpty() || s.startsWith(raw)) {
                     suggestion.addEntry(new SuggestionEntry(s));
                 }
             });
@@ -36,7 +38,12 @@ public class ArenaArgument extends Argument<Function<Game, Optional<Arena>>> {
 
     @Override
     public String parser() {
-        return null;
+        return "brigadier:string";
+    }
+
+    @Override
+    public byte @Nullable [] nodeProperties() {
+        return BinaryWriter.makeArray(packetWriter -> packetWriter.writeVarInt(0));
     }
 
     @Override

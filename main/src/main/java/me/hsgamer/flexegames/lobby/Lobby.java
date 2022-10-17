@@ -239,7 +239,6 @@ public class Lobby extends InstanceContainer {
         board.removePlayer(player);
         player.updateViewerRule(entity -> true);
         lobbyItems.keySet().forEach(slot -> player.getInventory().setItemStack(slot, ItemStack.AIR));
-        player.refreshCommands();
     }
 
     private void onDisconnect(Player player) {

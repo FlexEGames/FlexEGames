@@ -6,7 +6,9 @@ import me.hsgamer.flexegames.game.Game;
 import net.minestom.server.command.builder.arguments.Argument;
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
+import net.minestom.server.utils.binary.BinaryWriter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -21,7 +23,7 @@ public class GameArgument extends Argument<Game> {
         setSuggestionCallback((sender, context, suggestion) -> {
             String raw = context.getRaw(this);
             gameServer.getGameManager().getGameMap().forEach((s, t) -> {
-                if (raw == null || raw.isBlank() || s.startsWith(raw)) {
+                if (raw == null || raw.isEmpty() || s.startsWith(raw)) {
                     suggestion.addEntry(new SuggestionEntry(s, t.getFeature(DescriptionFeature.class).getDisplayName()));
                 }
             });
@@ -39,7 +41,12 @@ public class GameArgument extends Argument<Game> {
 
     @Override
     public String parser() {
-        return null;
+        return "brigadier:string";
+    }
+
+    @Override
+    public byte @Nullable [] nodeProperties() {
+        return BinaryWriter.makeArray(packetWriter -> packetWriter.writeVarInt(0));
     }
 
     @Override

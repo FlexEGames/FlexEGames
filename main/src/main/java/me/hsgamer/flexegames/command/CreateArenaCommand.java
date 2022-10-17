@@ -15,7 +15,6 @@ import java.util.function.Predicate;
 public class CreateArenaCommand extends Command {
     public CreateArenaCommand(GameServer gameServer) {
         super("createarena", "create");
-        setCondition((sender, commandString) -> sender instanceof Player player && gameServer.getLobby().isInLobby(player));
         setDefaultExecutor((sender, context) -> sender.sendMessage("Usage: /" + context.getCommandName() + " <game>"));
 
         Predicate<CommandSender> playerLobbyPredicate = sender -> sender instanceof Player player && gameServer.getLobby().isInLobby(player);
