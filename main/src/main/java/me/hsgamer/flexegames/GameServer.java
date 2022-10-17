@@ -120,8 +120,8 @@ public class GameServer {
 
     @ApiStatus.Internal
     public void stop() {
-        gameManager.clear();
         lobby.clear();
+        gameManager.clear();
         MinecraftServer.stopCleanly();
     }
 
