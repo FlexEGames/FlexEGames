@@ -119,6 +119,10 @@ public class MobGeneratorFeature extends ArenaFeature<MobGeneratorFeature.ArenaM
             return spawnedMobs.isEmpty();
         }
 
+        public int getMobCount() {
+            return spawningMobs.size() + spawnedMobs.size();
+        }
+
         @Override
         public void clear() {
             clearMobs();

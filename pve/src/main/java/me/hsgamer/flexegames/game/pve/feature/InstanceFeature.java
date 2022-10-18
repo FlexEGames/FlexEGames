@@ -34,6 +34,8 @@ import net.minestom.server.event.trait.EntityEvent;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.tag.Tag;
 
+import java.util.List;
+
 public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceFeature> {
     private static final Pos SPAWN_POS = new Pos(0, PveGame.HEIGHT, 0);
     private static final Tag<Boolean> DEAD_TAG = Tag.Boolean("pve:dead").defaultValue(false);
@@ -168,6 +170,10 @@ public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceF
 
         public boolean isAllDead() {
             return instance.getPlayers().stream().allMatch(player -> Boolean.TRUE.equals(player.getTag(DEAD_TAG)));
+        }
+
+        public List<Player> getAlivePlayers() {
+            return instance.getPlayers().stream().filter(player -> Boolean.FALSE.equals(player.getTag(DEAD_TAG))).toList();
         }
 
         private boolean isInGame() {

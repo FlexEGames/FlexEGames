@@ -6,6 +6,7 @@ import me.hsgamer.flexegames.feature.ConfigFeature;
 import me.hsgamer.flexegames.feature.DescriptionFeature;
 import me.hsgamer.flexegames.feature.JoinFeature;
 import me.hsgamer.flexegames.game.Game;
+import me.hsgamer.flexegames.game.pve.feature.BoardFeature;
 import me.hsgamer.flexegames.game.pve.feature.InstanceFeature;
 import me.hsgamer.flexegames.game.pve.feature.MobGeneratorFeature;
 import me.hsgamer.flexegames.game.pve.feature.StageFeature;
@@ -13,6 +14,7 @@ import me.hsgamer.flexegames.game.pve.state.*;
 import me.hsgamer.flexegames.util.TimeUtil;
 import me.hsgamer.hscore.common.Pair;
 import me.hsgamer.hscore.config.Config;
+import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.Feature;
 import me.hsgamer.minigamecore.base.GameState;
 import me.hsgamer.minigamecore.implementation.feature.arena.ArenaTimerFeature;
@@ -38,7 +40,9 @@ public class PveGame extends Game {
         var descriptionFeature = getFeature(DescriptionFeature.class);
         descriptionFeature.setReplacementsFunction(arena -> Map.of(
                 "time", () -> Component.text(TimeUtil.format(arena.getArenaFeature(ArenaTimerFeature.class).getDuration(TimeUnit.MILLISECONDS))),
-                "stage", () -> Component.text(Integer.toString(arena.getArenaFeature(StageFeature.class).getStage()))
+                "stage", () -> Component.text(Integer.toString(arena.getArenaFeature(StageFeature.class).getStage())),
+                "alive", () -> Component.text(Integer.toString(arena.getArenaFeature(InstanceFeature.class).getAlivePlayers().size())),
+                "mob", () -> Component.text(Integer.toString(arena.getArenaFeature(MobGeneratorFeature.class).getMobCount()))
         ));
         var joinFeature = getFeature(JoinFeature.class);
         joinFeature.setMaxPlayersFunction(arena -> arena.getFeature(ConfigFeature.class).getConfig(PveGameConfig.class).getMaxPlayers());
@@ -56,6 +60,11 @@ public class PveGame extends Game {
             player.setInstance(instance);
             return JoinResponse.successful();
         });
+    }
+
+    @Override
+    protected void configureArena(Arena arena) {
+        arena.getArenaFeature(BoardFeature.class); // Call to load the board
     }
 
     @Override
@@ -80,7 +89,8 @@ public class PveGame extends Game {
                 new ArenaTimerFeature(),
                 new InstanceFeature(),
                 new StageFeature(),
-                new MobGeneratorFeature()
+                new MobGeneratorFeature(),
+                new BoardFeature()
         );
     }
 }

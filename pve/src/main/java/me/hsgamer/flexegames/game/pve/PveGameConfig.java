@@ -2,6 +2,7 @@ package me.hsgamer.flexegames.game.pve;
 
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.config.converter.ComponentConverter;
+import me.hsgamer.flexegames.config.converter.ComponentListConverter;
 import me.hsgamer.flexegames.config.converter.NumberObjectMapConverter;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 import net.kyori.adventure.text.Component;
@@ -10,9 +11,54 @@ import net.minestom.server.item.ItemStack;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public interface PveGameConfig {
+    @ConfigPath(value = "board.title", converter = ComponentConverter.class)
+    default Component getBoardTitle() {
+        return ComponentConverter.fromString("&6&lPvE");
+    }
+
+    @ConfigPath(value = "board.lines.waiting", converter = ComponentListConverter.class)
+    default List<Component> getBoardLinesWaiting() {
+        return ComponentListConverter.fromStringList(List.of(
+                "&eWaiting for players",
+                "&ePlayers: &a%players%/%max-players%",
+                "&eTime Left: &a%time%"
+        ));
+    }
+
+    @ConfigPath(value = "board.lines.resting", converter = ComponentListConverter.class)
+    default List<Component> getBoardLinesResting() {
+        return ComponentListConverter.fromStringList(List.of(
+                "&eResting...",
+                "&eStage: &a%stage%",
+                "&eAlive: &a%alive%",
+                "&eTime Left: &a%time%"
+        ));
+    }
+
+    @ConfigPath(value = "board.lines.fighting", converter = ComponentListConverter.class)
+    default List<Component> getBoardLinesFighting() {
+        return ComponentListConverter.fromStringList(List.of(
+                "&eFighting...",
+                "&eStage: &a%stage%",
+                "&eAlive: &a%alive%",
+                "&eMob: &a%mob%",
+                "&eTime Left: &a%time%"
+        ));
+    }
+
+    @ConfigPath(value = "board.lines.ending", converter = ComponentListConverter.class)
+    default List<Component> getBoardLinesEnding() {
+        return ComponentListConverter.fromStringList(List.of(
+                "&eGame Over",
+                "&eStage: &a%stage%",
+                "&eEnding in: &a%time%"
+        ));
+    }
+
     @ConfigPath("tough-mob")
     default boolean isToughMob() {
         return false;

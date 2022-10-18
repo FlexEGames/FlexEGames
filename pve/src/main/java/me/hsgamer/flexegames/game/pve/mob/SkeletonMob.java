@@ -1,9 +1,9 @@
 package me.hsgamer.flexegames.game.pve.mob;
 
-import io.github.bloepiloepi.pvp.projectile.Arrow;
 import me.hsgamer.minigamecore.base.Arena;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.EntityProjectile;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.ai.goal.RangedAttackGoal;
@@ -26,11 +26,11 @@ public final class SkeletonMob extends ArenaMob {
                 16, 8, true, 1, 0.1);
 
         // TODO: Wait for MinestomPvP to support EntityProjectile
-//        rangedAttackGoal.setProjectileGenerator(entity -> {
-//            HomingArrow projectile = new HomingArrow(entity, EntityType.PLAYER);
-//            projectile.scheduleRemove(Duration.of(100, TimeUnit.SERVER_TICK));
-//            return projectile;
-//        });
+        rangedAttackGoal.setProjectileGenerator(entity -> {
+            HomingArrow projectile = new HomingArrow(entity, EntityType.PLAYER);
+            projectile.scheduleRemove(Duration.of(100, TimeUnit.SERVER_TICK));
+            return projectile;
+        });
 
         addAIGroup(
                 List.of(rangedAttackGoal),
@@ -38,11 +38,11 @@ public final class SkeletonMob extends ArenaMob {
         );
     }
 
-    private static final class HomingArrow extends Arrow {
+    private static final class HomingArrow extends EntityProjectile {
         private final EntityType target;
 
         public HomingArrow(@Nullable Entity shooter, EntityType target) {
-            super(shooter, false);
+            super(shooter, target);
             this.target = target;
         }
 
