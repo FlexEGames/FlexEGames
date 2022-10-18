@@ -26,7 +26,6 @@ public class RestingState implements ComponentGameState {
                         TimeUnit.SECONDS
                 );
         arena.getArenaFeature(InstanceFeature.class).respawnDeadPlayers();
-        arena.getArenaFeature(InstanceFeature.class).giveKit();
     }
 
     @Override
