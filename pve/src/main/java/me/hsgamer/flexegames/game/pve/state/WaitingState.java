@@ -12,7 +12,6 @@ import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.implementation.feature.arena.ArenaTimerFeature;
 import net.kyori.adventure.text.Component;
-import net.minestom.server.entity.Player;
 
 import java.util.concurrent.TimeUnit;
 
@@ -38,10 +37,8 @@ public class WaitingState implements ComponentGameState {
         if (arena.getArenaFeature(JoinFeature.class).getPlayerCount() >= arena.getFeature(ConfigFeature.class).getConfig(PveGameConfig.class).getMinPlayers()) {
             arena.setNextState(RestingState.class);
         } else {
-            Component component = pveExtension.getMessageConfig().getNotEnoughPlayers();
-            for (Player player : arena.getArenaFeature(JoinFeature.class).getPlayers()) {
-                player.sendMessage(component);
-            }
+            Component message = pveExtension.getMessageConfig().getNotEnoughPlayers();
+            arena.getArenaFeature(InstanceFeature.class).sendMessage(message);
             arena.setNextState(KillingState.class);
         }
     }
@@ -52,7 +49,7 @@ public class WaitingState implements ComponentGameState {
         var gameConfig = arena.getFeature(ConfigFeature.class).getConfig(PveGameConfig.class);
         var descriptionFeature = arena.getArenaFeature(DescriptionFeature.class);
         Component message = ReplacementManager.replace(gameConfig.getStartMessage(), descriptionFeature.getReplacements());
-        arena.getArenaFeature(JoinFeature.class).getPlayers().forEach(player -> player.sendMessage(message));
+        arena.getArenaFeature(InstanceFeature.class).sendMessage(message);
         arena.getArenaFeature(InstanceFeature.class).giveKit();
     }
 

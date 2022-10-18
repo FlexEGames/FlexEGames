@@ -3,7 +3,6 @@ package me.hsgamer.flexegames.game.pve.state;
 import me.hsgamer.flexegames.api.game.ComponentGameState;
 import me.hsgamer.flexegames.feature.ConfigFeature;
 import me.hsgamer.flexegames.feature.DescriptionFeature;
-import me.hsgamer.flexegames.feature.JoinFeature;
 import me.hsgamer.flexegames.game.pve.PveExtension;
 import me.hsgamer.flexegames.game.pve.PveGameConfig;
 import me.hsgamer.flexegames.game.pve.feature.InstanceFeature;
@@ -29,7 +28,7 @@ public class EndingState implements ComponentGameState {
         arena.getArenaFeature(ArenaTimerFeature.class).setDuration(gameConfig.getEndingTime(), TimeUnit.SECONDS);
         arena.getArenaFeature(InstanceFeature.class).clearInventory();
         Component message = ReplacementManager.replace(gameConfig.getEndMessage(), descriptionFeature.getReplacements());
-        arena.getArenaFeature(JoinFeature.class).getPlayers().forEach(player -> player.sendMessage(message));
+        arena.getArenaFeature(InstanceFeature.class).sendMessage(message);
         arena.getArenaFeature(MobGeneratorFeature.class).clearMobs();
     }
 

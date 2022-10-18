@@ -3,12 +3,12 @@ package me.hsgamer.flexegames.game.duel.state;
 import me.hsgamer.flexegames.api.game.ComponentGameState;
 import me.hsgamer.flexegames.feature.ConfigFeature;
 import me.hsgamer.flexegames.feature.JoinFeature;
-import me.hsgamer.flexegames.game.duel.DuelGameConfig;
 import me.hsgamer.flexegames.game.duel.DuelExtension;
+import me.hsgamer.flexegames.game.duel.DuelGameConfig;
+import me.hsgamer.flexegames.game.duel.feature.InstanceFeature;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.implementation.feature.arena.ArenaTimerFeature;
 import net.kyori.adventure.text.Component;
-import net.minestom.server.entity.Player;
 
 import java.util.concurrent.TimeUnit;
 
@@ -35,9 +35,7 @@ public class WaitingState implements ComponentGameState {
             arena.setNextState(InGameState.class);
         } else {
             Component component = duelExtension.getMessageConfig().getNotEnoughPlayers();
-            for (Player player : arena.getArenaFeature(JoinFeature.class).getPlayers()) {
-                player.sendMessage(component);
-            }
+            arena.getArenaFeature(InstanceFeature.class).sendMessage(component);
             arena.setNextState(KillingState.class);
         }
     }

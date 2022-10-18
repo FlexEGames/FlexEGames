@@ -18,6 +18,7 @@ import me.hsgamer.flexegames.util.PvpUtil;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaFeature;
 import me.hsgamer.minigamecore.base.Feature;
+import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.attribute.Attribute;
 import net.minestom.server.coordinate.Pos;
@@ -151,6 +152,10 @@ public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceF
             arena.getFeature(LobbyFeature.class).send(instance.getPlayers());
             MinecraftServer.getInstanceManager().unregisterInstance(instance);
             MinecraftServer.getGlobalEventHandler().removeChild(entityEventNode);
+        }
+
+        public void sendMessage(Component component) {
+            instance.sendMessage(component);
         }
 
         public void giveKit(Player player) {

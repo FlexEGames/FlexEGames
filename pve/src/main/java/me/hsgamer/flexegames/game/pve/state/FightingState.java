@@ -3,7 +3,6 @@ package me.hsgamer.flexegames.game.pve.state;
 import me.hsgamer.flexegames.api.game.ComponentGameState;
 import me.hsgamer.flexegames.feature.ConfigFeature;
 import me.hsgamer.flexegames.feature.DescriptionFeature;
-import me.hsgamer.flexegames.feature.JoinFeature;
 import me.hsgamer.flexegames.game.pve.PveExtension;
 import me.hsgamer.flexegames.game.pve.PveGameConfig;
 import me.hsgamer.flexegames.game.pve.feature.InstanceFeature;
@@ -26,7 +25,7 @@ public class FightingState implements ComponentGameState {
         var gameConfig = arena.getFeature(ConfigFeature.class).getConfig(PveGameConfig.class);
         var descriptionFeature = arena.getArenaFeature(DescriptionFeature.class);
         Component message = ReplacementManager.replace(gameConfig.getStageStartMessage(), descriptionFeature.getReplacements());
-        arena.getArenaFeature(JoinFeature.class).getPlayers().forEach(player -> player.sendMessage(message));
+        arena.getArenaFeature(InstanceFeature.class).sendMessage(message);
     }
 
     @Override
@@ -45,7 +44,7 @@ public class FightingState implements ComponentGameState {
         var gameConfig = arena.getFeature(ConfigFeature.class).getConfig(PveGameConfig.class);
         var descriptionFeature = arena.getArenaFeature(DescriptionFeature.class);
         Component message = ReplacementManager.replace(gameConfig.getStageEndMessage(), descriptionFeature.getReplacements());
-        arena.getArenaFeature(JoinFeature.class).getPlayers().forEach(player -> player.sendMessage(message));
+        arena.getArenaFeature(InstanceFeature.class).sendMessage(message);
 
         arena.getArenaFeature(StageFeature.class).increaseStage();
         arena.setNextState(RestingState.class);
