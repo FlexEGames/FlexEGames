@@ -40,7 +40,7 @@ public final class SkeletonMob extends ArenaMob {
         private final EntityType target;
 
         public HomingArrow(@Nullable Entity shooter, EntityType target) {
-            super(shooter, target);
+            super(shooter, EntityType.ARROW);
             this.target = target;
         }
 
