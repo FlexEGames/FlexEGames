@@ -1,6 +1,5 @@
 package me.hsgamer.flexegames.lobby;
 
-import lombok.Getter;
 import lombok.experimental.ExtensionMethod;
 import me.hsgamer.flexegames.GameServer;
 import me.hsgamer.flexegames.api.game.JoinResponse;
