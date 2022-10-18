@@ -1,5 +1,9 @@
 package me.hsgamer.flexegames.game.pve.feature;
 
+import io.github.bloepiloepi.pvp.config.ArmorToolConfig;
+import io.github.bloepiloepi.pvp.config.ExplosionConfig;
+import io.github.bloepiloepi.pvp.config.FoodConfig;
+import io.github.bloepiloepi.pvp.config.PotionConfig;
 import io.github.bloepiloepi.pvp.events.ExplosionEvent;
 import me.hsgamer.flexegames.feature.ConfigFeature;
 import me.hsgamer.flexegames.feature.DescriptionFeature;
@@ -31,7 +35,6 @@ import net.minestom.server.event.player.PlayerMoveEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.trait.EntityEvent;
 import net.minestom.server.instance.Instance;
-import net.minestom.server.item.ItemStack;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.utils.time.TimeUnit;
 
@@ -70,6 +73,11 @@ public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceF
             entityEventNode.addListener(PlayerSpawnEvent.class, event -> event.getPlayer().teleport(SPAWN_POS));
             PvpUtil.applyExplosion(instance);
             ChatUtil.apply(instance.eventNode(), gameConfig.getChatFormat(), player -> arena.getArenaFeature(DescriptionFeature.class).getReplacements());
+            instance.eventNode()
+                    .addChild(FoodConfig.DEFAULT.createNode())
+                    .addChild(PotionConfig.DEFAULT.createNode())
+                    .addChild(ExplosionConfig.DEFAULT.createNode())
+                    .addChild(ArmorToolConfig.DEFAULT.createNode());
 
             InstanceEventHook.applyBow(instance.eventNode(), (entity, power) -> {
                 final EntityProjectile projectile = new EntityProjectile(entity, EntityType.ARROW);
@@ -87,19 +95,8 @@ public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceF
                     damage = movementSpeed * player.getAttributeValue(Attribute.ATTACK_DAMAGE);
                 }
 
-                if (attacker instanceof Player player) {
-                    final ItemStack item = player.getItemInMainHand();
-                    final int tier = item.isAir() ? 0 : item.getTag(PveGameConfig.MELEE_TAG);
-                    final float multi = 0.1f * tier; // no weapon = 0 tier, non damaging item = -10 tier = 0 damage
-
-                    damage *= 1 + multi;
-                }
-
                 if (victim instanceof Player player) {
-                    int armorPoints = player.getHelmet().getTag(PveGameConfig.MELEE_TAG) +
-                            player.getChestplate().getTag(PveGameConfig.MELEE_TAG) +
-                            player.getLeggings().getTag(PveGameConfig.MELEE_TAG) +
-                            player.getBoots().getTag(PveGameConfig.MELEE_TAG);
+                    float armorPoints = player.getAttributeValue(Attribute.ARMOR);
 
                     // Armor point = 4% damage reduction
                     // 20 armor points = max reduction
