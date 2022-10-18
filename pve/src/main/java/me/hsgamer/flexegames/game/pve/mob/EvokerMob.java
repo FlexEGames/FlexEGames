@@ -59,7 +59,7 @@ public final class EvokerMob extends ArenaMob {
                         ((EvokerMeta) getEntityMeta()).setSpell(SpellcasterIllagerMeta.Spell.NONE);
                     }, TaskSchedule.seconds(2), TaskSchedule.stop());
                 })),
-                List.of(new ClosestEntityTarget(this, 32, Player.class::isInstance))
+                List.of(new ClosestEntityTarget(this, 32, MobPredicates.playerExcludeSpectator()))
         );
     }
 

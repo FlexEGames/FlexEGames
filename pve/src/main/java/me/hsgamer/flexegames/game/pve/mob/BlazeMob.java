@@ -31,7 +31,7 @@ public final class BlazeMob extends ArenaMob {
 
         addAIGroup(
                 List.of(rangedAttackGoal),
-                List.of(new ClosestEntityTarget(this, 32, Player.class::isInstance))
+                List.of(new ClosestEntityTarget(this, 32, MobPredicates.playerExcludeSpectator()))
         );
     }
 

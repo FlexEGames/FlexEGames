@@ -39,7 +39,7 @@ public final class SpiderMob extends ArenaMob {
 
         addAIGroup(
                 List.of(attackGoal),
-                List.of(new ClosestEntityTarget(this, 32, Player.class::isInstance))
+                List.of(new ClosestEntityTarget(this, 32, MobPredicates.playerExcludeSpectator()))
         );
     }
 
