@@ -1,10 +1,9 @@
 package me.hsgamer.flexegames.game.pve.feature;
 
-import io.github.bloepiloepi.pvp.config.ArmorToolConfig;
-import io.github.bloepiloepi.pvp.config.ExplosionConfig;
-import io.github.bloepiloepi.pvp.config.FoodConfig;
-import io.github.bloepiloepi.pvp.config.PotionConfig;
+import io.github.bloepiloepi.pvp.config.*;
+import io.github.bloepiloepi.pvp.damage.CustomDamageType;
 import io.github.bloepiloepi.pvp.events.ExplosionEvent;
+import io.github.bloepiloepi.pvp.listeners.DamageListener;
 import me.hsgamer.flexegames.feature.ConfigFeature;
 import me.hsgamer.flexegames.feature.DescriptionFeature;
 import me.hsgamer.flexegames.feature.LobbyFeature;
@@ -88,25 +87,20 @@ public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceF
             });
             InstanceEventHook.applyCombat(instance.eventNode(), false, (attacker, victim) -> {
                 float damage = 1;
+                CustomDamageType damageType = CustomDamageType.GENERIC;
                 if (attacker instanceof LivingEntity livingEntity) {
                     damage = livingEntity.getAttributeValue(Attribute.ATTACK_DAMAGE);
+                    damageType = CustomDamageType.mob(livingEntity);
                 } else if (attacker instanceof EntityProjectile projectile && projectile.getShooter() instanceof Player player) {
                     final float movementSpeed = (float) (projectile.getVelocity().length() / MinecraftServer.TICK_PER_SECOND);
                     damage = movementSpeed * player.getAttributeValue(Attribute.ATTACK_DAMAGE);
+                    damageType = CustomDamageType.arrow(projectile, player);
                 }
-
-                if (victim instanceof Player player) {
-                    float armorPoints = player.getAttributeValue(Attribute.ARMOR);
-
-                    // Armor point = 4% damage reduction
-                    // 20 armor points = max reduction
-                    /* * Math.pow(1.15, getUpgrade(ALLOYING_UPGRADE)) */
-                    final float multi = -0.04f * armorPoints;
-
-                    damage *= Math.max(1 + multi, 0.2);
+                if (victim instanceof LivingEntity livingEntity) {
+                    return DamageListener.applyDamage(livingEntity, damageType, damage, DamageConfig.DEFAULT);
+                } else {
+                    return damage;
                 }
-
-                return damage;
             }, victim -> {
                 if (victim instanceof Player) return 500;
                 else return 100;
