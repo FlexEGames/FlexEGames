@@ -6,7 +6,6 @@ plugins {
 ext {
     core = "4.1.28"
     minigameCore = "1.0.1"
-    lombok = "1.18.24"
     minestom = "9dab3183e5"
     pvp = "388378a6d6"
 }
@@ -54,11 +53,6 @@ dependencies {
 
     api "com.github.Minestom.Minestom:Minestom:$minestom"
     api "com.github.Bloepiloepi:MinestomPvP:$pvp"
-
-    compileOnly "org.projectlombok:lombok:$lombok"
-    annotationProcessor "org.projectlombok:lombok:$lombok"
-    testCompileOnly "org.projectlombok:lombok:$lombok"
-    testAnnotationProcessor "org.projectlombok:lombok:$lombok"
 }
 
 jar {

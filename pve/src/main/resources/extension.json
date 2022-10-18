@@ -1,0 +1,5 @@
+{
+  "entrypoint": "${main}",
+  "name": "${name}",
+  "version": "${version}"
+}

@@ -1,4 +1,4 @@
-package me.hsgamer.flexegames.game.duel;
+package me.hsgamer.flexegames.game.pve;
 
 import me.hsgamer.flexegames.GameServer;
 import me.hsgamer.flexegames.api.extension.SingleGameExtension;
@@ -9,25 +9,25 @@ import me.hsgamer.hscore.config.Config;
 
 import java.util.function.Function;
 
-public class DuelExtension extends SingleGameExtension {
-    private DuelMessageConfig messageConfig;
+public class PveExtension extends SingleGameExtension {
+    private PveMessageConfig messageConfig;
 
     @Override
     public void onEnable() {
-        messageConfig = YamlConfigGenerator.generate(DuelMessageConfig.class, getDataDirectory().resolve("messages.yml").toFile());
+        messageConfig = YamlConfigGenerator.generate(PveMessageConfig.class, getDataDirectory().resolve("messages.yml").toFile());
     }
 
     @Override
     public Function<Pair<GameServer, Config>, Game> getInitializer() {
-        return pair -> new DuelGame(pair, this);
+        return pair -> new PveGame(pair, this);
     }
 
     @Override
     public String[] getId() {
-        return new String[]{"duel"};
+        return new String[]{"pve"};
     }
 
-    public DuelMessageConfig getMessageConfig() {
+    public PveMessageConfig getMessageConfig() {
         return messageConfig;
     }
 }

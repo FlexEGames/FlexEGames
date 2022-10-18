@@ -7,11 +7,23 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'java-library'
 
+    ext {
+        lombok = "1.18.24"
+    }
+
     repositories {
         mavenLocal()
         mavenCentral()
         maven { url 'https://jitpack.io' }
         maven { url 'https://repo.codemc.io/repository/maven-public/' }
+    }
+
+    dependencies {
+        compileOnly 'org.jetbrains:annotations:23.0.0'
+        compileOnly "org.projectlombok:lombok:$lombok"
+        annotationProcessor "org.projectlombok:lombok:$lombok"
+        testCompileOnly "org.projectlombok:lombok:$lombok"
+        testAnnotationProcessor "org.projectlombok:lombok:$lombok"
     }
 
     processResources {

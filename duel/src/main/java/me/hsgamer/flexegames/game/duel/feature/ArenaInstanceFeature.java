@@ -143,7 +143,7 @@ public class ArenaInstanceFeature implements Feature {
                 .addListener(PlayerMoveEvent.class, event -> {
                     if (!instance.isInVoid(event.getNewPosition())) return;
                     event.setNewPosition(gameConfig.getJoinPos());
-                    if (arena.getState() == InGameState.class) {
+                    if (isInGame()) {
                         onKill(event.getPlayer());
                     }
                 })

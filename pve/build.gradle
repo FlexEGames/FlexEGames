@@ -1,0 +1,25 @@
+plugins {
+    id 'java-library'
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+dependencies {
+    compileOnly project(":main")
+    implementation "de.articdive:jnoise:3.0.2"
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        expand(
+                'version': project.version,
+                'main': "me.hsgamer.flexegames.game.pve.PveExtension",
+                'name': "PveExtension",
+        )
+        include 'extension.json'
+    }
+}
+
+artifacts {
+    archives shadowJar
+    shadow shadowJar
+}
