@@ -1,14 +1,13 @@
 package me.hsgamer.flexegames.game.pve.feature;
 
-import io.github.bloepiloepi.pvp.config.DamageConfig;
-import io.github.bloepiloepi.pvp.events.*;
-import io.github.bloepiloepi.pvp.listeners.DamageListener;
+import io.github.bloepiloepi.pvp.events.ExplosionEvent;
 import me.hsgamer.flexegames.feature.ConfigFeature;
 import me.hsgamer.flexegames.feature.DescriptionFeature;
 import me.hsgamer.flexegames.feature.LobbyFeature;
 import me.hsgamer.flexegames.game.pve.PveGame;
 import me.hsgamer.flexegames.game.pve.PveGameConfig;
 import me.hsgamer.flexegames.game.pve.instance.ArenaInstance;
+import me.hsgamer.flexegames.game.pve.instance.InstanceEventHook;
 import me.hsgamer.flexegames.game.pve.state.FightingState;
 import me.hsgamer.flexegames.game.pve.state.RestingState;
 import me.hsgamer.flexegames.util.ChatUtil;
@@ -19,13 +18,10 @@ import me.hsgamer.minigamecore.base.Feature;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.attribute.Attribute;
 import net.minestom.server.coordinate.Pos;
-import net.minestom.server.entity.GameMode;
-import net.minestom.server.entity.LivingEntity;
-import net.minestom.server.entity.Player;
-import net.minestom.server.entity.damage.DamageType;
+import net.minestom.server.entity.*;
+import net.minestom.server.entity.metadata.arrow.ArrowMeta;
 import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
-import net.minestom.server.event.entity.EntityAttackEvent;
 import net.minestom.server.event.entity.EntityDamageEvent;
 import net.minestom.server.event.instance.AddEntityToInstanceEvent;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
@@ -35,8 +31,11 @@ import net.minestom.server.event.player.PlayerMoveEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.trait.EntityEvent;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.item.ItemStack;
 import net.minestom.server.tag.Tag;
+import net.minestom.server.utils.time.TimeUnit;
 
+import java.time.Duration;
 import java.util.List;
 
 public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceFeature> {
@@ -69,9 +68,52 @@ public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceF
             var gameConfig = arena.getFeature(ConfigFeature.class).getConfig(PveGameConfig.class);
 
             entityEventNode.addListener(PlayerSpawnEvent.class, event -> event.getPlayer().teleport(SPAWN_POS));
-            PvpUtil.applyPvp(instance.eventNode(), gameConfig.isUseLegacyPvp());
             PvpUtil.applyExplosion(instance);
             ChatUtil.apply(instance.eventNode(), gameConfig.getChatFormat(), player -> arena.getArenaFeature(DescriptionFeature.class).getReplacements());
+
+            InstanceEventHook.applyBow(instance.eventNode(), (entity, power) -> {
+                final EntityProjectile projectile = new EntityProjectile(entity, EntityType.ARROW);
+                final ArrowMeta meta = (ArrowMeta) projectile.getEntityMeta();
+                meta.setCritical(power >= 0.9);
+                projectile.scheduleRemove(Duration.of(100, TimeUnit.SERVER_TICK));
+                return projectile;
+            });
+            InstanceEventHook.applyCombat(instance.eventNode(), false, (attacker, victim) -> {
+                float damage = 1;
+                if (attacker instanceof LivingEntity livingEntity) {
+                    damage = livingEntity.getAttributeValue(Attribute.ATTACK_DAMAGE);
+                } else if (attacker instanceof EntityProjectile projectile && projectile.getShooter() instanceof Player player) {
+                    final float movementSpeed = (float) (projectile.getVelocity().length() / MinecraftServer.TICK_PER_SECOND);
+                    damage = movementSpeed * player.getAttributeValue(Attribute.ATTACK_DAMAGE);
+                }
+
+                if (attacker instanceof Player player) {
+                    final ItemStack item = player.getItemInMainHand();
+                    final int tier = item.isAir() ? 0 : item.getTag(PveGameConfig.MELEE_TAG);
+                    final float multi = 0.1f * tier; // no weapon = 0 tier, non damaging item = -10 tier = 0 damage
+
+                    damage *= 1 + multi;
+                }
+
+                if (victim instanceof Player player) {
+                    int armorPoints = player.getHelmet().getTag(PveGameConfig.MELEE_TAG) +
+                            player.getChestplate().getTag(PveGameConfig.MELEE_TAG) +
+                            player.getLeggings().getTag(PveGameConfig.MELEE_TAG) +
+                            player.getBoots().getTag(PveGameConfig.MELEE_TAG);
+
+                    // Armor point = 4% damage reduction
+                    // 20 armor points = max reduction
+                    /* * Math.pow(1.15, getUpgrade(ALLOYING_UPGRADE)) */
+                    final float multi = -0.04f * armorPoints;
+
+                    damage *= Math.max(1 + multi, 0.2);
+                }
+
+                return damage;
+            }, victim -> {
+                if (victim instanceof Player) return 500;
+                else return 100;
+            });
 
             instance.eventNode()
                     .addListener(AddEntityToInstanceEvent.class, event -> {
@@ -85,10 +127,13 @@ public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceF
                             player.removeTag(DEAD_TAG);
                         }
                     })
-                    .addListener(EntityPreDeathEvent.class, event -> {
+                    .addListener(EntityDamageEvent.class, event -> {
                         if (event.getEntity() instanceof Player player) {
-                            event.setCancelled(true);
-                            onKill(player);
+                            var totalHealth = player.getHealth() + player.getAdditionalHearts();
+                            var damage = event.getDamage();
+                            if (totalHealth - damage <= 0) {
+                                onKill(player);
+                            }
                         }
                     })
                     .addListener(PlayerMoveEvent.class, event -> {
@@ -96,31 +141,6 @@ public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceF
                         event.setNewPosition(SPAWN_POS);
                         if (isInGame()) {
                             onKill(event.getPlayer());
-                        }
-                    })
-                    .addListener(PlayerExhaustEvent.class, event -> {
-                        if (!isInGame() || Boolean.TRUE.equals(event.getEntity().getTag(DEAD_TAG))) {
-                            event.setCancelled(true);
-                        }
-                    })
-                    .addListener(FinalDamageEvent.class, event -> {
-                        if (!isInGame() || Boolean.TRUE.equals(event.getEntity().getTag(DEAD_TAG))) {
-                            event.setCancelled(true);
-                        }
-                    })
-                    .addListener(EntityDamageEvent.class, event -> {
-                        if (event.getEntity() instanceof Player) return;
-                        DamageListener.handleEntityDamage(event, gameConfig.isUseLegacyPvp() ? DamageConfig.LEGACY : DamageConfig.DEFAULT);
-                    })
-                    .addListener(EntityAttackEvent.class, event -> {
-                        if (event.getEntity() instanceof LivingEntity attacker && !(attacker instanceof Player) && event.getTarget() instanceof LivingEntity target) {
-                            var damage = attacker.getAttributeValue(Attribute.ATTACK_DAMAGE);
-                            target.damage(DamageType.fromEntity(attacker), damage);
-                        }
-                    })
-                    .addListener(FinalAttackEvent.class, event -> {
-                        if (event.getTarget() instanceof Player) {
-                            event.setCancelled(true);
                         }
                     })
                     .addListener(PlayerBlockBreakEvent.class, event -> {

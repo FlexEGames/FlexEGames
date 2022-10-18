@@ -5,7 +5,6 @@ import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityProjectile;
 import net.minestom.server.entity.EntityType;
-import net.minestom.server.entity.Player;
 import net.minestom.server.entity.ai.goal.RangedAttackGoal;
 import net.minestom.server.entity.ai.target.ClosestEntityTarget;
 import net.minestom.server.item.ItemStack;
@@ -25,7 +24,6 @@ public final class SkeletonMob extends ArenaMob {
                 this, Duration.of(40, TimeUnit.SERVER_TICK),
                 16, 8, true, 1, 0.1);
 
-        // TODO: Wait for MinestomPvP to support EntityProjectile
         rangedAttackGoal.setProjectileGenerator(entity -> {
             HomingArrow projectile = new HomingArrow(entity, EntityType.PLAYER);
             projectile.scheduleRemove(Duration.of(100, TimeUnit.SERVER_TICK));

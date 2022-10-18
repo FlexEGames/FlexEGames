@@ -8,13 +8,14 @@ import me.hsgamer.hscore.config.annotation.ConfigPath;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.item.ItemStack;
+import net.minestom.server.tag.Tag;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public interface PveGameConfig {
+    Tag<Integer> MELEE_TAG = Tag.Integer("melee").defaultValue(-10);
+    Tag<Integer> ARMOR_TAG = Tag.Integer("armor").defaultValue(0);
+
     @ConfigPath(value = "board.title", converter = ComponentConverter.class)
     default Component getBoardTitle() {
         return ComponentConverter.fromString("&6&lPvE");
@@ -69,11 +70,6 @@ public interface PveGameConfig {
         return false;
     }
 
-    @ConfigPath("use-legacy-pvp")
-    default boolean isUseLegacyPvp() {
-        return false;
-    }
-
     @ConfigPath("max-players")
     default int getMaxPlayers() {
         return 10;
@@ -116,7 +112,18 @@ public interface PveGameConfig {
 
     default Map<Integer, ItemStack> getConvertedKit() {
         Map<Integer, ItemStack> kit = new HashMap<>();
-        getKit().forEach((key, value) -> kit.put(key.intValue(), ItemBuilder.buildItem(value)));
+        getKit().forEach((key, value) -> {
+            var item = ItemBuilder.buildItem(value);
+            if (value.containsKey("melee")) {
+                var melee = Integer.parseInt(Objects.toString(value.get("melee")));
+                item = item.withTag(MELEE_TAG, melee);
+            }
+            if (value.containsKey("armor")) {
+                var armor = Integer.parseInt(Objects.toString(value.get("armor")));
+                item = item.withTag(ARMOR_TAG, armor);
+            }
+            kit.put(key.intValue(), item);
+        });
         return kit;
     }
 

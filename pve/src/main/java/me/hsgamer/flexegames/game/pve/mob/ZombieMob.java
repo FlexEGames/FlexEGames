@@ -3,7 +3,6 @@ package me.hsgamer.flexegames.game.pve.mob;
 import me.hsgamer.minigamecore.base.Arena;
 import net.minestom.server.attribute.Attribute;
 import net.minestom.server.entity.EntityType;
-import net.minestom.server.entity.Player;
 import net.minestom.server.entity.ai.goal.MeleeAttackGoal;
 import net.minestom.server.entity.ai.target.ClosestEntityTarget;
 import net.minestom.server.entity.metadata.monster.zombie.ZombieMeta;
