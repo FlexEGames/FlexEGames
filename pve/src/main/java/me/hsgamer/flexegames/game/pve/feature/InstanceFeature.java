@@ -195,6 +195,15 @@ public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceF
                     });
         }
 
+        public void tryHealAll() {
+            if (arena.getFeature(ConfigFeature.class).getConfig(PveGameConfig.class).isHealOnRest()) {
+                instance.getPlayers().forEach(player -> {
+                    player.heal();
+                    player.setFood(20);
+                });
+            }
+        }
+
         public boolean isAllDead() {
             return instance.getPlayers().stream().allMatch(player -> Boolean.TRUE.equals(player.getTag(DEAD_TAG)));
         }

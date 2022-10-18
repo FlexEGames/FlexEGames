@@ -70,6 +70,11 @@ public interface PveGameConfig {
         return false;
     }
 
+    @ConfigPath("heal-on-rest")
+    default boolean isHealOnRest() {
+        return true;
+    }
+
     @ConfigPath("max-players")
     default int getMaxPlayers() {
         return 10;
