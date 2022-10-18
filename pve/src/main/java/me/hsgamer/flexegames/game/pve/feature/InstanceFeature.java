@@ -1,6 +1,8 @@
 package me.hsgamer.flexegames.game.pve.feature;
 
+import io.github.bloepiloepi.pvp.config.DamageConfig;
 import io.github.bloepiloepi.pvp.events.*;
+import io.github.bloepiloepi.pvp.listeners.DamageListener;
 import me.hsgamer.flexegames.feature.ConfigFeature;
 import me.hsgamer.flexegames.feature.DescriptionFeature;
 import me.hsgamer.flexegames.feature.LobbyFeature;
@@ -24,6 +26,7 @@ import net.minestom.server.entity.damage.DamageType;
 import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.entity.EntityAttackEvent;
+import net.minestom.server.event.entity.EntityDamageEvent;
 import net.minestom.server.event.instance.AddEntityToInstanceEvent;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
 import net.minestom.server.event.player.PlayerBlockBreakEvent;
@@ -104,6 +107,10 @@ public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceF
                         if (!isInGame() || Boolean.TRUE.equals(event.getEntity().getTag(DEAD_TAG))) {
                             event.setCancelled(true);
                         }
+                    })
+                    .addListener(EntityDamageEvent.class, event -> {
+                        if (event.getEntity() instanceof Player) return;
+                        DamageListener.handleEntityDamage(event, gameConfig.isUseLegacyPvp() ? DamageConfig.LEGACY : DamageConfig.DEFAULT);
                     })
                     .addListener(EntityAttackEvent.class, event -> {
                         if (event.getEntity() instanceof LivingEntity attacker && !(attacker instanceof Player) && event.getTarget() instanceof LivingEntity target) {
