@@ -128,13 +128,14 @@ public class HotbarItemsHelper {
         }
     }
 
-    private void giveItems(Player player) {
+    public void giveItems(Player player) {
+        if (!isEnabled.get()) return;
         for (var entry : itemSlots.entrySet()) {
             player.getInventory().setItemStack(entry.getKey(), entry.getValue());
         }
     }
 
-    private void clearItems(Player player) {
+    public void clearItems(Player player) {
         var inventory = player.getInventory();
         for (ItemStack item : inventory.getItemStacks()) {
             if (Boolean.TRUE.equals(item.getTag(tag)))
