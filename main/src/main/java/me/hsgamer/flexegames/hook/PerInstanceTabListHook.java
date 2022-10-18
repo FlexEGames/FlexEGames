@@ -10,6 +10,7 @@ import net.minestom.server.instance.Instance;
 import net.minestom.server.network.packet.server.play.ScoreboardObjectivePacket;
 import net.minestom.server.scoreboard.TabList;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,15 +18,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PerInstanceTabListHook {
     private static final Map<Instance, TabList> TAB_LIST_MAP = new ConcurrentHashMap<>();
 
-    public static void hook(EventNode<Event> node) {
+    public static void hook(EventNode<Event> node, Collection<Instance> globalInstances) {
         node.addListener(PlayerSpawnEvent.class, event -> {
             var instance = event.getSpawnInstance();
+            if (globalInstances.contains(instance)) return;
             var player = event.getPlayer();
             var tabList = getTabList(instance);
             tabList.addViewer(player);
         }).addListener(RemoveEntityFromInstanceEvent.class, event -> {
             if (event.getEntity() instanceof Player player) {
                 var instance = event.getInstance();
+                if (globalInstances.contains(instance)) return;
                 var tabList = getTabList(instance);
                 tabList.removeViewer(player);
             }

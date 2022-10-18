@@ -82,7 +82,7 @@ public class GameServer {
         Board.hook(globalNode);
         LoginLogHook.hook(globalNode);
         UpdateViewHook.hook(globalNode);
-        PerInstanceTabListHook.hook(globalNode);
+        PerInstanceTabListHook.hook(globalNode, List.of(lobby));
         PvpExtension.init();
 
         // Player
