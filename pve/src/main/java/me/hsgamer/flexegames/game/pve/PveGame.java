@@ -42,7 +42,8 @@ public class PveGame extends Game {
                 "time", () -> Component.text(TimeUtil.format(arena.getArenaFeature(ArenaTimerFeature.class).getDuration(TimeUnit.MILLISECONDS))),
                 "stage", () -> Component.text(Integer.toString(arena.getArenaFeature(StageFeature.class).getStage())),
                 "alive", () -> Component.text(Integer.toString(arena.getArenaFeature(InstanceFeature.class).getAlivePlayers().size())),
-                "mob", () -> Component.text(Integer.toString(arena.getArenaFeature(MobGeneratorFeature.class).getMobCount()))
+                "mob", () -> Component.text(Integer.toString(arena.getArenaFeature(MobGeneratorFeature.class).getMobCount())),
+                "max-mob", () -> Component.text(Integer.toString(arena.getArenaFeature(MobGeneratorFeature.class).getMaxMobCount()))
         ));
         var joinFeature = getFeature(JoinFeature.class);
         joinFeature.setMaxPlayersFunction(arena -> arena.getFeature(ConfigFeature.class).getConfig(PveGameConfig.class).getMaxPlayers());

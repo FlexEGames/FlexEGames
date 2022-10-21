@@ -14,6 +14,7 @@ import net.minestom.server.coordinate.Vec;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.*;
 
 import static me.hsgamer.flexegames.game.pve.PveGame.HEIGHT;
@@ -58,6 +59,7 @@ public class MobGeneratorFeature extends ArenaFeature<MobGeneratorFeature.ArenaM
 
     public static class ArenaMobGeneratorFeature implements Feature {
         private final Arena arena;
+        private final AtomicInteger maxMobCount = new AtomicInteger();
         private final Queue<ArenaMob> spawningMobs = new LinkedList<>();
         private final List<ArenaMob> spawnedMobs = new LinkedList<>();
 
@@ -76,6 +78,7 @@ public class MobGeneratorFeature extends ArenaFeature<MobGeneratorFeature.ArenaM
                 var generator = MOB_GENERATORS.get(random.nextInt(MOB_GENERATORS.size()));
                 generator.generate(arena, initialMobs.size()).ifPresent(initialMobs::add);
             }
+            maxMobCount.set(initialMobs.size());
 
             spawningMobs.addAll(initialMobs);
         }
@@ -121,6 +124,10 @@ public class MobGeneratorFeature extends ArenaFeature<MobGeneratorFeature.ArenaM
 
         public int getMobCount() {
             return spawningMobs.size() + spawnedMobs.size();
+        }
+
+        public int getMaxMobCount() {
+            return maxMobCount.get();
         }
 
         @Override
