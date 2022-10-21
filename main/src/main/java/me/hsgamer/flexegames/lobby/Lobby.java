@@ -299,8 +299,12 @@ public class Lobby extends InstanceContainer {
                     @Override
                     public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
                         var player = uuid.getPlayer();
-                        game.createArena(player.getUuid());
-                        openArenaInventory(player, true);
+                        var newArena = game.createArena(player.getUuid());
+                        if (gameServer.getLobbyConfig().isJoinArenaOnCreate() && tryJoinArena(player, newArena)) {
+                            player.closeInventory();
+                        } else {
+                            openArenaInventory(player, false);
+                        }
                         return false;
                     }
                 }, Collections.singletonList(i));
@@ -429,16 +433,8 @@ public class Lobby extends InstanceContainer {
                     @Override
                     public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
                         var player = uuid.getPlayer();
-                        var joinFeature = arena.getArenaFeature(JoinFeature.class);
-                        if (joinFeature.isJoined(player)) {
-                            player.sendMessage(gameServer.getMessageConfig().getErrorArenaJoined());
-                        } else {
-                            JoinResponse response = joinFeature.join(player);
-                            if (response.success()) {
-                                player.closeInventory();
-                            } else {
-                                player.sendMessage(response.message());
-                            }
+                        if (tryJoinArena(player, arena)) {
+                            player.closeInventory();
                         }
                         return false;
                     }
@@ -501,6 +497,22 @@ public class Lobby extends InstanceContainer {
             openArenaInventory(openPlayer, () -> gameServer.getGameManager().findArenasByOwner(openPlayer));
         } else {
             openArenaInventory(openPlayer, () -> gameServer.getGameManager().getAllArenas());
+        }
+    }
+
+    public boolean tryJoinArena(Player player, Arena arena) {
+        var joinFeature = arena.getArenaFeature(JoinFeature.class);
+        if (joinFeature.isJoined(player)) {
+            player.sendMessage(gameServer.getMessageConfig().getErrorArenaJoined());
+            return false;
+        } else {
+            JoinResponse response = joinFeature.join(player);
+            if (response.success()) {
+                return true;
+            } else {
+                player.sendMessage(response.message());
+                return false;
+            }
         }
     }
 

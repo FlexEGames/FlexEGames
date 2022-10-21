@@ -49,11 +49,7 @@ public abstract class Game extends ArenaManager {
     }
 
     public Arena createArena(UUID owner) {
-        String name;
-        do {
-            name = UUID.randomUUID().toString();
-        } while (getArenaByName(name).isPresent());
-        return createArena(name, owner);
+        return createArena(UUID.randomUUID().toString(), owner);
     }
 
     public boolean isConfigured() {

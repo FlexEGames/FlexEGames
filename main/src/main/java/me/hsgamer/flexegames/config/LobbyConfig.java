@@ -45,6 +45,11 @@ public interface LobbyConfig {
                 .append(Component.text("%message%").color(NamedTextColor.GOLD));
     }
 
+    @ConfigPath("join-arena-on-create")
+    default boolean isJoinArenaOnCreate() {
+        return true;
+    }
+
     @ConfigPath(value = "board.title", converter = ComponentConverter.class)
     default Component getBoardTitle() {
         return Component.text("Lobby").decorate(TextDecoration.BOLD).color(NamedTextColor.YELLOW);

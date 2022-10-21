@@ -1,10 +1,8 @@
 package me.hsgamer.flexegames.command;
 
 import me.hsgamer.flexegames.GameServer;
-import me.hsgamer.flexegames.api.game.JoinResponse;
 import me.hsgamer.flexegames.command.argument.ArenaArgument;
 import me.hsgamer.flexegames.command.argument.GameArgument;
-import me.hsgamer.flexegames.feature.JoinFeature;
 import me.hsgamer.flexegames.game.Game;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.minigamecore.base.Arena;
@@ -62,15 +60,7 @@ public class JoinArenaCommand extends Command {
             }
             Player player = (Player) sender;
             Arena arena = optionalArena.get();
-            var joinFeature = arena.getArenaFeature(JoinFeature.class);
-            if (joinFeature.isJoined(player)) {
-                sender.sendMessage(gameServer.getMessageConfig().getErrorArenaJoined());
-                return;
-            }
-            JoinResponse response = optionalArena.get().getArenaFeature(JoinFeature.class).join((Player) sender);
-            if (!response.success()) {
-                sender.sendMessage(response.message());
-            }
+            gameServer.getLobby().tryJoinArena(player, arena);
         }, gameArgument, arenaArgument);
 
         var searchArgument = ArgumentType.Literal("search");
