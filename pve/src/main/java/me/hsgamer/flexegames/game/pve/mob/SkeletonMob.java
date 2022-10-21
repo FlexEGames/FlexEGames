@@ -5,6 +5,7 @@ import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityProjectile;
 import net.minestom.server.entity.EntityType;
+import net.minestom.server.entity.ai.goal.MeleeAttackGoal;
 import net.minestom.server.entity.ai.goal.RangedAttackGoal;
 import net.minestom.server.entity.ai.target.ClosestEntityTarget;
 import net.minestom.server.item.ItemStack;
@@ -33,6 +34,11 @@ public final class SkeletonMob extends ArenaMob {
         addAIGroup(
                 List.of(rangedAttackGoal),
                 List.of(new ClosestEntityTarget(this, 32, MobPredicates.playerExcludeSpectator()))
+        );
+
+        addAIGroup(
+                List.of(new MeleeAttackGoal(this, 1.2, 20, TimeUnit.SERVER_TICK)),
+                List.of(new ClosestEntityTarget(this, 4, MobPredicates.playerExcludeSpectator()))
         );
     }
 

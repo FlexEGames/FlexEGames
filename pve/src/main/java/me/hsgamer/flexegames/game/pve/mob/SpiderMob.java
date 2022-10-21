@@ -5,6 +5,7 @@ import net.kyori.adventure.sound.Sound;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.*;
+import net.minestom.server.entity.ai.goal.MeleeAttackGoal;
 import net.minestom.server.entity.ai.goal.RangedAttackGoal;
 import net.minestom.server.entity.ai.target.ClosestEntityTarget;
 import net.minestom.server.entity.metadata.other.ArmorStandMeta;
@@ -40,6 +41,11 @@ public final class SpiderMob extends ArenaMob {
         addAIGroup(
                 List.of(attackGoal),
                 List.of(new ClosestEntityTarget(this, 32, MobPredicates.playerExcludeSpectator()))
+        );
+
+        addAIGroup(
+                List.of(new MeleeAttackGoal(this, 1.2, 20, TimeUnit.SERVER_TICK)),
+                List.of(new ClosestEntityTarget(this, 4, MobPredicates.playerExcludeSpectator()))
         );
     }
 
