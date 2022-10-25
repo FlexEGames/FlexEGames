@@ -299,12 +299,8 @@ public class Lobby extends InstanceContainer {
                     @Override
                     public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
                         var player = uuid.getPlayer();
-                        var newArena = game.createArena(player.getUuid());
-                        if (gameServer.getLobbyConfig().isJoinArenaOnCreate() && tryJoinArena(player, newArena)) {
-                            player.closeInventory();
-                        } else {
-                            openArenaInventory(player, false);
-                        }
+                        game.createArena(player.getUuid());
+                        openArenaInventory(player, false);
                         return false;
                     }
                 }, Collections.singletonList(i));
