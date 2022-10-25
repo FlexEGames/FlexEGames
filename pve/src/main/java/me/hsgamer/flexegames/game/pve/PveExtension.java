@@ -10,12 +10,7 @@ import me.hsgamer.hscore.config.Config;
 import java.util.function.Function;
 
 public class PveExtension extends SingleGameExtension {
-    private PveMessageConfig messageConfig;
-
-    @Override
-    public void onEnable() {
-        messageConfig = YamlConfigGenerator.generate(PveMessageConfig.class, getDataDirectory().resolve("messages.yml").toFile());
-    }
+    private final PveMessageConfig messageConfig = YamlConfigGenerator.generate(PveMessageConfig.class, getDataDirectory().resolve("messages.yml").toFile());
 
     @Override
     public Function<Pair<GameServer, Config>, Game> getInitializer() {

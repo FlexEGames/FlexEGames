@@ -10,12 +10,7 @@ import me.hsgamer.hscore.config.Config;
 import java.util.function.Function;
 
 public class DuelExtension extends SingleGameExtension {
-    private DuelMessageConfig messageConfig;
-
-    @Override
-    public void onEnable() {
-        messageConfig = YamlConfigGenerator.generate(DuelMessageConfig.class, getDataDirectory().resolve("messages.yml").toFile());
-    }
+    private final DuelMessageConfig messageConfig = YamlConfigGenerator.generate(DuelMessageConfig.class, getDataDirectory().resolve("messages.yml").toFile());
 
     @Override
     public Function<Pair<GameServer, Config>, Game> getInitializer() {
