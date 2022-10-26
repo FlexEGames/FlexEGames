@@ -6,7 +6,7 @@ plugins {
 ext {
     core = "4.1.28"
     minigameCore = "1.0.1"
-    minestom = "632922bce5"
+    minestom = "d7e958fa07"
     pvp = "388378a6d6"
 }
 
