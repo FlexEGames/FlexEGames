@@ -6,8 +6,6 @@ plugins {
 ext {
     core = "4.1.28"
     minigameCore = "1.0.1"
-    minestom = "d7e958fa07"
-    pvp = "388378a6d6"
 }
 
 java {
@@ -51,8 +49,8 @@ dependencies {
     api "me.hsgamer:minigamecore-base:$minigameCore"
     api "me.hsgamer:minigamecore-implementation:$minigameCore"
 
-    api "com.github.Minestom.Minestom:Minestom:$minestom"
-    api "com.github.TogAr2:MinestomPvP:$pvp"
+    api "com.github.Minestom.Minestom:Minestom:d7e958fa07"
+    api "com.github.HSGamer:MinestomPvP:pve-SNAPSHOT"
 }
 
 jar {

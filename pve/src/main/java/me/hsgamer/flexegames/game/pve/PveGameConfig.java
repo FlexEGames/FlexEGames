@@ -59,6 +59,11 @@ public interface PveGameConfig {
         ));
     }
 
+    @ConfigPath("use-legacy-pvp")
+    default boolean isUseLegacyPvp() {
+        return false;
+    }
+
     @ConfigPath("tough-mob")
     default boolean isToughMob() {
         return false;
