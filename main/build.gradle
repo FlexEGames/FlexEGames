@@ -9,7 +9,14 @@ ext {
 }
 
 java {
+    withJavadocJar()
     withSourcesJar()
+}
+
+javadoc {
+    options.links = [
+            "https://javadoc.minestom.net/"
+    ]
 }
 
 shadowJar {
