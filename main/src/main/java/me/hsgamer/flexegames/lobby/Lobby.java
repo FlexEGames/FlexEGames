@@ -1,5 +1,6 @@
 package me.hsgamer.flexegames.lobby;
 
+import lombok.Getter;
 import lombok.experimental.ExtensionMethod;
 import me.hsgamer.flexegames.GameServer;
 import me.hsgamer.flexegames.api.game.JoinResponse;
@@ -46,8 +47,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
+/**
+ * The lobby
+ */
 @ExtensionMethod({ItemUtil.class, PlayerUtil.class})
 public class Lobby extends InstanceContainer {
+    @Getter
     private final Pos position;
     private final Board board;
     private final Task boardTask;
@@ -56,6 +61,7 @@ public class Lobby extends InstanceContainer {
     private final Tag<Boolean> hidePlayerTag = Tag.Boolean("lobby:HidePlayer").defaultValue(false);
     private final Tag<Boolean> firstSpawnTag = Tag.Boolean("lobby:FirstSpawn").defaultValue(true);
     private final Map<UUID, Supplier<List<Arena>>> arenaSupplierRefMap = new ConcurrentHashMap<>();
+    @Getter
     private final HotbarItemsHelper hotbarItemsHelper;
     private GUIHolder arenaGUIHolder;
     private GUIHolder gameGUIHolder;
@@ -197,14 +203,6 @@ public class Lobby extends InstanceContainer {
         player.removeTag(firstSpawnTag);
     }
 
-    public Pos getPosition() {
-        return position;
-    }
-
-    public HotbarItemsHelper getHotbarItemsHelper() {
-        return hotbarItemsHelper;
-    }
-
     public void clear() {
         if (gameGUIHolder != null) {
             gameGUIHolder.stop();
@@ -318,10 +316,21 @@ public class Lobby extends InstanceContainer {
         gameGUIHolder.init();
     }
 
+    /**
+     * Open the game inventory for the player
+     *
+     * @param openPlayer the player to open the inventory for
+     */
     public void openGameInventory(Player openPlayer) {
         gameGUIHolder.createDisplay(openPlayer.getUuid()).init();
     }
 
+    /**
+     * Set the arena supplier for the unique id
+     *
+     * @param uuid             the unique id
+     * @param arenaSupplierRef the arena supplier
+     */
     public void setArenaSupplierRef(UUID uuid, Supplier<List<Arena>> arenaSupplierRef) {
         arenaSupplierRefMap.put(uuid, arenaSupplierRef);
     }
@@ -474,11 +483,23 @@ public class Lobby extends InstanceContainer {
         arenaGUIHolder.init();
     }
 
+    /**
+     * Open the arena inventory for the player
+     *
+     * @param openPlayer    the player to open the inventory for
+     * @param arenaSupplier the arena supplier
+     */
     public void openArenaInventory(Player openPlayer, Supplier<List<Arena>> arenaSupplier) {
         arenaSupplierRefMap.put(openPlayer.getUuid(), arenaSupplier);
         arenaGUIHolder.createDisplay(openPlayer.getUuid()).init();
     }
 
+    /**
+     * Open the arena inventory for the player
+     *
+     * @param openPlayer the player to open the inventory for
+     * @param ownerQuery the query to filter the owner of the arena
+     */
     public void openArenaInventory(Player openPlayer, String ownerQuery) {
         List<UUID> uuids = MinecraftServer.getConnectionManager().getOnlinePlayers()
                 .stream()
@@ -488,6 +509,12 @@ public class Lobby extends InstanceContainer {
         openArenaInventory(openPlayer, () -> gameServer.getGameManager().findArenasByOwner(uuids));
     }
 
+    /**
+     * Open the arena inventory for the player
+     *
+     * @param openPlayer the player to open the inventory for
+     * @param myArena    whether to filter the arena by the open player
+     */
     public void openArenaInventory(Player openPlayer, boolean myArena) {
         if (myArena) {
             openArenaInventory(openPlayer, () -> gameServer.getGameManager().findArenasByOwner(openPlayer));
@@ -496,6 +523,13 @@ public class Lobby extends InstanceContainer {
         }
     }
 
+    /**
+     * Try to join the arena
+     *
+     * @param player the player to join the arena
+     * @param arena  the arena to join
+     * @return whether the player is successfully joined the arena
+     */
     public boolean tryJoinArena(Player player, Arena arena) {
         var joinFeature = arena.getArenaFeature(JoinFeature.class);
         if (joinFeature.isJoined(player)) {

@@ -13,12 +13,21 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.*;
 
+/**
+ * The utility class for {@link Permission}
+ */
 @UtilityClass
 public final class PermissionUtil {
     public static final String PERMISSION_KEY = "permission";
     public static final String DATA_KEY = "data";
     private static final Gson GSON = new Gson();
 
+    /**
+     * Convert the map to {@link Permission}
+     *
+     * @param map the map
+     * @return the permission
+     */
     public static Permission toPermission(Map<String, Object> map) {
         String permission = Objects.toString(map.get(PERMISSION_KEY));
         if (permission == null) return null;
@@ -51,6 +60,12 @@ public final class PermissionUtil {
         return new Permission(permission, data);
     }
 
+    /**
+     * Convert the list of map to the list of {@link Permission}
+     *
+     * @param mapList the list of map
+     * @return the list of permission
+     */
     public static List<Permission> toPermission(List<Map<String, Object>> mapList) {
         List<Permission> list = new ArrayList<>();
         for (Map<String, Object> map : mapList) {
@@ -61,6 +76,12 @@ public final class PermissionUtil {
         return list;
     }
 
+    /**
+     * Convert the {@link Permission} to the map
+     *
+     * @param permission the permission
+     * @return the map
+     */
     public static Map<String, Object> toMap(Permission permission) {
         Map<String, Object> map = new HashMap<>();
         map.put(PERMISSION_KEY, permission.getPermissionName());
@@ -70,6 +91,12 @@ public final class PermissionUtil {
         return map;
     }
 
+    /**
+     * Convert the list of {@link Permission} to the list of map
+     *
+     * @param permissionList the list of permission
+     * @return the list of map
+     */
     public static List<Map<String, Object>> toMap(List<Permission> permissionList) {
         List<Map<String, Object>> list = new ArrayList<>();
         for (Permission permission : permissionList) {

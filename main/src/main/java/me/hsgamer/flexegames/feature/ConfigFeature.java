@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * The game config feature
+ */
 public class ConfigFeature implements Feature {
     @Getter
     private final Config config;
@@ -19,6 +22,14 @@ public class ConfigFeature implements Feature {
         this.configTypesMap = new ConcurrentHashMap<>();
     }
 
+    /**
+     * Get the config object from the class
+     *
+     * @param clazz      the class
+     * @param addDefault whether to add the default value to the config
+     * @param <T>        the type of the config object
+     * @return the config object
+     */
     public <T> T getConfig(Class<T> clazz, boolean addDefault) {
         boolean forceAddDefault = Boolean.parseBoolean(Objects.toString(config.get("add-default"), "false"));
         try {
@@ -28,6 +39,13 @@ public class ConfigFeature implements Feature {
         }
     }
 
+    /**
+     * Get the config object from the class
+     *
+     * @param clazz the class
+     * @param <T>   the type of the config object
+     * @return the config object
+     */
     public <T> T getConfig(Class<T> clazz) {
         return getConfig(clazz, false);
     }

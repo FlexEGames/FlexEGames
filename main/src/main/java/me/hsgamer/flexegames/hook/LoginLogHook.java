@@ -10,6 +10,9 @@ import net.minestom.server.event.player.PlayerSpawnEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The hook for logging player login
+ */
 @UtilityClass
 public final class LoginLogHook {
     private static final Logger LOGGER = LoggerFactory.getLogger("Login");

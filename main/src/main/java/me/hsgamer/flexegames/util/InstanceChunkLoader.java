@@ -11,17 +11,33 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 
+/**
+ * A decorative {@link IChunkLoader} to modify blocks after chunk loading
+ */
 public class InstanceChunkLoader implements IChunkLoader {
     private final IChunkLoader loader;
     private final BiFunction<Chunk, Block, Block> blockModifier;
     private final boolean ignoreAir;
 
+    /**
+     * Create a new instance chunk loader
+     *
+     * @param loader        the loader
+     * @param blockModifier the block modifier
+     * @param ignoreAir     whether to ignore air
+     */
     public InstanceChunkLoader(IChunkLoader loader, BiFunction<Chunk, Block, Block> blockModifier, boolean ignoreAir) {
         this.loader = loader;
         this.blockModifier = blockModifier;
         this.ignoreAir = ignoreAir;
     }
 
+    /**
+     * Create a new instance chunk loader
+     *
+     * @param loader        the loader
+     * @param blockModifier the block modifier
+     */
     public InstanceChunkLoader(IChunkLoader loader, BiFunction<Chunk, Block, Block> blockModifier) {
         this(loader, blockModifier, true);
     }

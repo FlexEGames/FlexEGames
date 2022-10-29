@@ -14,8 +14,18 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * The utility class for chat
+ */
 @UtilityClass
 public final class ChatUtil {
+    /**
+     * Register the chat event to the event node
+     *
+     * @param node                      the event node
+     * @param chatFormat                the chat format
+     * @param playerReplacementSupplier the supplier for player replacements
+     */
     public static void apply(EventNode<InstanceEvent> node, Component chatFormat, Function<Player, Map<String, Supplier<ComponentLike>>> playerReplacementSupplier) {
         node.addListener(PlayerChatEvent.class, event -> {
             event.setChatFormat(e -> ReplacementManager.builder()
@@ -29,6 +39,12 @@ public final class ChatUtil {
         });
     }
 
+    /**
+     * Register the chat event to the event node
+     *
+     * @param node       the event node
+     * @param chatFormat the chat format
+     */
     public static void apply(EventNode<InstanceEvent> node, Component chatFormat) {
         apply(node, chatFormat, p -> Map.of());
     }

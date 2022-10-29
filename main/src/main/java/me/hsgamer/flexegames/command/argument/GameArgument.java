@@ -13,6 +13,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * An argument for {@link Game}
+ */
 public class GameArgument extends Argument<Game> {
     public static final int GAME_NOT_FOUND = 1;
     private final GameServer gameServer;

@@ -4,8 +4,17 @@ import lombok.experimental.UtilityClass;
 
 import java.time.Duration;
 
+/**
+ * The utility class for time
+ */
 @UtilityClass
 public final class TimeUtil {
+    /**
+     * Format the duration
+     *
+     * @param duration the duration
+     * @return the formatted string
+     */
     public static String format(Duration duration) {
         int hours = duration.toHoursPart();
         int minutes = duration.toMinutesPart();
@@ -24,6 +33,12 @@ public final class TimeUtil {
         return builder.toString();
     }
 
+    /**
+     * Format the duration in milliseconds
+     *
+     * @param millis the duration in milliseconds
+     * @return the formatted string
+     */
     public static String format(long millis) {
         return format(Duration.ofMillis(millis));
     }

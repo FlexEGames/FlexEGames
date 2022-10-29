@@ -12,6 +12,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.function.Function;
 
+/**
+ * An argument for {@link Arena}
+ */
 public class ArenaArgument extends Argument<Function<Game, Optional<Arena>>> {
     public ArenaArgument(@NotNull String id) {
         super(id);

@@ -8,8 +8,16 @@ import net.minestom.server.entity.Player;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * The utility class for {@link Player}
+ */
 @UtilityClass
 public final class PlayerUtil {
+    /**
+     * Reset the player's attributes
+     *
+     * @param player the player
+     */
     public static void reset(Player player) {
         player.getInventory().clear();
         player.clearEffects();
@@ -44,6 +52,12 @@ public final class PlayerUtil {
         player.resetTitle();
     }
 
+    /**
+     * Get the player by its unique id
+     *
+     * @param uuid the unique id
+     * @return the player
+     */
     public static Player getPlayer(UUID uuid) {
         return MinecraftServer.getConnectionManager().getPlayer(uuid);
     }

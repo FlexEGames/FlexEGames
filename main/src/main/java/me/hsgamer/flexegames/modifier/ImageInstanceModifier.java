@@ -30,6 +30,9 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.stream.IntStream;
 
+/**
+ * The modifier to add image to the instance
+ */
 public class ImageInstanceModifier implements InstanceModifierProvider {
     private static final int MAP_UNIT_LENGTH = 128;
     private final int width;

@@ -8,6 +8,9 @@ import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.timer.ExecutionType;
 
+/**
+ * The hook for updating the view
+ */
 @UtilityClass
 public final class UpdateViewHook {
     public static void hook(EventNode<Event> node) {

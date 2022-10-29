@@ -9,6 +9,9 @@ import java.io.PrintStream;
 
 import static net.minestom.server.MinecraftServer.LOGGER;
 
+/**
+ * The utility class to redirect the System Out and Err output to the logger
+ */
 @UtilityClass
 public final class SysOutErrRedirect {
     public static void init() {

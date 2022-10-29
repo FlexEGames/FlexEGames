@@ -18,8 +18,14 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
+/**
+ * The builder for {@link ItemStack}
+ */
 @ExtensionMethod({Objects.class, ReplacementManager.class, CollectionUtils.class})
 public class ItemBuilder extends Builder<Object, BiFunction<ItemStack, Map<String, Supplier<ComponentLike>>, ItemStack>> {
+    /**
+     * The singleton instance
+     */
     public static final ItemBuilder INSTANCE = new ItemBuilder();
 
     private ItemBuilder() {
@@ -102,6 +108,13 @@ public class ItemBuilder extends Builder<Object, BiFunction<ItemStack, Map<Strin
         }, "damage");
     }
 
+    /**
+     * Create an {@link ItemStack} from the value map
+     *
+     * @param values       the value map
+     * @param replacements the replacement map. Used in some properties that work with {@link Component}
+     * @return the item stack
+     */
     public static ItemStack buildItem(Map<String, Object> values, Map<String, Supplier<ComponentLike>> replacements) {
         ItemStack itemStack = ItemStack.of(Material.STONE);
         for (Map.Entry<String, Object> entry : values.entrySet()) {
@@ -113,6 +126,12 @@ public class ItemBuilder extends Builder<Object, BiFunction<ItemStack, Map<Strin
         return itemStack;
     }
 
+    /**
+     * Create an {@link ItemStack} from the value map
+     *
+     * @param values the value map
+     * @return the item stack
+     */
     public static ItemStack buildItem(Map<String, Object> values) {
         return buildItem(values, Collections.emptyMap());
     }

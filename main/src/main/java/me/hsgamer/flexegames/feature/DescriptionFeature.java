@@ -21,9 +21,15 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * The feature to show the description of the {@link Game}
+ */
 @ExtensionMethod({ItemUtil.class})
 public class DescriptionFeature extends ArenaFeature<DescriptionFeature.ArenaDescriptionFeature> {
     private final Game game;
+    /**
+     * The function to provide the replacement map of an {@link Arena}
+     */
     @Setter
     private Function<Arena, Map<String, Supplier<ComponentLike>>> replacementsFunction = a -> Collections.emptyMap();
 
@@ -35,14 +41,29 @@ public class DescriptionFeature extends ArenaFeature<DescriptionFeature.ArenaDes
         return game.getFeature(ConfigFeature.class).getConfig(GameDescriptionConfig.class, true);
     }
 
+    /**
+     * Get the display name of the {@link Game}
+     *
+     * @return the display name
+     */
     public Component getDisplayName() {
         return getConfig().getDisplayName();
     }
 
+    /**
+     * Get the description of the {@link Game}
+     *
+     * @return the description
+     */
     public List<Component> getDescription() {
         return getConfig().getDescription();
     }
 
+    /**
+     * Get the display item of the {@link Game}
+     *
+     * @return the display item
+     */
     public ItemStack getDisplayItem() {
         return ItemBuilder.buildItem(getConfig().getDisplayItem())
                 .withDisplayName(getDisplayName())
@@ -55,6 +76,9 @@ public class DescriptionFeature extends ArenaFeature<DescriptionFeature.ArenaDes
         return new ArenaDescriptionFeature(arena);
     }
 
+    /**
+     * The description feature for each {@link Arena}
+     */
     public class ArenaDescriptionFeature implements Feature {
         private final Arena arena;
 
@@ -62,6 +86,11 @@ public class DescriptionFeature extends ArenaFeature<DescriptionFeature.ArenaDes
             this.arena = arena;
         }
 
+        /**
+         * Get the replacement map of the {@link Arena}
+         *
+         * @return the replacement map
+         */
         public Map<String, Supplier<ComponentLike>> getReplacements() {
             JoinFeature.ArenaJoinFeature joinFeature = arena.getArenaFeature(JoinFeature.class);
             Map<String, Supplier<ComponentLike>> replacements = new HashMap<>();
@@ -83,6 +112,11 @@ public class DescriptionFeature extends ArenaFeature<DescriptionFeature.ArenaDes
             return replacements;
         }
 
+        /**
+         * Get the display name of the {@link Arena}
+         *
+         * @return the display name
+         */
         public ItemStack getDisplayItem() {
             return ItemBuilder.buildItem(getConfig().getArenaDisplayItem(), getReplacements()).stripItalics();
         }

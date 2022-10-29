@@ -11,6 +11,9 @@ import net.minestom.server.permission.Permission;
 
 import java.util.*;
 
+/**
+ * The main config
+ */
 public interface MainConfig {
     @ConfigPath("server.ip")
     default String getServerIp() {

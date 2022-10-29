@@ -9,6 +9,9 @@ import net.minestom.server.extensions.Extension;
 
 import java.util.function.Function;
 
+/**
+ * An {@link Extension} to register a single game
+ */
 public abstract class SingleGameExtension extends Extension {
     @Override
     public final void initialize() {
@@ -21,15 +24,31 @@ public abstract class SingleGameExtension extends Extension {
         onDisable();
     }
 
+    /**
+     * Called when the extension is enabled
+     */
     public void onEnable() {
         // EMPTY
     }
 
+    /**
+     * Called when the extension is disabled
+     */
     public void onDisable() {
         // EMPTY
     }
 
+    /**
+     * Get the initializer that registers the game
+     *
+     * @return the initializer
+     */
     public abstract Function<Pair<GameServer, Config>, Game> getInitializer();
 
+    /**
+     * Get the id (type) of the game
+     *
+     * @return the id
+     */
     public abstract String[] getId();
 }
