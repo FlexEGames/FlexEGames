@@ -50,7 +50,7 @@ dependencies {
     api "me.hsgamer:minigamecore-implementation:$minigameCore"
 
     api "com.github.Minestom.Minestom:Minestom:993af51556"
-    api "com.github.HSGamer:MinestomPvP:0d28f213c8"
+    api "com.github.HSGamer:MinestomPvP:08db74ec87"
 }
 
 jar {
