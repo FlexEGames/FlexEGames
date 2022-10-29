@@ -2,14 +2,17 @@ package me.hsgamer.flexegames.game.pve.feature;
 
 import io.github.bloepiloepi.pvp.events.EntityPreDeathEvent;
 import io.github.bloepiloepi.pvp.events.ExplosionEvent;
+import io.github.bloepiloepi.pvp.events.PlayerExhaustEvent;
 import me.hsgamer.flexegames.feature.ConfigFeature;
 import me.hsgamer.flexegames.feature.DescriptionFeature;
 import me.hsgamer.flexegames.feature.LobbyFeature;
 import me.hsgamer.flexegames.game.pve.PveGame;
 import me.hsgamer.flexegames.game.pve.PveGameConfig;
 import me.hsgamer.flexegames.game.pve.instance.ArenaInstance;
+import me.hsgamer.flexegames.game.pve.state.EndingState;
 import me.hsgamer.flexegames.game.pve.state.FightingState;
 import me.hsgamer.flexegames.game.pve.state.RestingState;
+import me.hsgamer.flexegames.game.pve.state.WaitingState;
 import me.hsgamer.flexegames.util.ChatUtil;
 import me.hsgamer.flexegames.util.PvpUtil;
 import me.hsgamer.minigamecore.base.Arena;
@@ -95,6 +98,11 @@ public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceF
                     })
                     .addListener(PlayerBlockBreakEvent.class, event -> {
                         if (Boolean.FALSE.equals(event.getBlock().getTag(PLAYER_BLOCK_TAG))) {
+                            event.setCancelled(true);
+                        }
+                    })
+                    .addListener(PlayerExhaustEvent.class, event -> {
+                        if (arena.getState() == WaitingState.class || arena.getState() == EndingState.class) {
                             event.setCancelled(true);
                         }
                     })

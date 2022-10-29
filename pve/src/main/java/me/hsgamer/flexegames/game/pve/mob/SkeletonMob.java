@@ -1,9 +1,11 @@
 package me.hsgamer.flexegames.game.pve.mob;
 
+import io.github.bloepiloepi.pvp.projectile.Arrow;
+import me.hsgamer.flexegames.feature.ConfigFeature;
+import me.hsgamer.flexegames.game.pve.PveGameConfig;
 import me.hsgamer.minigamecore.base.Arena;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
-import net.minestom.server.entity.EntityProjectile;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.ai.goal.MeleeAttackGoal;
 import net.minestom.server.entity.ai.goal.RangedAttackGoal;
@@ -21,12 +23,13 @@ public final class SkeletonMob extends ArenaMob {
         super(EntityType.SKELETON, arena);
         setItemInMainHand(ItemStack.of(Material.BOW));
 
+        var gameConfig = arena.getFeature(ConfigFeature.class).getConfig(PveGameConfig.class);
         RangedAttackGoal rangedAttackGoal = new RangedAttackGoal(
                 this, Duration.of(40, TimeUnit.SERVER_TICK),
                 16, 8, true, 1, 0.1);
 
         rangedAttackGoal.setProjectileGenerator(entity -> {
-            HomingArrow projectile = new HomingArrow(entity, EntityType.PLAYER);
+            HomingArrow projectile = new HomingArrow(entity, EntityType.PLAYER, gameConfig.isUseLegacyPvp());
             projectile.scheduleRemove(Duration.of(100, TimeUnit.SERVER_TICK));
             return projectile;
         });
@@ -42,11 +45,11 @@ public final class SkeletonMob extends ArenaMob {
         );
     }
 
-    private static final class HomingArrow extends EntityProjectile {
+    private static final class HomingArrow extends Arrow {
         private final EntityType target;
 
-        public HomingArrow(@Nullable Entity shooter, EntityType target) {
-            super(shooter, EntityType.ARROW);
+        public HomingArrow(@Nullable Entity shooter, EntityType target, boolean isLegacy) {
+            super(shooter, isLegacy);
             this.target = target;
         }
 
