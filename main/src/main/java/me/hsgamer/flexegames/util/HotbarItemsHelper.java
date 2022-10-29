@@ -24,6 +24,9 @@ import java.util.function.Consumer;
 
 import static net.minestom.server.event.EventListener.builder;
 
+/**
+ * The helper class for hotbar items
+ */
 public class HotbarItemsHelper {
     private final Instance instance;
     private final EventNode<PlayerEvent> playerNode;
@@ -33,6 +36,11 @@ public class HotbarItemsHelper {
     private final Map<ItemStack, Consumer<Player>> itemConsumers = new HashMap<>();
     private final Tag<Boolean> tag = Tag.Boolean("flexegames:hotbar-items-helper").defaultValue(false);
 
+    /**
+     * Create a new helper
+     *
+     * @param instance the instance
+     */
     public HotbarItemsHelper(Instance instance) {
         this.instance = instance;
         this.playerNode = EventNode.event("hotbar-" + UUID.randomUUID(), EventFilter.PLAYER, event -> event.getPlayer().getInstance() == instance && isEnabled.get());
@@ -93,11 +101,17 @@ public class HotbarItemsHelper {
                         .build());
     }
 
+    /**
+     * Initialize the helper
+     */
     public void init() {
         MinecraftServer.getGlobalEventHandler().addChild(playerNode);
         instance.eventNode().addChild(instanceNode);
     }
 
+    /**
+     * Clear the helper
+     */
     public void clear() {
         itemSlots.clear();
         itemConsumers.clear();
@@ -105,20 +119,46 @@ public class HotbarItemsHelper {
         instance.eventNode().removeChild(instanceNode);
     }
 
+    /**
+     * Check if the helper is enabled
+     *
+     * @return true if enabled
+     */
     public boolean isEnabled() {
         return isEnabled.get();
     }
 
+    /**
+     * Enable/Disable the helper.
+     * If the helper is enabled, the necessary events will be active.
+     * If the helper is disabled, the necessary events will be disabled.
+     *
+     * @param enabled true to enable
+     */
     public void setEnabled(boolean enabled) {
         isEnabled.set(enabled);
     }
 
+    /**
+     * Add an item to the hotbar
+     *
+     * @param slot      the slot
+     * @param itemStack the item
+     * @param consumer  the consumer when the item is interacted with
+     */
     public void registerHotbarItem(int slot, ItemStack itemStack, Consumer<Player> consumer) {
         itemStack = itemStack.withTag(tag, true);
         itemSlots.put(slot, itemStack);
         itemConsumers.put(itemStack, consumer);
     }
 
+    /**
+     * Add an item to the hotbar from the setting map
+     *
+     * @param map         the map
+     * @param defaultSlot the default slot
+     * @param consumer    the consumer when the item is interacted with
+     */
     public void registerHotbarItemFromMap(Map<String, Object> map, int defaultSlot, Consumer<Player> consumer) {
         var item = ItemUtil.stripItalics(ItemBuilder.buildItem(map));
         var slot = Optional.ofNullable(map.get("slot")).map(Objects::toString).flatMap(Validate::getNumber).map(BigDecimal::intValue).orElse(defaultSlot);
@@ -128,6 +168,11 @@ public class HotbarItemsHelper {
         }
     }
 
+    /**
+     * Give the items to the player
+     *
+     * @param player the player
+     */
     public void giveItems(Player player) {
         if (!isEnabled.get()) return;
         for (var entry : itemSlots.entrySet()) {
@@ -135,6 +180,11 @@ public class HotbarItemsHelper {
         }
     }
 
+    /**
+     * Clear the items from the player
+     *
+     * @param player the player
+     */
     public void clearItems(Player player) {
         var inventory = player.getInventory();
         for (ItemStack item : inventory.getItemStacks()) {

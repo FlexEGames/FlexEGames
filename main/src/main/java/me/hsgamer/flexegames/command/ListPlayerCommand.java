@@ -8,6 +8,9 @@ import net.minestom.server.entity.Player;
 
 import java.util.Collection;
 
+/**
+ * The command to list all players
+ */
 public class ListPlayerCommand extends Command {
     public ListPlayerCommand() {
         super("listplayer", "list");

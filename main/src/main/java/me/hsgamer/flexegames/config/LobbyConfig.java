@@ -11,6 +11,9 @@ import net.minestom.server.item.Material;
 
 import java.util.*;
 
+/**
+ * The {@link me.hsgamer.flexegames.lobby.Lobby} config
+ */
 public interface LobbyConfig {
     @ConfigPath(value = "world.id", converter = UuidConverter.class)
     default UUID getWorldId() {

@@ -7,6 +7,9 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.timer.ExecutionType;
 import net.minestom.server.timer.Task;
 
+/**
+ * The arena for the game
+ */
 class GameArena extends Arena {
     private Task task;
 

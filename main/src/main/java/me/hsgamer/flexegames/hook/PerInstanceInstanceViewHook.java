@@ -15,6 +15,9 @@ import net.minestom.server.utils.PacketUtils;
 
 import java.util.List;
 
+/**
+ * The hook for per-instance instance view (tab list view)
+ */
 @UtilityClass
 public class PerInstanceInstanceViewHook {
     private static final Tag<Boolean> firstSpawnTag = Tag.Boolean("InstanceViewHook:FirstSpawn").defaultValue(true);

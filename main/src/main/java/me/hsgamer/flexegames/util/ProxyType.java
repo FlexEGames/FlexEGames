@@ -7,9 +7,21 @@ import net.minestom.server.extras.velocity.VelocityProxy;
 
 import java.util.function.Consumer;
 
+/**
+ * The type of proxy
+ */
 public enum ProxyType {
+    /**
+     * The offline-mode proxy
+     */
     NONE,
+    /**
+     * The BungeeCord proxy
+     */
     BUNGEE(BungeeCordProxy::enable),
+    /**
+     * The Velocity proxy
+     */
     VELOCITY(server -> {
         String secret = server.getMainConfig().getVelocitySecret();
         if (secret.isEmpty()) {
@@ -17,6 +29,9 @@ public enum ProxyType {
         }
         VelocityProxy.enable(secret);
     }),
+    /**
+     * The Mojang proxy
+     */
     ONLINE(MojangAuth::init);
     private final Consumer<GameServer> proxyExecutor;
 
@@ -33,6 +48,11 @@ public enum ProxyType {
         });
     }
 
+    /**
+     * Enable the proxy
+     *
+     * @param gameServer the game server
+     */
     public void execute(GameServer gameServer) {
         proxyExecutor.accept(gameServer);
     }

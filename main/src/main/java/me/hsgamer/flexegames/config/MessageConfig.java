@@ -5,6 +5,9 @@ import me.hsgamer.hscore.config.annotation.ConfigPath;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
+/**
+ * The message config
+ */
 public interface MessageConfig {
     @ConfigPath(value = "error.game-not-found", converter = ComponentConverter.class)
     default Component getErrorGameNotFound() {

@@ -35,16 +35,42 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * The main class of the game server
+ */
 @Getter
 public class GameServer {
+    /**
+     * The Minecraft server
+     */
     private final MinecraftServer minecraftServer = MinecraftServer.init();
+    /**
+     * The main config
+     */
     private final MainConfig mainConfig = YamlConfigGenerator.generate(MainConfig.class, new File("config.yml"), true, true);
+    /**
+     * The lobby config
+     */
     private final LobbyConfig lobbyConfig = YamlConfigGenerator.generate(LobbyConfig.class, new File("lobby.yml"), true, true);
+    /**
+     * The message config
+     */
     private final MessageConfig messageConfig = YamlConfigGenerator.generate(MessageConfig.class, new File("messages.yml"), true, true);
+    /**
+     * The game manager
+     */
     private final GameManager gameManager = new GameManager(this);
+    /**
+     * The lobby
+     */
     private final Lobby lobby;
 
-    public GameServer() {
+    /**
+     * Create a new game server
+     *
+     * @param args the arguments
+     */
+    public GameServer(String[] args) {
         // Redirect System.out and System.err to the logger
         SysOutErrRedirect.init();
 

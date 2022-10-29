@@ -10,6 +10,9 @@ import net.minestom.server.item.Material;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The {@link me.hsgamer.flexegames.game.Game} description config
+ */
 public interface GameDescriptionConfig {
     @ConfigPath(value = "display-name", converter = ComponentConverter.class)
     default Component getDisplayName() {

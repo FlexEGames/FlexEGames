@@ -12,6 +12,9 @@ import net.minestom.server.entity.Player;
 import java.util.Map;
 import java.util.function.Predicate;
 
+/**
+ * The command to create an arena
+ */
 public class CreateArenaCommand extends Command {
     public CreateArenaCommand(GameServer gameServer) {
         super("createarena", "create");

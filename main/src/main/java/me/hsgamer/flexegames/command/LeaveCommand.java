@@ -4,6 +4,9 @@ import me.hsgamer.flexegames.GameServer;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.entity.Player;
 
+/**
+ * The command to leave the game
+ */
 public class LeaveCommand extends Command {
     public LeaveCommand(GameServer gameServer) {
         super("leave");

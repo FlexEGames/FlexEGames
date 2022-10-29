@@ -19,6 +19,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+/**
+ * The command to join an arena
+ */
 public class JoinArenaCommand extends Command {
     public JoinArenaCommand(GameServer gameServer) {
         super("joinarena", "join");
