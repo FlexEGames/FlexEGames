@@ -36,11 +36,14 @@ artifacts {
 publishing {
     publications {
         shadow(MavenPublication) { publication ->
-            project.shadow.component(publication)
             artifactId = rootProject.name
             pom {
                 name = rootProject.name
             }
+
+            project.shadow.component(publication)
+            artifact sourcesJar
+            artifact javadocJar
         }
     }
 }
