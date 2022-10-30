@@ -17,7 +17,8 @@ javadoc {
     options.links = [
             "https://javadoc.minestom.net/",
             "https://hsgamer.github.io/MinigameCore/",
-            "https://hsgamer.github.io/HSCore/"
+            "https://hsgamer.github.io/HSCore/",
+            "https://jd.adventure.kyori.net/api/4.11.0/"
     ]
 }
 
