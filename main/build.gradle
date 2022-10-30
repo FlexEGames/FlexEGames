@@ -23,7 +23,13 @@ javadoc {
 }
 
 shadowJar {
+    archiveBaseName.set(rootProject.name)
     exclude 'extension.json'
+}
+
+artifacts {
+    archives shadowJar
+    shadow shadowJar
 }
 
 publishing {
