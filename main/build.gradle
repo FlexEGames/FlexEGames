@@ -15,7 +15,9 @@ java {
 
 javadoc {
     options.links = [
-            "https://javadoc.minestom.net/"
+            "https://javadoc.minestom.net/",
+            "https://hsgamer.github.io/MinigameCore/",
+            "https://hsgamer.github.io/HSCore/"
     ]
 }
 
