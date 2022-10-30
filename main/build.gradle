@@ -23,27 +23,26 @@ javadoc {
 }
 
 shadowJar {
-    archiveClassifier.set(null)
-    archiveBaseName.set(rootProject.name)
     exclude 'extension.json'
-}
-
-artifacts {
-    archives shadowJar
-    shadow shadowJar
 }
 
 publishing {
     publications {
-        shadow(MavenPublication) { publication ->
+        java(MavenPublication) {
             artifactId = rootProject.name
             pom {
                 name = rootProject.name
+                withXml {
+                    def repositories  = asNode().appendNode("repositories")
+                    def jitpack = repositories.appendNode("repository")
+                    jitpack.appendNode("id", "jitpack")
+                    jitpack.appendNode("url", "https://jitpack.io")
+                    def codemc = repositories.appendNode("repository")
+                    codemc.appendNode("id", "codemc")
+                    codemc.appendNode("url", "https://repo.codemc.io/repository/maven-public/")
+                }
             }
-
-            project.shadow.component(publication)
-            artifact sourcesJar
-            artifact javadocJar
+            from components.java
         }
     }
 }
