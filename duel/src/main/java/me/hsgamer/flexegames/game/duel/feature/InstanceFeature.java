@@ -1,7 +1,6 @@
 package me.hsgamer.flexegames.game.duel.feature;
 
 import io.github.bloepiloepi.pvp.events.EntityPreDeathEvent;
-import io.github.bloepiloepi.pvp.events.ExplosionEvent;
 import io.github.bloepiloepi.pvp.events.FinalDamageEvent;
 import io.github.bloepiloepi.pvp.events.PlayerExhaustEvent;
 import me.hsgamer.flexegames.feature.ConfigFeature;
@@ -12,10 +11,7 @@ import me.hsgamer.flexegames.game.duel.state.EndingState;
 import me.hsgamer.flexegames.game.duel.state.InGameState;
 import me.hsgamer.flexegames.game.duel.state.WaitingState;
 import me.hsgamer.flexegames.manager.ReplacementManager;
-import me.hsgamer.flexegames.util.AssetUtil;
-import me.hsgamer.flexegames.util.ChatUtil;
-import me.hsgamer.flexegames.util.FullBrightDimension;
-import me.hsgamer.flexegames.util.PvpUtil;
+import me.hsgamer.flexegames.util.*;
 import me.hsgamer.hscore.minestom.board.Board;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaFeature;
@@ -28,8 +24,6 @@ import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.instance.AddEntityToInstanceEvent;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
-import net.minestom.server.event.player.PlayerBlockBreakEvent;
-import net.minestom.server.event.player.PlayerBlockPlaceEvent;
 import net.minestom.server.event.player.PlayerMoveEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.trait.EntityEvent;
@@ -55,7 +49,6 @@ public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceF
         private final InstanceContainer instance;
         private final EventNode<EntityEvent> entityEventNode;
         private final Tag<Boolean> deadTag = Tag.Boolean("duel:dead").defaultValue(false);
-        private final Tag<Boolean> playerBlockTag = Tag.Boolean("duel:playerBlock").defaultValue(false);
         private Board board;
         private Task task;
 
@@ -123,6 +116,7 @@ public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceF
             PvpUtil.applyPvp(instance.eventNode(), gameConfig.isUseLegacyPvp());
             PvpUtil.applyExplosion(instance);
             ChatUtil.apply(instance.eventNode(), gameConfig.getChatFormat(), player -> arena.getArenaFeature(DescriptionFeature.class).getReplacements());
+            PlayerBlockUtil.apply(instance.eventNode());
             instance.eventNode()
                     .addListener(EntityPreDeathEvent.class, event -> {
                         if (event.getEntity() instanceof Player player) {
@@ -159,14 +153,7 @@ public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceF
                             player.removeTag(deadTag);
                             board.removePlayer(player);
                         }
-                    })
-                    .addListener(PlayerBlockBreakEvent.class, event -> {
-                        if (Boolean.FALSE.equals(event.getBlock().getTag(playerBlockTag))) {
-                            event.setCancelled(true);
-                        }
-                    })
-                    .addListener(ExplosionEvent.class, event -> event.getAffectedBlocks().removeIf(point -> !Boolean.TRUE.equals(instance.getBlock(point).getTag(playerBlockTag))))
-                    .addListener(PlayerBlockPlaceEvent.class, event -> event.setBlock(event.getBlock().withTag(playerBlockTag, true)));
+                    });
 
             MinecraftServer.getInstanceManager().registerInstance(instance);
             task = instance.scheduler()

@@ -1,7 +1,6 @@
 package me.hsgamer.flexegames.game.pve.feature;
 
 import io.github.bloepiloepi.pvp.events.EntityPreDeathEvent;
-import io.github.bloepiloepi.pvp.events.ExplosionEvent;
 import io.github.bloepiloepi.pvp.events.PlayerExhaustEvent;
 import me.hsgamer.flexegames.feature.ConfigFeature;
 import me.hsgamer.flexegames.feature.DescriptionFeature;
@@ -14,6 +13,7 @@ import me.hsgamer.flexegames.game.pve.state.FightingState;
 import me.hsgamer.flexegames.game.pve.state.RestingState;
 import me.hsgamer.flexegames.game.pve.state.WaitingState;
 import me.hsgamer.flexegames.util.ChatUtil;
+import me.hsgamer.flexegames.util.PlayerBlockUtil;
 import me.hsgamer.flexegames.util.PvpUtil;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaFeature;
@@ -27,8 +27,6 @@ import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.instance.AddEntityToInstanceEvent;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
-import net.minestom.server.event.player.PlayerBlockBreakEvent;
-import net.minestom.server.event.player.PlayerBlockPlaceEvent;
 import net.minestom.server.event.player.PlayerMoveEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.trait.EntityEvent;
@@ -40,7 +38,6 @@ import java.util.List;
 public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceFeature> {
     private static final Pos SPAWN_POS = new Pos(0, PveGame.HEIGHT, 0);
     private static final Tag<Boolean> DEAD_TAG = Tag.Boolean("pve:dead").defaultValue(false);
-    private static final Tag<Boolean> PLAYER_BLOCK_TAG = Tag.Boolean("pve:playerBlock").defaultValue(false);
 
     @Override
     protected ArenaInstanceFeature createFeature(Arena arena) {
@@ -70,6 +67,7 @@ public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceF
             PvpUtil.applyExplosion(instance);
             PvpUtil.applyPvp(instance.eventNode(), gameConfig.isUseLegacyPvp());
             ChatUtil.apply(instance.eventNode(), gameConfig.getChatFormat(), player -> arena.getArenaFeature(DescriptionFeature.class).getReplacements());
+            PlayerBlockUtil.apply(instance.eventNode());
 
             instance.eventNode()
                     .addListener(AddEntityToInstanceEvent.class, event -> {
@@ -96,18 +94,11 @@ public class InstanceFeature extends ArenaFeature<InstanceFeature.ArenaInstanceF
                             onKill(event.getPlayer());
                         }
                     })
-                    .addListener(PlayerBlockBreakEvent.class, event -> {
-                        if (Boolean.FALSE.equals(event.getBlock().getTag(PLAYER_BLOCK_TAG))) {
-                            event.setCancelled(true);
-                        }
-                    })
                     .addListener(PlayerExhaustEvent.class, event -> {
                         if (arena.getState() == WaitingState.class || arena.getState() == EndingState.class) {
                             event.setCancelled(true);
                         }
-                    })
-                    .addListener(ExplosionEvent.class, event -> event.getAffectedBlocks().removeIf(point -> !Boolean.TRUE.equals(instance.getBlock(point).getTag(PLAYER_BLOCK_TAG))))
-                    .addListener(PlayerBlockPlaceEvent.class, event -> event.setBlock(event.getBlock().withTag(PLAYER_BLOCK_TAG, true)));
+                    });
 
             MinecraftServer.getInstanceManager().registerInstance(instance);
             MinecraftServer.getGlobalEventHandler().addChild(entityEventNode);
