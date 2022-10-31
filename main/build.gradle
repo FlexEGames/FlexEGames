@@ -40,12 +40,16 @@ publishing {
                 name = rootProject.name
                 withXml {
                     def repositories  = asNode().appendNode("repositories")
-                    def jitpack = repositories.appendNode("repository")
-                    jitpack.appendNode("id", "jitpack")
-                    jitpack.appendNode("url", "https://jitpack.io")
-                    def codemc = repositories.appendNode("repository")
-                    codemc.appendNode("id", "codemc")
-                    codemc.appendNode("url", "https://repo.codemc.io/repository/maven-public/")
+                    project.repositories.each {
+                        if (it instanceof MavenArtifactRepository) {
+                            if (it.name == "MavenLocal" || it.name == "MavenRepo") {
+                                return
+                            }
+                            def repository = repositories.appendNode("repository")
+                            repository.appendNode("id", it.name)
+                            repository.appendNode("url", it.url)
+                        }
+                    }
                 }
             }
             from components.java
