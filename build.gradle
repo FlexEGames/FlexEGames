@@ -18,10 +18,6 @@ subprojects {
             name "jitpack"
             url 'https://jitpack.io'
         }
-        maven {
-            name "codemc"
-            url 'https://repo.codemc.io/repository/maven-public/'
-        }
     }
 
     dependencies {
