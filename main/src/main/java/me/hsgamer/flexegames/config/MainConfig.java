@@ -30,6 +30,11 @@ public interface MainConfig {
         return ProxyType.NONE;
     }
 
+    @ConfigPath("server.lan")
+    default boolean isLANsupported() {
+        return false;
+    }
+
     @ConfigPath("server.velocity-secret")
     default String getVelocitySecret() {
         return "";

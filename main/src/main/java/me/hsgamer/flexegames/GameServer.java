@@ -26,6 +26,8 @@ import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerLoginEvent;
 import net.minestom.server.event.server.ServerListPingEvent;
+import net.minestom.server.extras.lan.OpenToLAN;
+import net.minestom.server.extras.lan.OpenToLANConfig;
 import net.minestom.server.ping.ResponseData;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -141,6 +143,10 @@ public class GameServer {
         } catch (Exception e) {
             MinecraftServer.LOGGER.error("Failed to start server", e);
             System.exit(1);
+        }
+        if (mainConfig.isLANsupported()) {
+            var config = new OpenToLANConfig().port(mainConfig.getServerPort());
+            OpenToLAN.open(config);
         }
 
         gameManager.init();
