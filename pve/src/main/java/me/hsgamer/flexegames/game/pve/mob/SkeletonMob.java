@@ -26,7 +26,7 @@ public final class SkeletonMob extends ArenaMob {
         var gameConfig = arena.getFeature(ConfigFeature.class).getConfig(PveGameConfig.class);
         RangedAttackGoal rangedAttackGoal = new RangedAttackGoal(
                 this, Duration.of(40, TimeUnit.SERVER_TICK),
-                16, 8, true, 1, 0.1);
+                16, 8, false, 1, 0.1);
 
         rangedAttackGoal.setProjectileGenerator(entity -> {
             HomingArrow projectile = new HomingArrow(entity, EntityType.PLAYER, gameConfig.isUseLegacyPvp());
@@ -37,11 +37,6 @@ public final class SkeletonMob extends ArenaMob {
         addAIGroup(
                 List.of(rangedAttackGoal),
                 List.of(new ClosestEntityTarget(this, 32, MobPredicates.playerExcludeSpectator()))
-        );
-
-        addAIGroup(
-                List.of(new MeleeAttackGoal(this, 1.2, 20, TimeUnit.SERVER_TICK)),
-                List.of(new ClosestEntityTarget(this, 4, MobPredicates.playerExcludeSpectator()))
         );
     }
 
