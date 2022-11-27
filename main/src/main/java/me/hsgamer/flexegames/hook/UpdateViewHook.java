@@ -21,9 +21,9 @@ public final class UpdateViewHook {
                 if (instancePlayer == player) {
                     continue;
                 }
-                MinecraftServer.getSchedulerManager().scheduleNextTick(() -> updateView(instancePlayer), ExecutionType.ASYNC);
+                MinecraftServer.getSchedulerManager().scheduleNextTick(() -> updateView(instancePlayer));
             }
-            MinecraftServer.getSchedulerManager().scheduleNextTick(() -> updateView(player), ExecutionType.ASYNC);
+            MinecraftServer.getSchedulerManager().scheduleNextTick(() -> updateView(player));
         });
     }
 
