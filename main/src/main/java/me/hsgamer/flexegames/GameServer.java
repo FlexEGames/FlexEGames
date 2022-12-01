@@ -89,7 +89,7 @@ public class GameServer {
         // COMMAND
         CommandManager commandManager = MinecraftServer.getCommandManager();
         commandManager.setUnknownCommandCallback((sender, c) -> sender.sendMessage("Unknown command: " + c));
-        commandManager.register(new StopCommand(this));
+        commandManager.register(new StopCommand());
         commandManager.register(new LeaveCommand(this));
         commandManager.register(new CreateArenaCommand(this));
         commandManager.register(new JoinArenaCommand(this));
@@ -130,7 +130,7 @@ public class GameServer {
     }
 
     @ApiStatus.Internal
-    public void start() {
+    void start() {
         gameManager.prepare();
 
         ProxyType proxyType = mainConfig.getProxyType();
@@ -143,6 +143,7 @@ public class GameServer {
         } catch (Exception e) {
             MinecraftServer.LOGGER.error("Failed to start server", e);
             System.exit(1);
+            return;
         }
         if (mainConfig.isLANsupported()) {
             var config = new OpenToLANConfig().port(mainConfig.getServerPort());
@@ -150,10 +151,12 @@ public class GameServer {
         }
 
         gameManager.init();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
     }
 
     @ApiStatus.Internal
-    public void stop() {
+    void stop() {
         lobby.clear();
         gameManager.clear();
         MinecraftServer.stopCleanly();

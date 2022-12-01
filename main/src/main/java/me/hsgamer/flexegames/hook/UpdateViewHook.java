@@ -6,7 +6,6 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerSpawnEvent;
-import net.minestom.server.timer.ExecutionType;
 
 /**
  * The hook for updating the view
