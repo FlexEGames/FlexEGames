@@ -4,7 +4,7 @@ plugins {
 }
 
 ext {
-    core = "4.1.33"
+    core = "4.1.34"
     minigameCore = "1.0.2"
 }
 
@@ -71,7 +71,7 @@ dependencies {
     api "me.hsgamer:minigamecore-base:$minigameCore"
     api "me.hsgamer:minigamecore-implementation:$minigameCore"
 
-    api "com.github.Minestom.Minestom:Minestom:d7feed23c8"
+    api "com.github.Minestom.Minestom:Minestom:809d9516b2"
     api "com.github.TogAr2:MinestomPvP:b618d80297"
 }
 
