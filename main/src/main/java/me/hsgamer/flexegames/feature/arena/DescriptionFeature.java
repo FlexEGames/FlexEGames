@@ -37,7 +37,8 @@ public interface DescriptionFeature extends Feature {
                         })
                         .orElse(Component.empty()),
                 "game", () -> arena.getFeature(GameFeature.class).game().getDisplayName(),
-                "name", () -> Component.text(arena.getName())
+                "name", () -> Component.text(arena.getName()),
+                "owner", () -> arena.getFeature(OwnerFeature.class).getDisplayOwner()
         );
     }
 
