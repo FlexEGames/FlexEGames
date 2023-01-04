@@ -1,30 +1,27 @@
 package me.hsgamer.flexegames.manager;
 
-import me.hsgamer.flexegames.GameServer;
+import me.hsgamer.flexegames.api.game.Game;
 import me.hsgamer.flexegames.builder.GameBuilder;
-import me.hsgamer.flexegames.game.Game;
 import me.hsgamer.flexegames.util.YamlConfigGenerator;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringHashMap;
 import me.hsgamer.hscore.config.Config;
-import me.hsgamer.minigamecore.base.Arena;
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.entity.Player;
 
 import java.io.File;
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The {@link Game} manager
  */
 public class GameManager {
-    private final GameServer gameServer;
     private final File gameFolder;
     private final Map<String, Game> gameMap = new CaseInsensitiveStringHashMap<>();
     private final Map<String, Config> configMap = new CaseInsensitiveStringHashMap<>();
 
-    public GameManager(GameServer gameServer) {
-        this.gameServer = gameServer;
+    public GameManager() {
         gameFolder = new File("games");
         if (!gameFolder.exists() && gameFolder.mkdirs()) {
             MinecraftServer.LOGGER.info("Game folder created");
@@ -46,7 +43,7 @@ public class GameManager {
 
     public void init() {
         configMap.forEach((name, config) -> {
-            Optional<Game> optional = GameBuilder.buildGame(gameServer, config);
+            Optional<Game> optional = GameBuilder.buildGame(config);
             if (optional.isEmpty()) {
                 MinecraftServer.LOGGER.warn("ArenaGame {} is not a valid template", name);
                 return;
@@ -58,14 +55,9 @@ public class GameManager {
                 MinecraftServer.LOGGER.warn("{} is not configured", name);
             }
         });
-        gameMap.values().forEach(game -> {
-            game.init();
-            game.postInit();
-        });
     }
 
     public void clear() {
-        gameMap.values().forEach(Game::clear);
         gameMap.clear();
         configMap.clear();
     }
@@ -106,66 +98,5 @@ public class GameManager {
      */
     public Map<String, Config> getConfigMap() {
         return Collections.unmodifiableMap(configMap);
-    }
-
-    /**
-     * Get the list of all {@link Arena}s
-     *
-     * @return the list of all {@link Arena}s
-     */
-    public List<Arena> getAllArenas() {
-        List<Arena> arenaList = new ArrayList<>();
-        gameMap.values().forEach(game -> arenaList.addAll(game.getAllArenas()));
-        return arenaList;
-    }
-
-    /**
-     * Find the arenas that match the predicate
-     *
-     * @param predicate the predicate
-     * @return the list of the arenas
-     */
-    public List<Arena> findArenas(Predicate<Arena> predicate) {
-        return getAllArenas().stream().filter(predicate).toList();
-    }
-
-    /**
-     * Find the arenas that match the owner predicate
-     *
-     * @param ownerPredicate the predicate to check the owner
-     * @return the list of the arenas
-     */
-    public List<Arena> findArenasByOwner(Predicate<UUID> ownerPredicate) {
-        return gameMap.values().stream().map(game -> game.findArenasByOwner(ownerPredicate)).flatMap(Collection::stream).toList();
-    }
-
-    /**
-     * Find the arenas of the owner
-     *
-     * @param player the owner
-     * @return the list of the arenas
-     */
-    public List<Arena> findArenasByOwner(Player player) {
-        return findArenasByOwner(uuid -> player.getUuid().equals(uuid));
-    }
-
-    /**
-     * Find the arenas by the list of the owners
-     *
-     * @param owners the list of the owners
-     * @return the list of the arenas
-     */
-    public List<Arena> findArenasByOwner(List<UUID> owners) {
-        return findArenasByOwner(owners::contains);
-    }
-
-    /**
-     * Get the arena that the player is in
-     *
-     * @param player the player
-     * @return the arena
-     */
-    public Optional<Arena> getJoinedArena(Player player) {
-        return gameMap.values().stream().map(game -> game.getJoinedArena(player)).filter(Optional::isPresent).map(Optional::get).findFirst();
     }
 }

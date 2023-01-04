@@ -2,8 +2,6 @@ package me.hsgamer.flexegames.command;
 
 import me.hsgamer.flexegames.GameServer;
 import me.hsgamer.flexegames.command.argument.ArenaArgument;
-import me.hsgamer.flexegames.command.argument.GameArgument;
-import me.hsgamer.flexegames.game.Game;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.minigamecore.base.Arena;
 import net.kyori.adventure.text.Component;
@@ -16,7 +14,6 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.utils.StringUtils;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
@@ -26,8 +23,7 @@ public class JoinArenaCommand extends Command {
     public JoinArenaCommand(GameServer gameServer) {
         super("joinarena", "join");
         setDefaultExecutor((sender, context) -> {
-            sender.sendMessage("Usage: /" + context.getCommandName() + " <game>");
-            sender.sendMessage("Usage: /" + context.getCommandName() + " <game> <arena>");
+            sender.sendMessage("Usage: /" + context.getCommandName() + " <arena>");
             sender.sendMessage("Usage: /" + context.getCommandName() + " search <owner>");
         });
 
@@ -38,33 +34,18 @@ public class JoinArenaCommand extends Command {
             gameServer.getLobby().openArenaInventory((Player) sender, false);
         });
 
-        var gameArgument = new GameArgument(gameServer, "game");
+        ArenaArgument arenaArgument = new ArenaArgument(gameServer, "arena");
         setArgumentCallback((sender, exception) -> {
-            if (exception.getErrorCode() == GameArgument.GAME_NOT_FOUND) {
-                sender.sendMessage(ReplacementManager.replace(gameServer.getMessageConfig().getErrorGameNotFound(), Map.of("input", () -> Component.text(exception.getInput()))));
+            if (exception.getErrorCode() == ArenaArgument.ARENA_NOT_FOUND) {
+                sender.sendMessage(ReplacementManager.replace(gameServer.getMessageConfig().getErrorArenaNotFound(), Map.of("input", () -> Component.text(exception.getInput()))));
             }
-        }, gameArgument);
-
-        var arenaArgument = new ArenaArgument("arena");
-        arenaArgument.setGameArgument(gameArgument);
-
+        }, arenaArgument);
         addSyntax((sender, context) -> {
             if (!playerLobbyPredicate.test(sender)) return;
-            Game game = context.get(gameArgument);
-            gameServer.getLobby().openArenaInventory((Player) sender, game::getAllArenas);
-        }, gameArgument);
-        addSyntax((sender, context) -> {
-            if (!playerLobbyPredicate.test(sender)) return;
-            Game game = context.get(gameArgument);
-            Optional<Arena> optionalArena = context.get(arenaArgument).apply(game);
-            if (optionalArena.isEmpty()) {
-                sender.sendMessage(ReplacementManager.replace(gameServer.getMessageConfig().getErrorArenaNotFound(), Map.of("input", () -> Component.text(context.getInput()))));
-                return;
-            }
+            Arena arena = context.get(arenaArgument);
             Player player = (Player) sender;
-            Arena arena = optionalArena.get();
             gameServer.getLobby().tryJoinArena(player, arena);
-        }, gameArgument, arenaArgument);
+        }, arenaArgument);
 
         var searchArgument = ArgumentType.Literal("search");
         var ownerQueryArgument = ArgumentType.StringArray("owner");

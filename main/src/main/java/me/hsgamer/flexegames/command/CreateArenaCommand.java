@@ -1,8 +1,8 @@
 package me.hsgamer.flexegames.command;
 
 import me.hsgamer.flexegames.GameServer;
+import me.hsgamer.flexegames.api.game.Game;
 import me.hsgamer.flexegames.command.argument.GameArgument;
-import me.hsgamer.flexegames.game.Game;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.command.CommandSender;
@@ -31,7 +31,7 @@ public class CreateArenaCommand extends Command {
         addSyntax((sender, context) -> {
             if (!playerLobbyPredicate.test(sender)) return;
             Game game = context.get(gameArgument);
-            game.createArena(((Player) sender).getUuid());
+            gameServer.getArenaManager().createArena(game, ((Player) sender).getUuid());
             sender.sendMessage(gameServer.getMessageConfig().getResponseCreateArenaSuccessful());
         }, gameArgument);
         addSyntax((sender, context) -> {

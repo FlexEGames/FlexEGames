@@ -1,8 +1,7 @@
 package me.hsgamer.flexegames.command.argument;
 
 import me.hsgamer.flexegames.GameServer;
-import me.hsgamer.flexegames.feature.DescriptionFeature;
-import me.hsgamer.flexegames.game.Game;
+import me.hsgamer.flexegames.api.game.Game;
 import net.minestom.server.command.builder.arguments.Argument;
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
@@ -25,9 +24,9 @@ public class GameArgument extends Argument<Game> {
         this.gameServer = gameServer;
         setSuggestionCallback((sender, context, suggestion) -> {
             String raw = context.getRaw(this);
-            gameServer.getGameManager().getGameMap().forEach((s, t) -> {
-                if (raw == null || raw.isEmpty() || s.startsWith(raw)) {
-                    suggestion.addEntry(new SuggestionEntry(s, t.getFeature(DescriptionFeature.class).getDisplayName()));
+            gameServer.getGameManager().getGameMap().forEach((name, game) -> {
+                if (raw == null || raw.isEmpty() || name.startsWith(raw)) {
+                    suggestion.addEntry(new SuggestionEntry(name, game.getDisplayName()));
                 }
             });
         });
