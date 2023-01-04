@@ -2,9 +2,7 @@ package me.hsgamer.flexegames.game.duel;
 
 import me.hsgamer.flexegames.api.game.GameArena;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
-import me.hsgamer.flexegames.feature.arena.GameFeature;
 import me.hsgamer.flexegames.feature.arena.JoinFeature;
-import me.hsgamer.flexegames.feature.arena.OwnerFeature;
 import me.hsgamer.flexegames.game.duel.feature.*;
 import me.hsgamer.flexegames.game.duel.state.EndingState;
 import me.hsgamer.flexegames.game.duel.state.InGameState;
@@ -17,27 +15,31 @@ import me.hsgamer.minigamecore.implementation.feature.TimerFeature;
 
 import java.util.List;
 
-public class DuelArena extends GameArena {
+public class DuelArena extends GameArena<DuelGame> {
     private final DuelExtension duelExtension;
-    private final DuelGame game;
 
-    public DuelArena(DuelExtension duelExtension, DuelGame game, String name, ArenaManager arenaManager) {
-        super(name, arenaManager);
+    public DuelArena(DuelExtension duelExtension, DuelGame duelGame, String name, ArenaManager arenaManager) {
+        super(name, duelGame, arenaManager);
         this.duelExtension = duelExtension;
-        this.game = game;
     }
 
     @Override
-    protected List<Unit<Feature>> loadFeatures() {
+    protected DescriptionFeature createDescriptionFeature() {
+        return new GameDescriptionFeature(this);
+    }
+
+    @Override
+    protected JoinFeature createJoinFeature() {
+        return new GameJoinFeature(this, duelExtension);
+    }
+
+    @Override
+    protected List<Unit<Feature>> loadExtraFeatures() {
         return List.of(
                 new Unit<>(new InstanceFeature(this)),
                 new Unit<>(new WinnerFeature(this)),
                 new Unit<>(new TimerFeature()),
-                new Unit<>(new ConfigFeature(game.getGameConfig())),
-                new Unit<>(new GameFeature(game)),
-                new Unit<>(new OwnerFeature()),
-                new Unit<>(DescriptionFeature.class, new GameDescriptionFeature(this)),
-                new Unit<>(JoinFeature.class, new GameJoinFeature(this, duelExtension))
+                new Unit<>(new ConfigFeature(game.getGameConfig()))
         );
     }
 
