@@ -66,6 +66,7 @@ public class GameArenaManager extends ArenaManager {
         var arena = game.createArena(name).apply(this);
         if (addArena(arena)) {
             arena.getFeature(OwnerFeature.class).setOwner(owner);
+            arena.postInit();
             return arena;
         } else {
             throw new IllegalStateException("Cannot create arena");
