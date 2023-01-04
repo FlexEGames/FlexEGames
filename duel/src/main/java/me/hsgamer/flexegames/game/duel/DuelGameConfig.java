@@ -6,8 +6,10 @@ import me.hsgamer.flexegames.util.ChunkLoaderType;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.item.ItemStack;
+import net.minestom.server.item.Material;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,6 +17,43 @@ import java.util.List;
 import java.util.Map;
 
 public interface DuelGameConfig {
+    @ConfigPath(value = "display-name", converter = ComponentConverter.class)
+    default Component getDisplayName() {
+        return Component.text("Duel").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD);
+    }
+
+    @ConfigPath(value = "description", converter = ComponentListConverter.class)
+    default List<Component> getDescription() {
+        return List.of(
+                Component.text("Fight with your opponent").color(NamedTextColor.WHITE),
+                Component.text("in a small arena").color(NamedTextColor.WHITE),
+                Component.text("and be the last one standing").color(NamedTextColor.WHITE)
+        );
+    }
+
+    @ConfigPath(value = "display-item", converter = StringObjectMapConverter.class)
+    default Map<String, Object> getDisplayItem() {
+        return Map.of(
+                "material", Material.WOODEN_SWORD.name(),
+                "hide", "all"
+        );
+    }
+
+    @ConfigPath(value = "arena-display-item", converter = StringObjectMapConverter.class)
+    default Map<String, Object> getArenaDisplayItem() {
+        return Map.of(
+                "material", Material.WOODEN_SWORD.name(),
+                "name", "%game%",
+                "lore", List.of(
+                        "&bOwner: &f%owner%",
+                        "&bPlayer: &f%players%/%max-players%",
+                        "&bTime: &f%time%",
+                        "&bStatus: &f%state%"
+                ),
+                "hide", "all"
+        );
+    }
+
     @ConfigPath(value = "board.title", converter = ComponentConverter.class)
     default Component getBoardTitle() {
         return ComponentConverter.fromString("&6&lDuel");

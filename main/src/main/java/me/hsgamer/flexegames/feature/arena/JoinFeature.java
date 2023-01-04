@@ -23,7 +23,9 @@ public interface JoinFeature extends Feature {
      *
      * @return the player count
      */
-    int getPlayerCount();
+    default int getPlayerCount() {
+        return getPlayers().size();
+    }
 
     /**
      * Get the maximum players in the {@link Arena}
