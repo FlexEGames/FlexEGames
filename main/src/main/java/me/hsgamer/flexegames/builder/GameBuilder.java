@@ -1,9 +1,7 @@
 package me.hsgamer.flexegames.builder;
 
-import me.hsgamer.flexegames.GameServer;
-import me.hsgamer.flexegames.game.Game;
+import me.hsgamer.flexegames.api.game.Game;
 import me.hsgamer.hscore.builder.Builder;
-import me.hsgamer.hscore.common.Pair;
 import me.hsgamer.hscore.config.Config;
 
 import java.util.Optional;
@@ -11,7 +9,7 @@ import java.util.Optional;
 /**
  * The builder for {@link Game}
  */
-public class GameBuilder extends Builder<Pair<GameServer, Config>, Game> {
+public class GameBuilder extends Builder<Config, Game> {
     /**
      * The singleton instance
      */
@@ -24,13 +22,12 @@ public class GameBuilder extends Builder<Pair<GameServer, Config>, Game> {
     /**
      * Build the game from the config
      *
-     * @param gameServer the game server
-     * @param config     the config
+     * @param config the config
      * @return the game
      */
-    public static Optional<Game> buildGame(GameServer gameServer, Config config) {
+    public static Optional<Game> buildGame(Config config) {
         return Optional.ofNullable(config.get("type"))
                 .map(String::valueOf)
-                .flatMap(type -> GameBuilder.INSTANCE.build(type, Pair.of(gameServer, config)));
+                .flatMap(type -> GameBuilder.INSTANCE.build(type, config));
     }
 }

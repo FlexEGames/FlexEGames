@@ -1,8 +1,7 @@
 package me.hsgamer.flexegames.game.pve.mob;
 
 import io.github.bloepiloepi.pvp.projectile.Arrow;
-import me.hsgamer.flexegames.feature.ConfigFeature;
-import me.hsgamer.flexegames.game.pve.PveGameConfig;
+import me.hsgamer.flexegames.game.pve.feature.ConfigFeature;
 import me.hsgamer.minigamecore.base.Arena;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
@@ -22,7 +21,7 @@ public final class SkeletonMob extends ArenaMob {
         super(EntityType.SKELETON, arena);
         setItemInMainHand(ItemStack.of(Material.BOW));
 
-        var gameConfig = arena.getFeature(ConfigFeature.class).getConfig(PveGameConfig.class);
+        var gameConfig = arena.getFeature(ConfigFeature.class).config();
         RangedAttackGoal rangedAttackGoal = new RangedAttackGoal(
                 this, Duration.of(40, TimeUnit.SERVER_TICK),
                 16, 8, false, 1, 0.1);

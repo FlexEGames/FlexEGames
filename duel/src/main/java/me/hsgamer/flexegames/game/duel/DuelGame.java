@@ -1,87 +1,55 @@
 package me.hsgamer.flexegames.game.duel;
 
-import me.hsgamer.flexegames.GameServer;
-import me.hsgamer.flexegames.api.game.JoinResponse;
-import me.hsgamer.flexegames.feature.ConfigFeature;
-import me.hsgamer.flexegames.feature.DescriptionFeature;
-import me.hsgamer.flexegames.feature.JoinFeature;
-import me.hsgamer.flexegames.game.Game;
-import me.hsgamer.flexegames.game.duel.feature.InstanceFeature;
-import me.hsgamer.flexegames.game.duel.feature.WinnerFeature;
-import me.hsgamer.flexegames.game.duel.state.EndingState;
-import me.hsgamer.flexegames.game.duel.state.InGameState;
-import me.hsgamer.flexegames.game.duel.state.KillingState;
-import me.hsgamer.flexegames.game.duel.state.WaitingState;
-import me.hsgamer.flexegames.util.TimeUtil;
-import me.hsgamer.hscore.common.Pair;
-import me.hsgamer.hscore.config.Config;
-import me.hsgamer.minigamecore.base.Feature;
-import me.hsgamer.minigamecore.base.GameState;
-import me.hsgamer.minigamecore.implementation.feature.arena.ArenaTimerFeature;
+import me.hsgamer.flexegames.api.game.Game;
+import me.hsgamer.flexegames.builder.ItemBuilder;
+import me.hsgamer.flexegames.util.ItemUtil;
+import me.hsgamer.minigamecore.base.Arena;
+import me.hsgamer.minigamecore.base.ArenaManager;
 import net.kyori.adventure.text.Component;
-import net.minestom.server.entity.Player;
+import net.minestom.server.item.ItemStack;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
-public class DuelGame extends Game {
+public class DuelGame implements Game {
     private final DuelExtension duelExtension;
+    private final DuelGameConfig gameConfig;
 
-    public DuelGame(Pair<GameServer, Config> pair, DuelExtension duelExtension) {
-        super(pair);
+    public DuelGame(DuelExtension duelExtension, DuelGameConfig gameConfig) {
         this.duelExtension = duelExtension;
+        this.gameConfig = gameConfig;
     }
 
     @Override
-    public void init() {
-        super.init();
-        var descriptionFeature = getFeature(DescriptionFeature.class);
-        descriptionFeature.setReplacementsFunction(arena -> Map.of(
-                "time", () -> Component.text(TimeUtil.format(arena.getArenaFeature(ArenaTimerFeature.class).getDuration(TimeUnit.MILLISECONDS))),
-                "winner", () -> Optional.ofNullable(arena.getArenaFeature(WinnerFeature.class).getWinner()).map(Player::getName).orElse(Component.empty()),
-                "alive", () -> Component.text(Integer.toString(arena.getArenaFeature(InstanceFeature.class).getAlivePlayers().size()))
-        ));
-        var joinFeature = getFeature(JoinFeature.class);
-        joinFeature.setMaxPlayersFunction(arena -> arena.getFeature(ConfigFeature.class).getConfig(DuelGameConfig.class).getPos().size());
-        joinFeature.setPlayersFunction(arena -> arena.getArenaFeature(InstanceFeature.class).getInstance().getPlayers());
-        joinFeature.setIsJoinedPredicate((player, arena) -> arena.getArenaFeature(InstanceFeature.class).getInstance() == player.getInstance());
-        joinFeature.setJoinResponseFunction((player, arena) -> {
-            if (arena.getState() != WaitingState.class) {
-                return JoinResponse.fail(duelExtension.getMessageConfig().getNotWaiting());
-            }
-            var instanceFeature = arena.getArenaFeature(InstanceFeature.class);
-            var instance = instanceFeature.getInstance();
-            if (instance.getPlayers().size() >= arena.getFeature(ConfigFeature.class).getConfig(DuelGameConfig.class).getPos().size()) {
-                return JoinResponse.fail(duelExtension.getMessageConfig().getMaxPlayersReached());
-            }
-            player.setInstance(instance);
-            return JoinResponse.successful();
-        });
+    public boolean isConfigured() {
+        return true;
     }
 
     @Override
-    protected Class<? extends GameState> getInitialState() {
-        return WaitingState.class;
+    public Component getDisplayName() {
+        return gameConfig.getDisplayName();
     }
 
     @Override
-    protected List<GameState> loadGameStates() {
-        return List.of(
-                new WaitingState(duelExtension),
-                new InGameState(duelExtension),
-                new EndingState(duelExtension),
-                new KillingState(duelExtension)
+    public List<Component> getDescription() {
+        return gameConfig.getDescription();
+    }
+
+    @Override
+    public ItemStack getDisplayItem() {
+        return ItemUtil.stripItalics(
+                ItemBuilder.buildItem(gameConfig.getDisplayItem())
+                        .withDisplayName(getDisplayName())
+                        .withLore(getDescription())
         );
     }
 
     @Override
-    protected List<Feature> getFeatures() {
-        return List.of(
-                new ArenaTimerFeature(),
-                new InstanceFeature(),
-                new WinnerFeature()
-        );
+    public Function<ArenaManager, Arena> createArena(String name) {
+        return arenaManager -> new DuelArena(duelExtension, this, name, arenaManager);
+    }
+
+    public DuelGameConfig getGameConfig() {
+        return gameConfig;
     }
 }

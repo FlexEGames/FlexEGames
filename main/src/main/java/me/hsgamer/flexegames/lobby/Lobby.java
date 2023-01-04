@@ -3,13 +3,13 @@ package me.hsgamer.flexegames.lobby;
 import lombok.Getter;
 import lombok.experimental.ExtensionMethod;
 import me.hsgamer.flexegames.GameServer;
+import me.hsgamer.flexegames.api.game.Game;
 import me.hsgamer.flexegames.api.game.JoinResponse;
 import me.hsgamer.flexegames.api.modifier.InstanceModifier;
 import me.hsgamer.flexegames.builder.InstanceModifierBuilder;
 import me.hsgamer.flexegames.builder.ItemBuilder;
-import me.hsgamer.flexegames.feature.DescriptionFeature;
-import me.hsgamer.flexegames.feature.JoinFeature;
-import me.hsgamer.flexegames.game.Game;
+import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
+import me.hsgamer.flexegames.feature.arena.JoinFeature;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.util.*;
 import me.hsgamer.hscore.minestom.board.Board;
@@ -291,13 +291,13 @@ public class Lobby extends InstanceContainer {
                 buttons.put(new Button() {
                     @Override
                     public ItemStack getItemStack(UUID uuid) {
-                        return game.getFeature(DescriptionFeature.class).getDisplayItem();
+                        return game.getDisplayItem();
                     }
 
                     @Override
                     public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
                         var player = uuid.getPlayer();
-                        game.createArena(player.getUuid());
+                        gameServer.getArenaManager().createArena(game, player.getUuid());
                         openArenaInventory(player, false);
                         return false;
                     }
@@ -389,7 +389,7 @@ public class Lobby extends InstanceContainer {
             @Override
             public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
                 uuidPage.put(uuid, 0);
-                setArenaSupplierRef(uuid, () -> gameServer.getGameManager().getAllArenas());
+                setArenaSupplierRef(uuid, () -> gameServer.getArenaManager().getAllArenas());
                 return false;
             }
         };
@@ -402,7 +402,7 @@ public class Lobby extends InstanceContainer {
             @Override
             public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
                 uuidPage.put(uuid, 0);
-                setArenaSupplierRef(uuid, () -> gameServer.getGameManager().findArenasByOwner(uuid1 -> uuid1.equals(uuid)));
+                setArenaSupplierRef(uuid, () -> gameServer.getArenaManager().findArenasByOwner(uuid1 -> uuid1.equals(uuid)));
                 return false;
             }
         };
@@ -432,7 +432,7 @@ public class Lobby extends InstanceContainer {
                 buttons.put(new Button() {
                     @Override
                     public ItemStack getItemStack(UUID uuid) {
-                        return arena.getArenaFeature(DescriptionFeature.class).getDisplayItem();
+                        return arena.getFeature(DescriptionFeature.class).getDisplayItem();
                     }
 
                     @Override
@@ -506,7 +506,7 @@ public class Lobby extends InstanceContainer {
                 .filter(player -> StringUtils.jaroWinklerScore(player.getUsername().toLowerCase(), ownerQuery.toLowerCase()) > 0)
                 .map(Player::getUuid)
                 .toList();
-        openArenaInventory(openPlayer, () -> gameServer.getGameManager().findArenasByOwner(uuids));
+        openArenaInventory(openPlayer, () -> gameServer.getArenaManager().findArenasByOwner(uuids));
     }
 
     /**
@@ -517,9 +517,9 @@ public class Lobby extends InstanceContainer {
      */
     public void openArenaInventory(Player openPlayer, boolean myArena) {
         if (myArena) {
-            openArenaInventory(openPlayer, () -> gameServer.getGameManager().findArenasByOwner(openPlayer));
+            openArenaInventory(openPlayer, () -> gameServer.getArenaManager().findArenasByOwner(openPlayer));
         } else {
-            openArenaInventory(openPlayer, () -> gameServer.getGameManager().getAllArenas());
+            openArenaInventory(openPlayer, () -> gameServer.getArenaManager().getAllArenas());
         }
     }
 
@@ -531,7 +531,7 @@ public class Lobby extends InstanceContainer {
      * @return whether the player is successfully joined the arena
      */
     public boolean tryJoinArena(Player player, Arena arena) {
-        var joinFeature = arena.getArenaFeature(JoinFeature.class);
+        var joinFeature = arena.getFeature(JoinFeature.class);
         if (joinFeature.isJoined(player)) {
             player.sendMessage(gameServer.getMessageConfig().getErrorArenaJoined());
             return false;

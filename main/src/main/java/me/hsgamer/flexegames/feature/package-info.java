@@ -1,4 +1,4 @@
 /**
- * Contains the main features to run the {@link me.hsgamer.flexegames.game.Game}
+ * Contains the global features for all {@link me.hsgamer.minigamecore.base.Arena}
  */
 package me.hsgamer.flexegames.feature;

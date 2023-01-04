@@ -4,10 +4,13 @@ import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.config.converter.ComponentConverter;
 import me.hsgamer.flexegames.config.converter.ComponentListConverter;
 import me.hsgamer.flexegames.config.converter.NumberObjectMapConverter;
+import me.hsgamer.flexegames.config.converter.StringObjectMapConverter;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.item.ItemStack;
+import net.minestom.server.item.Material;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,6 +18,42 @@ import java.util.List;
 import java.util.Map;
 
 public interface PveGameConfig {
+    @ConfigPath(value = "display-name", converter = ComponentConverter.class)
+    default Component getDisplayName() {
+        return Component.text("PvE").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD);
+    }
+
+    @ConfigPath(value = "description", converter = ComponentListConverter.class)
+    default List<Component> getDescription() {
+        return List.of(
+                Component.text("Kill the mobs to survive!").color(NamedTextColor.WHITE),
+                Component.text("The last one standing wins!").color(NamedTextColor.WHITE)
+        );
+    }
+
+    @ConfigPath(value = "display-item", converter = StringObjectMapConverter.class)
+    default Map<String, Object> getDisplayItem() {
+        return Map.of(
+                "material", Material.ZOMBIE_HEAD.name(),
+                "hide", "all"
+        );
+    }
+
+    @ConfigPath(value = "arena-display-item", converter = StringObjectMapConverter.class)
+    default Map<String, Object> getArenaDisplayItem() {
+        return Map.of(
+                "material", Material.ZOMBIE_HEAD.name(),
+                "name", "%game%",
+                "lore", List.of(
+                        "&bOwner: &f%owner%",
+                        "&bPlayer: &f%players%/%max-players%",
+                        "&bTime: &f%time%",
+                        "&bStatus: &f%state%"
+                ),
+                "hide", "all"
+        );
+    }
+
     @ConfigPath(value = "board.title", converter = ComponentConverter.class)
     default Component getBoardTitle() {
         return ComponentConverter.fromString("&6&lPvE");

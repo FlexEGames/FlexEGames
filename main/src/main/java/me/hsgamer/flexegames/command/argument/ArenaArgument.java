@@ -1,6 +1,6 @@
 package me.hsgamer.flexegames.command.argument;
 
-import me.hsgamer.flexegames.game.Game;
+import me.hsgamer.flexegames.GameServer;
 import me.hsgamer.minigamecore.base.Arena;
 import net.minestom.server.command.builder.arguments.Argument;
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException;
@@ -9,23 +9,23 @@ import net.minestom.server.utils.binary.BinaryWriter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * An argument for {@link Arena}
  */
-public class ArenaArgument extends Argument<Function<Game, Optional<Arena>>> {
-    public ArenaArgument(@NotNull String id) {
-        super(id);
-    }
+public class ArenaArgument extends Argument<Arena> {
+    public static final int ARENA_NOT_FOUND = 1;
+    private final GameServer gameServer;
 
-    public void setGameArgument(GameArgument gameArgument) {
+    public ArenaArgument(GameServer gameServer, @NotNull String id) {
+        super(id);
+        this.gameServer = gameServer;
+
         setSuggestionCallback((sender, context, suggestion) -> {
-            Game game = context.get(gameArgument);
-            if (game == null) return;
             String raw = context.getRaw(this);
-            game.getAllArenas().forEach(arena -> {
+            gameServer.getArenaManager().getAllArenas().forEach(arena -> {
                 String s = arena.getName();
                 if (raw == null || raw.isEmpty() || s.startsWith(raw)) {
                     suggestion.addEntry(new SuggestionEntry(s));
@@ -35,8 +35,12 @@ public class ArenaArgument extends Argument<Function<Game, Optional<Arena>>> {
     }
 
     @Override
-    public @NotNull Function<Game, Optional<Arena>> parse(@NotNull String input) throws ArgumentSyntaxException {
-        return game -> game.getArenaByName(input);
+    public @NotNull Arena parse(@NotNull String input) throws ArgumentSyntaxException {
+        Optional<Arena> arena = gameServer.getArenaManager().getArenaByName(input);
+        if (arena.isEmpty()) {
+            throw new ArgumentSyntaxException("Arena not found", input, ARENA_NOT_FOUND);
+        }
+        return arena.get();
     }
 
     @Override
@@ -52,5 +56,18 @@ public class ArenaArgument extends Argument<Function<Game, Optional<Arena>>> {
     @Override
     public String toString() {
         return String.format("Arena<%s>", getId());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ArenaArgument that)) return false;
+        if (!super.equals(o)) return false;
+        return Objects.equals(gameServer, that.gameServer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), gameServer);
     }
 }

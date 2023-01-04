@@ -1,18 +1,19 @@
 package me.hsgamer.flexegames.game.duel.state;
 
-import me.hsgamer.flexegames.api.game.ComponentGameState;
-import me.hsgamer.flexegames.feature.ConfigFeature;
-import me.hsgamer.flexegames.feature.JoinFeature;
+import me.hsgamer.flexegames.api.game.ComponentDisplayName;
+import me.hsgamer.flexegames.feature.arena.JoinFeature;
 import me.hsgamer.flexegames.game.duel.DuelExtension;
-import me.hsgamer.flexegames.game.duel.DuelGameConfig;
+import me.hsgamer.flexegames.game.duel.feature.ConfigFeature;
 import me.hsgamer.flexegames.game.duel.feature.InstanceFeature;
+import me.hsgamer.flexegames.state.KillingState;
 import me.hsgamer.minigamecore.base.Arena;
-import me.hsgamer.minigamecore.implementation.feature.arena.ArenaTimerFeature;
+import me.hsgamer.minigamecore.base.GameState;
+import me.hsgamer.minigamecore.implementation.feature.TimerFeature;
 import net.kyori.adventure.text.Component;
 
 import java.util.concurrent.TimeUnit;
 
-public class WaitingState implements ComponentGameState {
+public class WaitingState implements GameState, ComponentDisplayName {
     private final DuelExtension duelExtension;
 
     public WaitingState(DuelExtension duelExtension) {
@@ -21,21 +22,21 @@ public class WaitingState implements ComponentGameState {
 
     @Override
     public void start(Arena arena) {
-        arena.getArenaFeature(ArenaTimerFeature.class)
+        arena.getFeature(TimerFeature.class)
                 .setDuration(
-                        arena.getFeature(ConfigFeature.class).getConfig(DuelGameConfig.class).getWaitingTime(),
+                        arena.getFeature(ConfigFeature.class).config().getWaitingTime(),
                         TimeUnit.SECONDS
                 );
     }
 
     @Override
     public void update(Arena arena) {
-        if (arena.getArenaFeature(ArenaTimerFeature.class).getDuration(TimeUnit.MILLISECONDS) > 0) return;
-        if (arena.getArenaFeature(JoinFeature.class).getPlayerCount() > 1) {
+        if (arena.getFeature(TimerFeature.class).getDuration() > 0) return;
+        if (arena.getFeature(JoinFeature.class).getPlayerCount() > 1) {
             arena.setNextState(InGameState.class);
         } else {
             Component component = duelExtension.getMessageConfig().getNotEnoughPlayers();
-            arena.getArenaFeature(InstanceFeature.class).sendMessage(component);
+            arena.getFeature(InstanceFeature.class).sendMessage(component);
             arena.setNextState(KillingState.class);
         }
     }

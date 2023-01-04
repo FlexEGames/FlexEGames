@@ -35,9 +35,4 @@ public interface DuelMessageConfig {
     default Component getStateEnding() {
         return Component.text("Ending");
     }
-
-    @ConfigPath(value = "state.killing", converter = ComponentConverter.class)
-    default Component getStateKilling() {
-        return Component.text("Killing");
-    }
 }

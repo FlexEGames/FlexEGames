@@ -38,4 +38,9 @@ public interface MessageConfig {
     default Component getLobbyShowPlayers() {
         return Component.text("You now show other players").color(NamedTextColor.GREEN);
     }
+
+    @ConfigPath(value = "state.killing", converter = ComponentConverter.class)
+    default Component getStateKilling() {
+        return Component.text("Killing");
+    }
 }

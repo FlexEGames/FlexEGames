@@ -10,6 +10,7 @@ import me.hsgamer.flexegames.hook.LoginLogHook;
 import me.hsgamer.flexegames.hook.PerInstanceInstanceViewHook;
 import me.hsgamer.flexegames.hook.UpdateViewHook;
 import me.hsgamer.flexegames.lobby.Lobby;
+import me.hsgamer.flexegames.manager.GameArenaManager;
 import me.hsgamer.flexegames.manager.GameManager;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.player.GamePlayer;
@@ -61,7 +62,11 @@ public class GameServer {
     /**
      * The game manager
      */
-    private final GameManager gameManager = new GameManager(this);
+    private final GameManager gameManager = new GameManager();
+    /**
+     * The arena manager
+     */
+    private final GameArenaManager arenaManager = new GameArenaManager(this);
     /**
      * The lobby
      */
@@ -151,6 +156,8 @@ public class GameServer {
         }
 
         gameManager.init();
+        arenaManager.init();
+        arenaManager.postInit();
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
     }
@@ -158,6 +165,7 @@ public class GameServer {
     @ApiStatus.Internal
     void stop() {
         lobby.clear();
+        arenaManager.clear();
         gameManager.clear();
         MinecraftServer.stopCleanly();
     }
