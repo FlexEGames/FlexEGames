@@ -44,14 +44,18 @@ public class GameArenaManager extends ArenaManager {
 
     @Override
     public boolean addArena(Arena arena) {
+        if (!super.addArena(arena)) {
+            return false;
+        }
         var descriptionFeature = arena.getFeature(DescriptionFeature.class);
         var gameFeature = arena.getFeature(GameFeature.class);
         var joinFeature = arena.getFeature(JoinFeature.class);
         var ownerFeature = arena.getFeature(OwnerFeature.class);
         if (descriptionFeature == null || gameFeature == null || joinFeature == null || ownerFeature == null) {
+            arena.removeFromManager();
             return false;
         }
-        return super.addArena(arena);
+        return true;
     }
 
     /**
