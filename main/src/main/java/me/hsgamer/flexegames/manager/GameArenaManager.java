@@ -4,6 +4,7 @@ import me.hsgamer.flexegames.GameServer;
 import me.hsgamer.flexegames.api.game.Game;
 import me.hsgamer.flexegames.feature.GameServerFeature;
 import me.hsgamer.flexegames.feature.LobbyFeature;
+import me.hsgamer.flexegames.feature.SchedulerFeature;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.feature.arena.GameFeature;
 import me.hsgamer.flexegames.feature.arena.JoinFeature;
@@ -38,7 +39,8 @@ public class GameArenaManager extends ArenaManager {
     protected List<Unit<Feature>> loadFeatures() {
         return Unit.wrap(
                 new GameServerFeature(gameServer),
-                new LobbyFeature(gameServer)
+                new LobbyFeature(gameServer),
+                new SchedulerFeature(gameServer)
         );
     }
 
