@@ -1,18 +1,18 @@
 package me.hsgamer.flexegames.game.pve.state;
 
-import me.hsgamer.flexegames.api.game.ComponentGameState;
-import me.hsgamer.flexegames.feature.ConfigFeature;
-import me.hsgamer.flexegames.feature.DescriptionFeature;
+import me.hsgamer.flexegames.api.game.ComponentDisplayName;
+import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.game.pve.PveExtension;
-import me.hsgamer.flexegames.game.pve.PveGameConfig;
+import me.hsgamer.flexegames.game.pve.feature.ConfigFeature;
 import me.hsgamer.flexegames.game.pve.feature.InstanceFeature;
 import me.hsgamer.flexegames.game.pve.feature.MobGeneratorFeature;
 import me.hsgamer.flexegames.game.pve.feature.StageFeature;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.minigamecore.base.Arena;
+import me.hsgamer.minigamecore.base.GameState;
 import net.kyori.adventure.text.Component;
 
-public class FightingState implements ComponentGameState {
+public class FightingState implements GameState, ComponentDisplayName {
     private final PveExtension pveExtension;
 
     public FightingState(PveExtension pveExtension) {
@@ -21,32 +21,32 @@ public class FightingState implements ComponentGameState {
 
     @Override
     public void start(Arena arena) {
-        arena.getArenaFeature(MobGeneratorFeature.class).loadMobs();
-        var gameConfig = arena.getFeature(ConfigFeature.class).getConfig(PveGameConfig.class);
-        var descriptionFeature = arena.getArenaFeature(DescriptionFeature.class);
+        arena.getFeature(MobGeneratorFeature.class).loadMobs();
+        var gameConfig = arena.getFeature(ConfigFeature.class).config();
+        var descriptionFeature = arena.getFeature(DescriptionFeature.class);
         Component message = ReplacementManager.replace(gameConfig.getStageStartMessage(), descriptionFeature.getReplacements());
-        arena.getArenaFeature(InstanceFeature.class).sendMessage(message);
+        arena.getFeature(InstanceFeature.class).sendMessage(message);
     }
 
     @Override
     public void update(Arena arena) {
-        if (arena.getArenaFeature(InstanceFeature.class).isAllDead()) {
+        if (arena.getFeature(InstanceFeature.class).isAllDead()) {
             arena.setNextState(EndingState.class);
             return;
         }
 
-        var mobGeneratorFeature = arena.getArenaFeature(MobGeneratorFeature.class);
+        var mobGeneratorFeature = arena.getFeature(MobGeneratorFeature.class);
         if (!mobGeneratorFeature.isCleared()) {
             mobGeneratorFeature.trySpawnMobs();
             return;
         }
 
-        var gameConfig = arena.getFeature(ConfigFeature.class).getConfig(PveGameConfig.class);
-        var descriptionFeature = arena.getArenaFeature(DescriptionFeature.class);
+        var gameConfig = arena.getFeature(ConfigFeature.class).config();
+        var descriptionFeature = arena.getFeature(DescriptionFeature.class);
         Component message = ReplacementManager.replace(gameConfig.getStageEndMessage(), descriptionFeature.getReplacements());
-        arena.getArenaFeature(InstanceFeature.class).sendMessage(message);
+        arena.getFeature(InstanceFeature.class).sendMessage(message);
 
-        arena.getArenaFeature(StageFeature.class).increaseStage();
+        arena.getFeature(StageFeature.class).increaseStage();
         arena.setNextState(RestingState.class);
     }
 

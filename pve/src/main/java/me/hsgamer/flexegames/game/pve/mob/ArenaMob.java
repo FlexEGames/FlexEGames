@@ -1,7 +1,6 @@
 package me.hsgamer.flexegames.game.pve.mob;
 
-import me.hsgamer.flexegames.feature.ConfigFeature;
-import me.hsgamer.flexegames.game.pve.PveGameConfig;
+import me.hsgamer.flexegames.game.pve.feature.ConfigFeature;
 import me.hsgamer.flexegames.game.pve.feature.StageFeature;
 import me.hsgamer.minigamecore.base.Arena;
 import net.kyori.adventure.text.Component;
@@ -29,7 +28,7 @@ public class ArenaMob extends EntityCreature {
         super(entityType);
         this.arena = arena;
         var stage = getStage();
-        int multi = arena.getFeature(ConfigFeature.class).getConfig(PveGameConfig.class).isToughMob() ? 2 : 1;
+        int multi = arena.getFeature(ConfigFeature.class).config().isToughMob() ? 2 : 1;
         getAttribute(Attribute.MAX_HEALTH).setBaseValue((getMaxHealth() + stage * 2) * multi);
         getAttribute(Attribute.ATTACK_DAMAGE).setBaseValue((1 + stage / 4f) * multi);
         heal();
@@ -58,6 +57,6 @@ public class ArenaMob extends EntityCreature {
     }
 
     protected int getStage() {
-        return arena.getArenaFeature(StageFeature.class).getStage();
+        return arena.getFeature(StageFeature.class).getStage();
     }
 }
