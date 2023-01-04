@@ -1,26 +1,29 @@
 package me.hsgamer.flexegames.api.game;
 
-import me.hsgamer.flexegames.feature.SchedulerFeature;
+import me.hsgamer.flexegames.feature.GameServerFeature;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.feature.arena.GameFeature;
 import me.hsgamer.flexegames.feature.arena.JoinFeature;
 import me.hsgamer.flexegames.feature.arena.OwnerFeature;
+import me.hsgamer.flexegames.util.TaskUtil;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaManager;
 import me.hsgamer.minigamecore.base.Feature;
 import me.hsgamer.minigamecore.base.Unit;
+import net.minestom.server.MinecraftServer;
+import net.minestom.server.timer.ExecutionType;
+import net.minestom.server.timer.Task;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ScheduledFuture;
 
 /**
  * The arena for the game
  */
 public abstract class GameArena<T extends Game> extends Arena {
     protected final T game;
-    private ScheduledFuture<?> task;
+    private Task task;
 
     protected GameArena(String name, T game, ArenaManager arenaManager) {
         super(name, arenaManager);
@@ -29,7 +32,12 @@ public abstract class GameArena<T extends Game> extends Arena {
 
     @Override
     public void initArena() {
-        task = getFeature(SchedulerFeature.class).schedule(this);
+        var gameServer = getFeature(GameServerFeature.class).gameServer();
+        task = MinecraftServer.getSchedulerManager()
+                .buildTask(this)
+                .repeat(TaskUtil.tick(gameServer.getMainConfig().getArenaPeriod()))
+                .executionType(gameServer.getMainConfig().isArenaAsync() ? ExecutionType.ASYNC : ExecutionType.SYNC)
+                .schedule();
     }
 
     /**
@@ -70,7 +78,7 @@ public abstract class GameArena<T extends Game> extends Arena {
     @Override
     public void clearArena() {
         if (task != null) {
-            task.cancel(true);
+            task.cancel();
         }
     }
 }

@@ -68,9 +68,14 @@ public interface MainConfig {
         return "";
     }
 
-    @ConfigPath("scheduler.size")
-    default int getSchedulerSize() {
-        return Runtime.getRuntime().availableProcessors();
+    @ConfigPath("arena.period")
+    default int getArenaPeriod() {
+        return 0;
+    }
+
+    @ConfigPath("arena.async")
+    default boolean isArenaAsync() {
+        return false;
     }
 
     @ConfigPath(value = "custom-placeholders", converter = ComponentMapConverter.class)
