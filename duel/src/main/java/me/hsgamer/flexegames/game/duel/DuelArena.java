@@ -51,4 +51,9 @@ public class DuelArena extends GameArena<DuelGame> {
                 new EndingState(duelExtension)
         );
     }
+
+    @Override
+    protected void postInitArena() {
+        setNextState(WaitingState.class);
+    }
 }
