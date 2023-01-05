@@ -89,7 +89,6 @@ public class GameServer {
         // LOBBY
         lobby = new Lobby(this);
         MinecraftServer.getInstanceManager().registerInstance(lobby);
-        lobby.init();
 
         // COMMAND
         CommandManager commandManager = MinecraftServer.getCommandManager();
@@ -154,6 +153,8 @@ public class GameServer {
             var config = new OpenToLANConfig().port(mainConfig.getServerPort());
             OpenToLAN.open(config);
         }
+
+        lobby.init();
 
         gameManager.init();
         arenaManager.init();

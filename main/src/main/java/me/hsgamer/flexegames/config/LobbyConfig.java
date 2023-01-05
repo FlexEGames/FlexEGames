@@ -1,7 +1,6 @@
 package me.hsgamer.flexegames.config;
 
 import me.hsgamer.flexegames.config.converter.*;
-import me.hsgamer.flexegames.util.ChunkLoaderType;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -20,9 +19,9 @@ public interface LobbyConfig {
         return UUID.randomUUID();
     }
 
-    @ConfigPath(value = "world.type", converter = ChunkLoaderTypeConverter.class)
-    default ChunkLoaderType getWorldType() {
-        return ChunkLoaderType.ANVIL;
+    @ConfigPath(value = "world.type")
+    default String getWorldType() {
+        return "anvil";
     }
 
     @ConfigPath("world.name")

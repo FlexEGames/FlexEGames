@@ -6,6 +6,7 @@ import me.hsgamer.flexegames.GameServer;
 import me.hsgamer.flexegames.api.game.Game;
 import me.hsgamer.flexegames.api.game.JoinResponse;
 import me.hsgamer.flexegames.api.modifier.InstanceModifier;
+import me.hsgamer.flexegames.builder.ChunkLoaderBuilder;
 import me.hsgamer.flexegames.builder.InstanceModifierBuilder;
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
@@ -83,9 +84,6 @@ public class Lobby extends InstanceContainer {
         setTimeRate(0);
         setTime(6000);
 
-        var worldType = gameServer.getLobbyConfig().getWorldType();
-        setChunkLoader(worldType.getLoader(this, AssetUtil.getWorldFile(gameServer.getLobbyConfig().getWorldName()).toPath()));
-
         EventNode<InstanceEvent> eventNode = eventNode();
         eventNode
                 .addListener(RemoveEntityFromInstanceEvent.class, event -> {
@@ -152,6 +150,9 @@ public class Lobby extends InstanceContainer {
     }
 
     public void init() {
+        var worldType = gameServer.getLobbyConfig().getWorldType();
+        ChunkLoaderBuilder.INSTANCE.build(worldType, this, AssetUtil.getWorldFile(gameServer.getLobbyConfig().getWorldName()).toPath()).ifPresent(this::setChunkLoader);
+
         instanceModifiers.forEach(InstanceModifier::init);
         var node = MinecraftServer.getGlobalEventHandler();
         node.addListener(PlayerSpawnEvent.class, event -> {

@@ -2,7 +2,6 @@ package me.hsgamer.flexegames.game.duel;
 
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.config.converter.*;
-import me.hsgamer.flexegames.util.ChunkLoaderType;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -154,9 +153,9 @@ public interface DuelGameConfig {
         return false;
     }
 
-    @ConfigPath(value = "world-loader", converter = ChunkLoaderTypeConverter.class)
-    default ChunkLoaderType getWorldLoader() {
-        return ChunkLoaderType.ANVIL;
+    @ConfigPath(value = "world-loader")
+    default String getWorldLoader() {
+        return "anvil";
     }
 
     @ConfigPath("world-name")

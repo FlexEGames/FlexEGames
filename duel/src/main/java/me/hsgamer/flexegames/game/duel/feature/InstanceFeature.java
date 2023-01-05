@@ -3,6 +3,7 @@ package me.hsgamer.flexegames.game.duel.feature;
 import io.github.bloepiloepi.pvp.events.EntityPreDeathEvent;
 import io.github.bloepiloepi.pvp.events.FinalDamageEvent;
 import io.github.bloepiloepi.pvp.events.PlayerExhaustEvent;
+import me.hsgamer.flexegames.builder.ChunkLoaderBuilder;
 import me.hsgamer.flexegames.feature.LobbyFeature;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.game.duel.state.EndingState;
@@ -34,6 +35,7 @@ import net.minestom.server.timer.TaskSchedule;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class InstanceFeature implements Feature {
     private final Arena arena;
@@ -63,9 +65,9 @@ public class InstanceFeature implements Feature {
 
         boolean setGenerator = true;
         if (gameConfig.isUseWorld()) {
-            IChunkLoader chunkLoader = gameConfig.getWorldLoader().getLoader(instance, AssetUtil.getWorldFile(gameConfig.getWorldName()).toPath());
-            if (chunkLoader != null) {
-                instance.setChunkLoader(chunkLoader);
+            Optional<IChunkLoader> chunkLoader = ChunkLoaderBuilder.INSTANCE.build(gameConfig.getWorldLoader(), instance, AssetUtil.getWorldFile(gameConfig.getWorldName()).toPath());
+            if (chunkLoader.isPresent()) {
+                instance.setChunkLoader(chunkLoader.get());
                 setGenerator = false;
             }
         }
