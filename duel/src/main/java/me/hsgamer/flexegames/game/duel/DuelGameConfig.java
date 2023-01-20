@@ -1,7 +1,8 @@
 package me.hsgamer.flexegames.game.duel;
 
 import me.hsgamer.flexegames.builder.ItemBuilder;
-import me.hsgamer.flexegames.config.converter.*;
+import me.hsgamer.flexegames.config.converter.ComponentConverter;
+import me.hsgamer.flexegames.config.converter.ComponentListConverter;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -16,12 +17,12 @@ import java.util.List;
 import java.util.Map;
 
 public interface DuelGameConfig {
-    @ConfigPath(value = "display-name", converter = ComponentConverter.class)
+    @ConfigPath("display-name")
     default Component getDisplayName() {
         return Component.text("Duel").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD);
     }
 
-    @ConfigPath(value = "description", converter = ComponentListConverter.class)
+    @ConfigPath("description")
     default List<Component> getDescription() {
         return List.of(
                 Component.text("Fight with your opponent").color(NamedTextColor.WHITE),
@@ -30,7 +31,7 @@ public interface DuelGameConfig {
         );
     }
 
-    @ConfigPath(value = "display-item", converter = StringObjectMapConverter.class)
+    @ConfigPath("display-item")
     default Map<String, Object> getDisplayItem() {
         return Map.of(
                 "material", Material.WOODEN_SWORD.name(),
@@ -38,7 +39,7 @@ public interface DuelGameConfig {
         );
     }
 
-    @ConfigPath(value = "arena-display-item", converter = StringObjectMapConverter.class)
+    @ConfigPath("arena-display-item")
     default Map<String, Object> getArenaDisplayItem() {
         return Map.of(
                 "material", Material.WOODEN_SWORD.name(),
@@ -53,12 +54,12 @@ public interface DuelGameConfig {
         );
     }
 
-    @ConfigPath(value = "board.title", converter = ComponentConverter.class)
+    @ConfigPath("board.title")
     default Component getBoardTitle() {
         return ComponentConverter.fromString("&6&lDuel");
     }
 
-    @ConfigPath(value = "board.lines.waiting", converter = ComponentListConverter.class)
+    @ConfigPath("board.lines.waiting")
     default List<Component> getBoardLinesWaiting() {
         return ComponentListConverter.fromStringList(List.of(
                 "&eWaiting for players",
@@ -67,14 +68,14 @@ public interface DuelGameConfig {
         ));
     }
 
-    @ConfigPath(value = "board.lines.ingame", converter = ComponentListConverter.class)
+    @ConfigPath("board.lines.ingame")
     default List<Component> getBoardLinesIngame() {
         return ComponentListConverter.fromStringList(List.of(
                 "&eAlive: &a%alive%"
         ));
     }
 
-    @ConfigPath(value = "board.lines.ending", converter = ComponentListConverter.class)
+    @ConfigPath("board.lines.ending")
     default List<Component> getBoardLinesEnding() {
         return ComponentListConverter.fromStringList(List.of(
                 "&eEnding in: &a%time%",
@@ -82,22 +83,22 @@ public interface DuelGameConfig {
         ));
     }
 
-    @ConfigPath(value = "not-enough-players", converter = ComponentConverter.class)
+    @ConfigPath("not-enough-players")
     default Component getNotEnoughPlayers() {
         return ComponentConverter.fromString("&cNot enough players");
     }
 
-    @ConfigPath(value = "winner-message", converter = ComponentConverter.class)
+    @ConfigPath("winner-message")
     default Component getWinnerMessage() {
         return ComponentConverter.fromString("&a%winner% &ewon the game");
     }
 
-    @ConfigPath(value = "no-winner-message", converter = ComponentConverter.class)
+    @ConfigPath("no-winner-message")
     default Component getNoWinnerMessage() {
         return ComponentConverter.fromString("&cNo winner");
     }
 
-    @ConfigPath(value = "pos", converter = PosListConverter.class)
+    @ConfigPath("pos")
     default List<Pos> getPos() {
         return List.of(
                 new Pos(-2, 2, 0, -90, 0),
@@ -107,7 +108,7 @@ public interface DuelGameConfig {
         );
     }
 
-    @ConfigPath(value = "join-pos", converter = PosConverter.class)
+    @ConfigPath("join-pos")
     default Pos getJoinPos() {
         return new Pos(0, 2, 0);
     }
@@ -132,7 +133,7 @@ public interface DuelGameConfig {
         return false;
     }
 
-    @ConfigPath(value = "kit", converter = NumberObjectMapConverter.class)
+    @ConfigPath("kit")
     default Map<Number, Map<String, Object>> getKit() {
         return Collections.emptyMap();
     }
@@ -153,7 +154,7 @@ public interface DuelGameConfig {
         return false;
     }
 
-    @ConfigPath(value = "world-loader")
+    @ConfigPath("world-loader")
     default String getWorldLoader() {
         return "anvil";
     }
@@ -163,7 +164,7 @@ public interface DuelGameConfig {
         return "duel";
     }
 
-    @ConfigPath(value = "chat-format", converter = ComponentConverter.class)
+    @ConfigPath("chat-format")
     default Component getChatFormat() {
         return Component.empty()
                 .append(Component.text("%player%").color(NamedTextColor.WHITE))

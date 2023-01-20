@@ -1,7 +1,6 @@
 package me.hsgamer.flexegames.config;
 
 import me.hsgamer.flexegames.FlexEGames;
-import me.hsgamer.flexegames.config.converter.*;
 import me.hsgamer.flexegames.util.ProxyType;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 import net.kyori.adventure.text.Component;
@@ -25,7 +24,7 @@ public interface MainConfig {
         return 25565;
     }
 
-    @ConfigPath(value = "server.proxy-type", converter = ProxyTypeConverter.class)
+    @ConfigPath("server.proxy-type")
     default ProxyType getProxyType() {
         return ProxyType.NONE;
     }
@@ -55,7 +54,7 @@ public interface MainConfig {
         return true;
     }
 
-    @ConfigPath(value = "server.motd", converter = ComponentListConverter.class)
+    @ConfigPath("server.motd")
     default List<Component> getServerMOTD() {
         return Arrays.asList(
                 Component.text("FlexEGames").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD),
@@ -78,7 +77,7 @@ public interface MainConfig {
         return false;
     }
 
-    @ConfigPath(value = "custom-placeholders", converter = ComponentMapConverter.class)
+    @ConfigPath("custom-placeholders")
     default Map<String, Component> getCustomPlaceholders() {
         return Map.of(
                 "server-name", Component.text("FlexEGames").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD),
@@ -86,17 +85,17 @@ public interface MainConfig {
         );
     }
 
-    @ConfigPath(value = "permission.console", converter = PermissionListConverter.class)
+    @ConfigPath("permission.console")
     default List<Permission> getConsolePermissions() {
         return Collections.emptyList();
     }
 
-    @ConfigPath(value = "permission.player-default", converter = PermissionListConverter.class)
+    @ConfigPath("permission.player-default")
     default List<Permission> getPlayerDefaultPermissions() {
         return Collections.emptyList();
     }
 
-    @ConfigPath(value = "permission.player", converter = PermissionListMapConverter.class)
+    @ConfigPath("permission.player")
     default Map<String, List<Permission>> getPlayerPermissions() {
         return Collections.emptyMap();
     }

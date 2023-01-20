@@ -3,8 +3,6 @@ package me.hsgamer.flexegames.game.pve;
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.config.converter.ComponentConverter;
 import me.hsgamer.flexegames.config.converter.ComponentListConverter;
-import me.hsgamer.flexegames.config.converter.NumberObjectMapConverter;
-import me.hsgamer.flexegames.config.converter.StringObjectMapConverter;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -18,12 +16,12 @@ import java.util.List;
 import java.util.Map;
 
 public interface PveGameConfig {
-    @ConfigPath(value = "display-name", converter = ComponentConverter.class)
+    @ConfigPath("display-name")
     default Component getDisplayName() {
         return Component.text("PvE").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD);
     }
 
-    @ConfigPath(value = "description", converter = ComponentListConverter.class)
+    @ConfigPath("description")
     default List<Component> getDescription() {
         return List.of(
                 Component.text("Kill the mobs to survive!").color(NamedTextColor.WHITE),
@@ -31,7 +29,7 @@ public interface PveGameConfig {
         );
     }
 
-    @ConfigPath(value = "display-item", converter = StringObjectMapConverter.class)
+    @ConfigPath("display-item")
     default Map<String, Object> getDisplayItem() {
         return Map.of(
                 "material", Material.ZOMBIE_HEAD.name(),
@@ -39,7 +37,7 @@ public interface PveGameConfig {
         );
     }
 
-    @ConfigPath(value = "arena-display-item", converter = StringObjectMapConverter.class)
+    @ConfigPath("arena-display-item")
     default Map<String, Object> getArenaDisplayItem() {
         return Map.of(
                 "material", Material.ZOMBIE_HEAD.name(),
@@ -54,12 +52,12 @@ public interface PveGameConfig {
         );
     }
 
-    @ConfigPath(value = "board.title", converter = ComponentConverter.class)
+    @ConfigPath("board.title")
     default Component getBoardTitle() {
         return ComponentConverter.fromString("&6&lPvE");
     }
 
-    @ConfigPath(value = "board.lines.waiting", converter = ComponentListConverter.class)
+    @ConfigPath("board.lines.waiting")
     default List<Component> getBoardLinesWaiting() {
         return ComponentListConverter.fromStringList(List.of(
                 "&eWaiting for players",
@@ -68,7 +66,7 @@ public interface PveGameConfig {
         ));
     }
 
-    @ConfigPath(value = "board.lines.resting", converter = ComponentListConverter.class)
+    @ConfigPath("board.lines.resting")
     default List<Component> getBoardLinesResting() {
         return ComponentListConverter.fromStringList(List.of(
                 "&eResting...",
@@ -78,7 +76,7 @@ public interface PveGameConfig {
         ));
     }
 
-    @ConfigPath(value = "board.lines.fighting", converter = ComponentListConverter.class)
+    @ConfigPath("board.lines.fighting")
     default List<Component> getBoardLinesFighting() {
         return ComponentListConverter.fromStringList(List.of(
                 "&eFighting...",
@@ -89,7 +87,7 @@ public interface PveGameConfig {
         ));
     }
 
-    @ConfigPath(value = "board.lines.ending", converter = ComponentListConverter.class)
+    @ConfigPath("board.lines.ending")
     default List<Component> getBoardLinesEnding() {
         return ComponentListConverter.fromStringList(List.of(
                 "&eGame Over",
@@ -153,7 +151,7 @@ public interface PveGameConfig {
         return 5;
     }
 
-    @ConfigPath(value = "kit", converter = NumberObjectMapConverter.class)
+    @ConfigPath("kit")
     default Map<Number, Map<String, Object>> getKit() {
         return Collections.emptyMap();
     }
@@ -164,7 +162,7 @@ public interface PveGameConfig {
         return kit;
     }
 
-    @ConfigPath(value = "chat-format", converter = ComponentConverter.class)
+    @ConfigPath("chat-format")
     default Component getChatFormat() {
         return Component.empty()
                 .append(Component.text("%player%").color(NamedTextColor.WHITE))
@@ -172,22 +170,22 @@ public interface PveGameConfig {
                 .append(Component.text("%message%").color(NamedTextColor.GOLD));
     }
 
-    @ConfigPath(value = "message.start", converter = ComponentConverter.class)
+    @ConfigPath("message.start")
     default Component getStartMessage() {
         return Component.text("The game has started!").color(NamedTextColor.GREEN);
     }
 
-    @ConfigPath(value = "message.stage-start", converter = ComponentConverter.class)
+    @ConfigPath("message.stage-start")
     default Component getStageStartMessage() {
         return Component.text("The stage %stage% has started!").color(NamedTextColor.GREEN);
     }
 
-    @ConfigPath(value = "message.stage-end", converter = ComponentConverter.class)
+    @ConfigPath("message.stage-end")
     default Component getStageEndMessage() {
         return Component.text("The stage %stage% has ended!").color(NamedTextColor.GREEN);
     }
 
-    @ConfigPath(value = "message.end", converter = ComponentConverter.class)
+    @ConfigPath("message.end")
     default Component getEndMessage() {
         return Component.text("The game has ended!").color(NamedTextColor.GREEN);
     }
