@@ -1,11 +1,13 @@
 package me.hsgamer.flexegames.game.pve.mob;
 
+import io.github.bloepiloepi.pvp.damage.CustomDamageType;
+import io.github.bloepiloepi.pvp.entity.EntityUtils;
+import io.github.bloepiloepi.pvp.projectile.CustomEntityProjectile;
 import me.hsgamer.flexegames.game.pve.PveGame;
 import me.hsgamer.minigamecore.base.Arena;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityCreature;
-import net.minestom.server.entity.EntityProjectile;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.ai.GoalSelector;
 import net.minestom.server.entity.ai.target.ClosestEntityTarget;
@@ -27,7 +29,7 @@ public final class BlazeMob extends ArenaMob {
         BlazeAttackGoal rangedAttackGoal = new BlazeAttackGoal(
                 this, Duration.of(10, TimeUnit.SERVER_TICK),
                 16, 1, 0.5, entity -> {
-            EntityProjectile projectile = new FireballProjectile(entity);
+            CustomEntityProjectile projectile = new FireballProjectile(entity);
             projectile.scheduleRemove(Duration.of(30, TimeUnit.SERVER_TICK));
             return projectile;
         });
@@ -46,16 +48,22 @@ public final class BlazeMob extends ArenaMob {
                         : Math.abs(y)); // Fly up
     }
 
-    private static final class FireballProjectile extends EntityProjectile {
+    private static final class FireballProjectile extends CustomEntityProjectile {
         public FireballProjectile(@NotNull Entity shooter) {
-            super(shooter, EntityType.SMALL_FIREBALL);
+            super(shooter, EntityType.SMALL_FIREBALL, true);
             setNoGravity(true);
         }
 
         @Override
-        public void tick(long time) {
-            super.tick(time);
-            if (isOnGround()) remove();
+        public void onHit(Entity entity) {
+            EntityUtils.damage(entity, CustomDamageType.fireball(this, getShooter()), 3);
+            EntityUtils.setOnFireForSeconds(entity, 5);
+            remove();
+        }
+
+        @Override
+        public void onStuck() {
+            remove();
         }
     }
 
@@ -64,12 +72,12 @@ public final class BlazeMob extends ArenaMob {
         private final int attackRangeSquared;
         private final double power;
         private final double spread;
-        private final Function<Entity, EntityProjectile> projectileGenerator;
+        private final Function<Entity, CustomEntityProjectile> projectileGenerator;
         private long lastShot;
         private boolean stop;
         private Entity cachedTarget;
 
-        public BlazeAttackGoal(@NotNull EntityCreature entityCreature, Duration delay, int attackRange, double power, double spread, Function<Entity, EntityProjectile> projectileGenerator) {
+        public BlazeAttackGoal(@NotNull EntityCreature entityCreature, Duration delay, int attackRange, double power, double spread, Function<Entity, CustomEntityProjectile> projectileGenerator) {
             super(entityCreature);
             this.delay = delay;
             this.attackRangeSquared = attackRange * attackRange;
@@ -107,7 +115,7 @@ public final class BlazeMob extends ArenaMob {
                     if (entityCreature.hasLineOfSight(target)) {
                         final var to = target.getPosition().add(0D, target.getEyeHeight(), 0D);
 
-                        EntityProjectile projectile = projectileGenerator.apply(entityCreature);
+                        CustomEntityProjectile projectile = projectileGenerator.apply(entityCreature);
                         projectile.setInstance(entityCreature.getInstance(), entityCreature.getPosition().add(0D, entityCreature.getEyeHeight(), 0D));
 
                         projectile.shoot(to, power, spread);
