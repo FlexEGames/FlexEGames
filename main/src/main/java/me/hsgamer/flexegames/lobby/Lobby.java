@@ -11,13 +11,20 @@ import me.hsgamer.flexegames.builder.InstanceModifierBuilder;
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.feature.arena.JoinFeature;
+import me.hsgamer.flexegames.manager.GameArenaManager;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.util.*;
+import me.hsgamer.hscore.minecraft.gui.GUIDisplay;
+import me.hsgamer.hscore.minecraft.gui.advanced.AdvancedButtonMap;
+import me.hsgamer.hscore.minecraft.gui.button.Button;
+import me.hsgamer.hscore.minecraft.gui.button.impl.SimpleButton;
+import me.hsgamer.hscore.minecraft.gui.mask.MaskUtils;
+import me.hsgamer.hscore.minecraft.gui.mask.impl.ButtonMapMask;
+import me.hsgamer.hscore.minecraft.gui.mask.impl.ButtonPaginatedMask;
 import me.hsgamer.hscore.minestom.board.Board;
-import me.hsgamer.hscore.minestom.gui.GUIDisplay;
-import me.hsgamer.hscore.minestom.gui.GUIHolder;
-import me.hsgamer.hscore.minestom.gui.button.Button;
-import me.hsgamer.hscore.minestom.gui.button.ButtonMap;
+import me.hsgamer.hscore.minestom.gui.MinestomGUIDisplay;
+import me.hsgamer.hscore.minestom.gui.MinestomGUIHolder;
+import me.hsgamer.hscore.minestom.gui.object.MinestomItem;
 import me.hsgamer.minigamecore.base.Arena;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
@@ -27,7 +34,6 @@ import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
-import net.minestom.server.event.inventory.InventoryPreClickEvent;
 import net.minestom.server.event.player.*;
 import net.minestom.server.event.trait.InstanceEvent;
 import net.minestom.server.instance.InstanceContainer;
@@ -39,13 +45,13 @@ import net.minestom.server.timer.ExecutionType;
 import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskSchedule;
 import net.minestom.server.utils.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 /**
@@ -64,8 +70,8 @@ public class Lobby extends InstanceContainer {
     private final Map<UUID, Supplier<List<Arena>>> arenaSupplierRefMap = new ConcurrentHashMap<>();
     @Getter
     private final HotbarItemsHelper hotbarItemsHelper;
-    private GUIHolder arenaGUIHolder;
-    private GUIHolder gameGUIHolder;
+    private MinestomGUIHolder arenaGUIHolder;
+    private MinestomGUIHolder gameGUIHolder;
 
     public Lobby(GameServer gameServer) {
         super(gameServer.getLobbyConfig().getWorldId(), FullBrightDimension.INSTANCE);
@@ -221,95 +227,41 @@ public class Lobby extends InstanceContainer {
     }
 
     private void setupGameGUIHolder() {
-        gameGUIHolder = new GUIHolder();
+        gameGUIHolder = new MinestomGUIHolder();
         Supplier<List<Game>> games = () -> new ArrayList<>(gameServer.getGameManager().getGameMap().values());
-        IntSupplier maxPage = () -> getMaxPage(games.get().size());
-        var uuidPage = new HashMap<UUID, Integer>();
-        Button nextPageButton = new Button() {
-            @Override
-            public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getGameInventoryNextPage()).stripItalics();
-            }
+        AdvancedButtonMap buttonMap = new AdvancedButtonMap();
 
+        ButtonPaginatedMask gamesMask = new ButtonPaginatedMask("games", MaskUtils.generateAreaSlots(0, 0, 8, 1).boxed().toList()) {
             @Override
-            public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
-                uuidPage.compute(uuid, (key, oldPage) -> {
-                    if (oldPage == null)
-                        oldPage = 0;
-                    if (oldPage < maxPage.getAsInt() - 1) {
-                        return oldPage + 1;
-                    } else {
-                        return oldPage;
-                    }
-                });
-                gameGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
-                return false;
+            public @NotNull List<@NotNull Button> getButtons(@NotNull UUID uuid) {
+                return games.get().stream()
+                        .<Button>map(game -> new SimpleButton(new MinestomItem(game.getDisplayItem()), event -> {
+                            var player = event.getViewerID().getPlayer();
+                            gameServer.getArenaManager().createArena(game, player.getUuid());
+                            openArenaInventory(player, false);
+                        }))
+                        .toList();
             }
         };
-        Button previousPageButton = new Button() {
-            @Override
-            public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getGameInventoryPreviousPage()).stripItalics();
-            }
 
-            @Override
-            public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
-                uuidPage.compute(uuid, (key, oldPage) -> {
-                    if (oldPage == null)
-                        oldPage = 0;
-                    if (oldPage > 0) {
-                        return oldPage - 1;
-                    } else {
-                        return oldPage;
-                    }
-                });
-                gameGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
-                return false;
-            }
-        };
-        Button arenaButton = new Button() {
-            @Override
-            public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getGameInventoryArena()).stripItalics();
-            }
+        Button nextPageButton = new SimpleButton(ItemBuilder.buildItem(gameServer.getLobbyConfig().getGameInventoryNextPage()).stripItalics().asMinestomItem(), event -> {
+            gamesMask.nextPage(event.getViewerID());
+            gameGUIHolder.getDisplay(event.getViewerID()).ifPresent(GUIDisplay::update);
+        });
+        Button previousPageButton = new SimpleButton(ItemBuilder.buildItem(gameServer.getLobbyConfig().getGameInventoryPreviousPage()).stripItalics().asMinestomItem(), event -> {
+            gamesMask.previousPage(event.getViewerID());
+            gameGUIHolder.getDisplay(event.getViewerID()).ifPresent(GUIDisplay::update);
+        });
+        Button arenaButton = new SimpleButton(ItemBuilder.buildItem(gameServer.getLobbyConfig().getGameInventoryArena()).stripItalics().asMinestomItem(), event -> openArenaInventory(event.getViewerID().getPlayer(), false));
+        Button dummyButton = uuid -> ItemStack.of(Material.BLACK_STAINED_GLASS_PANE).withDisplayName(Component.empty()).asMinestomItem();
+        ButtonMapMask actionMask = new ButtonMapMask("action")
+                .addButton(previousPageButton, 18)
+                .addButton(nextPageButton, 19)
+                .addButton(dummyButton, 20, 21, 22, 23, 24, 25)
+                .addButton(arenaButton, 26);
 
-            @Override
-            public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
-                openArenaInventory(uuid.getPlayer(), false);
-                return false;
-            }
-        };
-        Button dummyButton = uuid -> ItemStack.of(Material.BLACK_STAINED_GLASS_PANE).withDisplayName(Component.empty());
-        ButtonMap buttonMap = uuid -> {
-            var buttons = new HashMap<Button, List<Integer>>();
-            var page = uuidPage.getOrDefault(uuid, 0);
-            for (int i = 0; i < 18; i++) {
-                var index = i + page * 18;
-                if (index >= games.get().size()) {
-                    continue;
-                }
-                var game = games.get().get(index);
-                buttons.put(new Button() {
-                    @Override
-                    public ItemStack getItemStack(UUID uuid) {
-                        return game.getDisplayItem();
-                    }
-
-                    @Override
-                    public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
-                        var player = uuid.getPlayer();
-                        gameServer.getArenaManager().createArena(game, player.getUuid());
-                        openArenaInventory(player, false);
-                        return false;
-                    }
-                }, Collections.singletonList(i));
-            }
-            buttons.put(previousPageButton, Collections.singletonList(18));
-            buttons.put(nextPageButton, Collections.singletonList(19));
-            buttons.put(dummyButton, Arrays.asList(20, 21, 22, 23, 24, 25));
-            buttons.put(arenaButton, Collections.singletonList(26));
-            return buttons;
-        };
+        buttonMap.addMask(gamesMask);
+        buttonMap.addMask(actionMask);
         gameGUIHolder.setTitle(gameServer.getLobbyConfig().getGameInventoryTitle());
         gameGUIHolder.setInventoryType(InventoryType.CHEST_3_ROW);
         gameGUIHolder.setRemoveDisplayOnClose(true);
@@ -323,7 +275,7 @@ public class Lobby extends InstanceContainer {
      * @param openPlayer the player to open the inventory for
      */
     public void openGameInventory(Player openPlayer) {
-        gameGUIHolder.createDisplay(openPlayer.getUuid()).init();
+        gameGUIHolder.createDisplay(openPlayer.getUuid()).open();
     }
 
     /**
@@ -338,129 +290,51 @@ public class Lobby extends InstanceContainer {
 
     private void setupArenaGUIHolder() {
         var uuidArenas = new ConcurrentHashMap<UUID, List<Arena>>();
-        var uuidPage = new ConcurrentHashMap<UUID, Integer>();
-        Button nextPageButton = new Button() {
-            @Override
-            public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryNextPage()).stripItalics();
-            }
+        AdvancedButtonMap buttonMap = new AdvancedButtonMap();
 
+        ButtonPaginatedMask arenasMask = new ButtonPaginatedMask("arenas", MaskUtils.generateAreaSlots(0, 0, 8, 1).boxed().toList()) {
             @Override
-            public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
-                uuidPage.compute(uuid, (key, oldPage) -> {
-                    if (oldPage == null)
-                        oldPage = 0;
-                    if (oldPage < getMaxPage(uuidArenas.getOrDefault(uuid, Collections.emptyList()).size()) - 1) {
-                        return oldPage + 1;
-                    } else {
-                        return oldPage;
-                    }
-                });
-                gameGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
-                return false;
+            public @NotNull List<@NotNull Button> getButtons(@NotNull UUID uuid) {
+                return uuidArenas.getOrDefault(uuid, Collections.emptyList())
+                        .stream()
+                        .filter(GameArenaManager::isValid)
+                        .<Button>map(arena -> new SimpleButton(arena.getFeature(DescriptionFeature.class).getDisplayItem().asMinestomItem(), event -> {
+                            var player = event.getViewerID().getPlayer();
+                            if (tryJoinArena(player, arena)) {
+                                player.closeInventory();
+                            }
+                        }))
+                        .toList();
             }
         };
-        Button previousPageButton = new Button() {
-            @Override
-            public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryPreviousPage()).stripItalics();
-            }
 
-            @Override
-            public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
-                uuidPage.compute(uuid, (key, oldPage) -> {
-                    if (oldPage == null)
-                        oldPage = 0;
-                    if (oldPage > 0) {
-                        return oldPage - 1;
-                    } else {
-                        return oldPage;
-                    }
-                });
-                gameGUIHolder.getDisplay(uuid).ifPresent(GUIDisplay::update);
-                return false;
-            }
-        };
-        Button globalArenaButton = new Button() {
-            @Override
-            public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryGlobalArena()).stripItalics();
-            }
-
-            @Override
-            public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
-                uuidPage.put(uuid, 0);
-                setArenaSupplierRef(uuid, () -> gameServer.getArenaManager().getAllArenas());
-                return false;
-            }
-        };
-        Button myArenaButton = new Button() {
-            @Override
-            public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryMyArena()).stripItalics();
-            }
-
-            @Override
-            public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
-                uuidPage.put(uuid, 0);
-                setArenaSupplierRef(uuid, () -> gameServer.getArenaManager().findArenasByOwner(uuid1 -> uuid1.equals(uuid)));
-                return false;
-            }
-        };
-        Button gameButton = new Button() {
-            @Override
-            public ItemStack getItemStack(UUID uuid) {
-                return ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryGame()).stripItalics();
-            }
-
-            @Override
-            public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
-                openGameInventory(uuid.getPlayer());
-                return false;
-            }
-        };
-        Button dummyButton = uuid -> ItemStack.of(Material.BLACK_STAINED_GLASS_PANE).withDisplayName(Component.empty());
-        ButtonMap buttonMap = uuid -> {
-            var buttons = new HashMap<Button, List<Integer>>();
-            var arenasList = uuidArenas.getOrDefault(uuid, Collections.emptyList());
-            var page = uuidPage.getOrDefault(uuid, 0);
-            for (int i = 0; i < 18; i++) {
-                var index = i + page * 18;
-                if (index >= arenasList.size()) {
-                    continue;
-                }
-                var arena = arenasList.get(index);
-                buttons.put(new Button() {
-                    @Override
-                    public ItemStack getItemStack(UUID uuid) {
-                        return arena.getFeature(DescriptionFeature.class).getDisplayItem();
-                    }
-
-                    @Override
-                    public boolean handleAction(UUID uuid, InventoryPreClickEvent event) {
-                        var player = uuid.getPlayer();
-                        if (tryJoinArena(player, arena)) {
-                            player.closeInventory();
-                        }
-                        return false;
-                    }
-                }, Collections.singletonList(i));
-            }
-            buttons.put(previousPageButton, Collections.singletonList(18));
-            buttons.put(nextPageButton, Collections.singletonList(19));
-            buttons.put(dummyButton, Arrays.asList(20, 21, 22, 23));
-            buttons.put(myArenaButton, Collections.singletonList(24));
-            buttons.put(globalArenaButton, Collections.singletonList(25));
-            buttons.put(gameButton, Collections.singletonList(26));
-            return buttons;
-        };
-
+        Button nextPageButton = new SimpleButton(ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryNextPage()).stripItalics().asMinestomItem(), event -> arenasMask.nextPage(event.getViewerID()));
+        Button previousPageButton = new SimpleButton(ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryPreviousPage()).stripItalics().asMinestomItem(), event -> arenasMask.previousPage(event.getViewerID()));
+        Button globalArenaButton = new SimpleButton(ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryGlobalArena()).stripItalics().asMinestomItem(), event -> {
+            arenasMask.setPage(event.getViewerID(), 0);
+            setArenaSupplierRef(event.getViewerID(), () -> gameServer.getArenaManager().getAllArenas());
+        });
+        Button myArenaButton = new SimpleButton(ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryMyArena()).stripItalics().asMinestomItem(), event -> {
+            arenasMask.setPage(event.getViewerID(), 0);
+            setArenaSupplierRef(event.getViewerID(), () -> gameServer.getArenaManager().findArenasByOwner(uuid1 -> uuid1.equals(event.getViewerID())));
+        });
+        Button gameButton = new SimpleButton(ItemBuilder.buildItem(gameServer.getLobbyConfig().getArenaInventoryGame()).stripItalics().asMinestomItem(), event -> openGameInventory(event.getViewerID().getPlayer()));
+        Button dummyButton = uuid -> ItemStack.of(Material.BLACK_STAINED_GLASS_PANE).withDisplayName(Component.empty()).asMinestomItem();
+        ButtonMapMask actionMask = new ButtonMapMask("action")
+                .addButton(previousPageButton, 18)
+                .addButton(nextPageButton, 19)
+                .addButton(dummyButton, 20, 21, 22, 23)
+                .addButton(myArenaButton, 24)
+                .addButton(globalArenaButton, 25)
+                .addButton(gameButton, 26);
+        buttonMap.addMask(arenasMask);
+        buttonMap.addMask(actionMask);
 
         var updateTasks = new ConcurrentHashMap<UUID, Task>();
-        arenaGUIHolder = new GUIHolder() {
+        arenaGUIHolder = new MinestomGUIHolder() {
             @Override
-            public GUIDisplay createDisplay(UUID uuid) {
-                GUIDisplay guiDisplay = super.createDisplay(uuid);
+            public @NotNull MinestomGUIDisplay newDisplay(UUID uuid) {
+                MinestomGUIDisplay guiDisplay = super.newDisplay(uuid);
                 updateTasks.put(uuid, MinecraftServer.getSchedulerManager().scheduleTask(() -> {
                     uuidArenas.put(uuid, arenaSupplierRefMap.get(uuid).get());
                     guiDisplay.update();
@@ -469,9 +343,9 @@ public class Lobby extends InstanceContainer {
             }
 
             @Override
-            public void removeDisplay(UUID uuid) {
-                super.removeDisplay(uuid);
-                var task = updateTasks.get(uuid);
+            protected void onRemoveDisplay(@NotNull MinestomGUIDisplay display) {
+                super.onRemoveDisplay(display);
+                var task = updateTasks.get(display.getUniqueId());
                 if (task != null) {
                     task.cancel();
                 }
@@ -492,7 +366,7 @@ public class Lobby extends InstanceContainer {
      */
     public void openArenaInventory(Player openPlayer, Supplier<List<Arena>> arenaSupplier) {
         arenaSupplierRefMap.put(openPlayer.getUuid(), arenaSupplier);
-        arenaGUIHolder.createDisplay(openPlayer.getUuid()).init();
+        arenaGUIHolder.createDisplay(openPlayer.getUuid()).open();
     }
 
     /**
@@ -545,9 +419,5 @@ public class Lobby extends InstanceContainer {
                 return false;
             }
         }
-    }
-
-    private int getMaxPage(int size) {
-        return size / 18 + (size % 18 == 0 ? 0 : 1);
     }
 }

@@ -27,6 +27,13 @@ public class GameArenaManager extends ArenaManager {
         this.gameServer = gameServer;
     }
 
+    public static boolean isValid(Arena arena) {
+        return arena.getFeature(DescriptionFeature.class) != null
+                && arena.getFeature(GameFeature.class) != null
+                && arena.getFeature(JoinFeature.class) != null
+                && arena.getFeature(OwnerFeature.class) != null;
+    }
+
     @Override
     protected List<Unit<GameState>> loadGameStates() {
         return Unit.wrap(
@@ -47,11 +54,7 @@ public class GameArenaManager extends ArenaManager {
         if (!super.addArena(arena)) {
             return false;
         }
-        var descriptionFeature = arena.getFeature(DescriptionFeature.class);
-        var gameFeature = arena.getFeature(GameFeature.class);
-        var joinFeature = arena.getFeature(JoinFeature.class);
-        var ownerFeature = arena.getFeature(OwnerFeature.class);
-        if (descriptionFeature == null || gameFeature == null || joinFeature == null || ownerFeature == null) {
+        if (!isValid(arena)) {
             arena.removeFromManager();
             return false;
         }

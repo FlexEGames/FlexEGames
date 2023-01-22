@@ -4,7 +4,7 @@ plugins {
 }
 
 ext {
-    core = "4.1.45"
+    core = "4.2.2"
     minigameCore = "2.0.1"
 }
 
@@ -67,6 +67,8 @@ dependencies {
     api "me.hsgamer:hscore-collections:$core"
     api "me.hsgamer:hscore-minestom-board:$core"
     api "me.hsgamer:hscore-minestom-gui:$core"
+    api "me.hsgamer:hscore-minecraft-gui-advanced:$core"
+    api "me.hsgamer:hscore-minecraft-gui-button:$core"
 
     api "me.hsgamer:minigamecore-base:$minigameCore"
     api "me.hsgamer:minigamecore-implementation:$minigameCore"

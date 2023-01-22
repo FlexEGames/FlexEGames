@@ -1,6 +1,7 @@
 package me.hsgamer.flexegames.util;
 
 import lombok.experimental.UtilityClass;
+import me.hsgamer.hscore.minestom.gui.object.MinestomItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.item.ItemStack;
@@ -23,5 +24,9 @@ public final class ItemUtil {
         return itemStack
                 .withDisplayName(ItemUtil::stripItalics)
                 .withLore(lore -> lore.stream().map(ItemUtil::stripItalics).toList());
+    }
+
+    public static MinestomItem asMinestomItem(ItemStack itemStack) {
+        return new MinestomItem(itemStack);
     }
 }
