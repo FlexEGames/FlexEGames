@@ -15,7 +15,7 @@ public final class FullBrightDimension {
      */
     public static final DimensionType INSTANCE = DimensionType.builder(NamespaceID.from("minestom:full_bright"))
             .skylightEnabled(true)
-            .ambientLight(2.0f)
+            .ambientLight(1.0f)
             .fixedTime(6000L)
             .build();
 
