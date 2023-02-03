@@ -8,7 +8,7 @@ subprojects {
     apply plugin: 'java-library'
 
     ext {
-        lombok = "1.18.24"
+        lombok = "1.18.26"
     }
 
     repositories {
