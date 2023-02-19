@@ -9,12 +9,13 @@ import me.hsgamer.flexegames.feature.arena.GameFeature;
 import me.hsgamer.flexegames.feature.arena.JoinFeature;
 import me.hsgamer.flexegames.feature.arena.OwnerFeature;
 import me.hsgamer.flexegames.state.KillingState;
-import me.hsgamer.minigamecore.base.*;
+import me.hsgamer.minigamecore.base.Arena;
+import me.hsgamer.minigamecore.base.ArenaManager;
+import me.hsgamer.minigamecore.base.Feature;
+import me.hsgamer.minigamecore.base.GameState;
 import net.minestom.server.entity.Player;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 
 /**
@@ -35,15 +36,15 @@ public class GameArenaManager extends ArenaManager {
     }
 
     @Override
-    protected List<Unit<GameState>> loadGameStates() {
-        return Unit.wrap(
+    protected List<GameState> loadGameStates() {
+        return Collections.singletonList(
                 new KillingState(gameServer)
         );
     }
 
     @Override
-    protected List<Unit<Feature>> loadFeatures() {
-        return Unit.wrap(
+    protected List<Feature> loadFeatures() {
+        return Arrays.asList(
                 new GameServerFeature(gameServer),
                 new LobbyFeature(gameServer)
         );

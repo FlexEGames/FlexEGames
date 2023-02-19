@@ -11,7 +11,6 @@ import me.hsgamer.flexegames.game.pve.state.WaitingState;
 import me.hsgamer.minigamecore.base.ArenaManager;
 import me.hsgamer.minigamecore.base.Feature;
 import me.hsgamer.minigamecore.base.GameState;
-import me.hsgamer.minigamecore.base.Unit;
 import me.hsgamer.minigamecore.implementation.feature.TimerFeature;
 
 import java.util.List;
@@ -35,8 +34,8 @@ public class PveArena extends GameArena<PveGame> {
     }
 
     @Override
-    protected List<Unit<Feature>> loadExtraFeatures() {
-        return Unit.wrap(
+    protected List<Feature> loadExtraFeatures() {
+        return List.of(
                 new TimerFeature(),
                 new InstanceFeature(this),
                 new StageFeature(),
@@ -47,8 +46,8 @@ public class PveArena extends GameArena<PveGame> {
     }
 
     @Override
-    protected List<Unit<GameState>> loadGameStates() {
-        return Unit.wrap(
+    protected List<GameState> loadGameStates() {
+        return List.of(
                 new WaitingState(pveExtension),
                 new RestingState(pveExtension),
                 new FightingState(pveExtension),

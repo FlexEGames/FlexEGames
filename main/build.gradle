@@ -5,7 +5,7 @@ plugins {
 
 ext {
     core = "4.2.7"
-    minigameCore = "2.0.1"
+    minigameCore = "2.1.0"
 }
 
 java {
@@ -39,7 +39,7 @@ publishing {
             pom {
                 name = rootProject.name
                 withXml {
-                    def repositories  = asNode().appendNode("repositories")
+                    def repositories = asNode().appendNode("repositories")
                     project.repositories.each {
                         if (it instanceof MavenArtifactRepository) {
                             if (it.name == "MavenLocal" || it.name == "MavenRepo") {

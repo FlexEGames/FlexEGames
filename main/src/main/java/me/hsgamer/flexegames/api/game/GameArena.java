@@ -9,7 +9,6 @@ import me.hsgamer.flexegames.util.TaskUtil;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaManager;
 import me.hsgamer.minigamecore.base.Feature;
-import me.hsgamer.minigamecore.base.Unit;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.timer.ExecutionType;
 import net.minestom.server.timer.Task;
@@ -45,7 +44,7 @@ public abstract class GameArena<T extends Game> extends Arena {
      *
      * @return the list of features
      */
-    protected List<Unit<Feature>> loadExtraFeatures() {
+    protected List<Feature> loadExtraFeatures() {
         return Collections.emptyList();
     }
 
@@ -64,13 +63,13 @@ public abstract class GameArena<T extends Game> extends Arena {
     protected abstract JoinFeature createJoinFeature();
 
     @Override
-    protected final List<Unit<Feature>> loadFeatures() {
-        List<Unit<Feature>> features = new ArrayList<>(loadExtraFeatures());
+    protected final List<Feature> loadFeatures() {
+        List<Feature> features = new ArrayList<>(loadExtraFeatures());
         features.addAll(List.of(
-                new Unit<>(new GameFeature(game)),
-                new Unit<>(new OwnerFeature()),
-                new Unit<>(DescriptionFeature.class, createDescriptionFeature()),
-                new Unit<>(JoinFeature.class, createJoinFeature())
+                new GameFeature(game),
+                new OwnerFeature(),
+                createDescriptionFeature(),
+                createJoinFeature()
         ));
         return features;
     }
