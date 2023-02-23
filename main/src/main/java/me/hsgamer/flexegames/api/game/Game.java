@@ -1,12 +1,14 @@
 package me.hsgamer.flexegames.api.game;
 
+import me.hsgamer.flexegames.api.property.GamePropertyMap;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaManager;
 import net.kyori.adventure.text.Component;
+import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
 
 import java.util.List;
-import java.util.function.Function;
+import java.util.concurrent.CompletableFuture;
 
 public interface Game {
     /**
@@ -37,11 +39,11 @@ public interface Game {
      */
     ItemStack getDisplayItem();
 
-    /**
-     * Get the {@link Arena} of the {@link Game}
-     *
-     * @param name the name of the {@link Arena}
-     * @return the function to create the {@link Arena}
-     */
-    Function<ArenaManager, Arena> createArena(String name);
+    CompletableFuture<GamePropertyMap> edit(Player player, GamePropertyMap gamePropertyMap);
+
+    default CompletableFuture<GamePropertyMap> create(Player player) {
+        return edit(player, GamePropertyMap.create());
+    }
+
+    Arena create(String name, ArenaManager arenaManager, GamePropertyMap gamePropertyMap);
 }
