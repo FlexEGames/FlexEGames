@@ -39,10 +39,10 @@ public interface Game {
      */
     ItemStack getDisplayItem();
 
-    CompletableFuture<GamePropertyMap> edit(Player player, GamePropertyMap gamePropertyMap);
+    CompletableFuture<GamePropertyMap> editProperty(Player player, GamePropertyMap gamePropertyMap);
 
-    default CompletableFuture<GamePropertyMap> create(Player player) {
-        return edit(player, GamePropertyMap.create());
+    default CompletableFuture<GamePropertyMap> createProperty(Player player) {
+        return editProperty(player, GamePropertyMap.create());
     }
 
     Arena create(String name, ArenaManager arenaManager, GamePropertyMap gamePropertyMap);
