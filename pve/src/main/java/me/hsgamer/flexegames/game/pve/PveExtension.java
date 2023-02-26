@@ -20,8 +20,8 @@ public class PveExtension extends SingleGameExtension {
     }
 
     @Override
-    public String[] getId() {
-        return new String[]{"pve"};
+    public String getIdentifier() {
+        return "pve";
     }
 
     public PveMessageConfig getMessageConfig() {

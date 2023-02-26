@@ -20,8 +20,8 @@ public class DuelExtension extends SingleGameExtension {
     }
 
     @Override
-    public String[] getId() {
-        return new String[]{"duel"};
+    public String getIdentifier() {
+        return "duel";
     }
 
     public DuelMessageConfig getMessageConfig() {

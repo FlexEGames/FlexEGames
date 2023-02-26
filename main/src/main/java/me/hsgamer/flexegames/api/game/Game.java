@@ -45,5 +45,5 @@ public interface Game {
         return editProperty(player, GamePropertyMap.create());
     }
 
-    Arena create(String name, ArenaManager arenaManager, GamePropertyMap gamePropertyMap);
+    Arena create(String name, GamePropertyMap gamePropertyMap, ArenaManager arenaManager);
 }

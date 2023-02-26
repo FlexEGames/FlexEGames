@@ -14,7 +14,7 @@ public abstract class SingleGameExtension extends Extension {
     @Override
     public final void initialize() {
         onEnable();
-        GameBuilder.INSTANCE.register((s, config) -> getInitializer().apply(config), getId());
+        GameBuilder.INSTANCE.register((s, config) -> getInitializer().apply(config), getIdentifier());
     }
 
     @Override
@@ -37,16 +37,16 @@ public abstract class SingleGameExtension extends Extension {
     }
 
     /**
-     * Get the initializer that registers the game
+     * Get the game
      *
-     * @return the initializer
+     * @return the game
      */
-    public abstract Function<Config, Game> getInitializer();
+    public abstract Game getGame();
 
     /**
      * Get the id (type) of the game
      *
      * @return the id
      */
-    public abstract String[] getId();
+    public abstract String getIdentifier();
 }

@@ -1,5 +1,6 @@
 package me.hsgamer.flexegames.api.game;
 
+import me.hsgamer.flexegames.api.property.GamePropertyMap;
 import me.hsgamer.flexegames.feature.GameServerFeature;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.feature.arena.GameFeature;
@@ -21,11 +22,13 @@ import java.util.List;
  * The arena for the game
  */
 public abstract class GameArena<T extends Game> extends Arena {
+    protected final GamePropertyMap propertyMap;
     protected final T game;
     private Task task;
 
-    protected GameArena(String name, T game, ArenaManager arenaManager) {
+    protected GameArena(String name, GamePropertyMap propertyMap, T game, ArenaManager arenaManager) {
         super(name, arenaManager);
+        this.propertyMap = propertyMap;
         this.game = game;
     }
 
