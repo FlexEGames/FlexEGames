@@ -9,6 +9,7 @@ import java.util.Optional;
 /**
  * The builder for {@link Game}
  */
+// TODO: Remove this class
 public class GameBuilder extends Builder<Config, Game> {
     /**
      * The singleton instance

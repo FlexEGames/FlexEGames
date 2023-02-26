@@ -2,10 +2,7 @@ package me.hsgamer.flexegames.api.extension;
 
 import me.hsgamer.flexegames.api.game.Game;
 import me.hsgamer.flexegames.builder.GameBuilder;
-import me.hsgamer.hscore.config.Config;
 import net.minestom.server.extensions.Extension;
-
-import java.util.function.Function;
 
 /**
  * An {@link Extension} to register a single game
@@ -14,7 +11,7 @@ public abstract class SingleGameExtension extends Extension {
     @Override
     public final void initialize() {
         onEnable();
-        GameBuilder.INSTANCE.register((s, config) -> getInitializer().apply(config), getIdentifier());
+        GameBuilder.INSTANCE.register((s, config) -> getInitializer().apply(config), getIdentifier()); // TODO
     }
 
     @Override

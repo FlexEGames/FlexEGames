@@ -17,6 +17,7 @@ import net.minestom.server.timer.Task;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The arena for the game
@@ -24,12 +25,14 @@ import java.util.List;
 public abstract class GameArena<T extends Game> extends Arena {
     protected final GamePropertyMap propertyMap;
     protected final T game;
+    private final UUID owner;
     private Task task;
 
-    protected GameArena(String name, GamePropertyMap propertyMap, T game, ArenaManager arenaManager) {
+    protected GameArena(String name, GamePropertyMap propertyMap, T game, ArenaManager arenaManager, UUID owner) {
         super(name, arenaManager);
         this.propertyMap = propertyMap;
         this.game = game;
+        this.owner = owner;
     }
 
     @Override
@@ -69,8 +72,8 @@ public abstract class GameArena<T extends Game> extends Arena {
     protected final List<Feature> loadFeatures() {
         List<Feature> features = new ArrayList<>(loadExtraFeatures());
         features.addAll(List.of(
-                new GameFeature(game),
-                new OwnerFeature(),
+                new GameFeature(game, propertyMap),
+                new OwnerFeature(owner),
                 createDescriptionFeature(),
                 createJoinFeature()
         ));

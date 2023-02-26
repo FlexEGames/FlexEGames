@@ -16,6 +16,7 @@ import java.util.Optional;
 /**
  * The {@link Game} manager
  */
+// TODO: remove configMap, add Property Map per Player & apply the new Game Property API
 public class GameManager {
     private final File gameFolder;
     private final Map<String, Game> gameMap = new CaseInsensitiveStringHashMap<>();

@@ -8,6 +8,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public interface Game {
@@ -45,5 +46,5 @@ public interface Game {
         return editProperty(player, GamePropertyMap.create());
     }
 
-    Arena create(String name, GamePropertyMap gamePropertyMap, ArenaManager arenaManager);
+    Arena create(String name, GamePropertyMap gamePropertyMap, ArenaManager arenaManager, UUID owner);
 }

@@ -15,6 +15,7 @@ import java.util.function.Predicate;
 /**
  * The command to create an arena
  */
+// TODO: Apply the new Game Property API
 public class CreateArenaCommand extends Command {
     public CreateArenaCommand(GameServer gameServer) {
         super("createarena", "create");

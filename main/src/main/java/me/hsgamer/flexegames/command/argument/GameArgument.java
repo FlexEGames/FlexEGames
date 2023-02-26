@@ -15,6 +15,7 @@ import java.util.Optional;
 /**
  * An argument for {@link Game}
  */
+// TODO: Apply the new Game Property API
 public class GameArgument extends Argument<Game> {
     public static final int GAME_NOT_FOUND = 1;
     private final GameServer gameServer;

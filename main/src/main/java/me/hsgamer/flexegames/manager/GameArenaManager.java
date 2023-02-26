@@ -72,9 +72,8 @@ public class GameArenaManager extends ArenaManager {
      * @return the {@link Arena}
      */
     public Arena createArena(String name, Game game, GamePropertyMap propertyMap, UUID owner) {
-        var arena = game.create(name, propertyMap, this);
+        var arena = game.create(name, propertyMap, this, owner);
         if (addArena(arena)) {
-            arena.getFeature(OwnerFeature.class).setOwner(owner);
             arena.postInit();
             return arena;
         } else {
@@ -114,7 +113,7 @@ public class GameArenaManager extends ArenaManager {
      * @return the list of the arenas
      */
     public List<Arena> findArenasByOwner(Predicate<UUID> ownerPredicate) {
-        return getAllArenas().stream().filter(arena -> ownerPredicate.test(arena.getFeature(OwnerFeature.class).getOwner())).toList();
+        return getAllArenas().stream().filter(arena -> ownerPredicate.test(arena.getFeature(OwnerFeature.class).owner())).toList();
     }
 
     /**
