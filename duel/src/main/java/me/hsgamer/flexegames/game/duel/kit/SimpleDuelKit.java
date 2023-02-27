@@ -20,15 +20,15 @@ public class SimpleDuelKit implements DuelKit {
 
         Object itemsObject = map.get("items");
         if (itemsObject instanceof Map<?, ?> rawMap) {
-            Map<Integer, ItemStack> items = new HashMap<>();
+            Map<Integer, ItemStack> itemStackMap = new HashMap<>();
             rawMap.forEach((key, value) -> {
                 try {
-                    items.put(Integer.parseInt(String.valueOf(key)), ItemUtil.getItemOrStone(value));
+                    itemStackMap.put(Integer.parseInt(String.valueOf(key)), ItemUtil.getItemOrStone(value));
                 } catch (Exception e) {
                     // IGNORED
                 }
             });
-            this.items = items;
+            this.items = itemStackMap;
         } else {
             this.items = Collections.emptyMap();
         }

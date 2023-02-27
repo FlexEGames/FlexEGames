@@ -3,6 +3,7 @@ package me.hsgamer.flexegames.game.duel.feature;
 import io.github.bloepiloepi.pvp.events.EntityPreDeathEvent;
 import io.github.bloepiloepi.pvp.events.FinalDamageEvent;
 import io.github.bloepiloepi.pvp.events.PlayerExhaustEvent;
+import lombok.Getter;
 import me.hsgamer.flexegames.feature.LobbyFeature;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.feature.arena.GameFeature;
@@ -42,10 +43,10 @@ import java.util.List;
 
 public class InstanceFeature implements Feature {
     private final Arena arena;
-    private final DuelWorld duelWorld;
-    private final DuelKit duelKit;
+    private final @Getter DuelWorld duelWorld;
+    private final @Getter DuelKit duelKit;
     private final DuelExtension duelExtension;
-    private final Instance instance;
+    private final @Getter Instance instance;
     private final EventNode<EntityEvent> entityEventNode;
     private final Tag<Boolean> deadTag = Tag.Boolean("duel:dead").defaultValue(false);
     private Board board;
@@ -157,18 +158,6 @@ public class InstanceFeature implements Feature {
 
     public void backToLobby() {
         arena.getFeature(LobbyFeature.class).send(instance.getPlayers());
-    }
-
-    public Instance getInstance() {
-        return instance;
-    }
-
-    public DuelWorld getDuelWorld() {
-        return duelWorld;
-    }
-
-    public DuelKit getDuelKit() {
-        return duelKit;
     }
 
     public void sendMessage(Component component) {
