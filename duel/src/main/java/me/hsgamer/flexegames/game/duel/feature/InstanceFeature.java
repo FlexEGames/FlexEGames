@@ -167,6 +167,10 @@ public class InstanceFeature implements Feature {
         return duelWorld;
     }
 
+    public DuelKit getDuelKit() {
+        return duelKit;
+    }
+
     public void sendMessage(Component component) {
         instance.sendMessage(component);
     }

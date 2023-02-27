@@ -33,7 +33,8 @@ public class GameDescriptionFeature implements DescriptionFeature {
                 "time", () -> Component.text(TimeUtil.format(arena.getFeature(TimerFeature.class).getDuration())),
                 "winner", () -> Optional.ofNullable(arena.getFeature(WinnerFeature.class).getWinner()).map(Player::getName).orElse(Component.empty()),
                 "alive", () -> Component.text(Integer.toString(arena.getFeature(InstanceFeature.class).getAlivePlayers().size())),
-                "world", () -> arena.getFeature(InstanceFeature.class).getDuelWorld().getDisplayName()
+                "world", () -> arena.getFeature(InstanceFeature.class).getDuelWorld().getDisplayName(),
+                "kit", () -> arena.getFeature(InstanceFeature.class).getDuelKit().getDisplayName()
         ));
         return map;
     }
