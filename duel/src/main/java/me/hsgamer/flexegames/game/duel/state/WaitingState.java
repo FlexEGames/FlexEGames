@@ -3,7 +3,6 @@ package me.hsgamer.flexegames.game.duel.state;
 import me.hsgamer.flexegames.api.game.ComponentDisplayName;
 import me.hsgamer.flexegames.feature.arena.JoinFeature;
 import me.hsgamer.flexegames.game.duel.DuelExtension;
-import me.hsgamer.flexegames.game.duel.feature.ConfigFeature;
 import me.hsgamer.flexegames.game.duel.feature.InstanceFeature;
 import me.hsgamer.flexegames.state.KillingState;
 import me.hsgamer.minigamecore.base.Arena;

@@ -1,6 +1,7 @@
 package me.hsgamer.flexegames.game.duel;
 
 import me.hsgamer.flexegames.api.game.GameArena;
+import me.hsgamer.flexegames.api.property.GamePropertyMap;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.feature.arena.JoinFeature;
 import me.hsgamer.flexegames.game.duel.feature.*;
@@ -13,18 +14,19 @@ import me.hsgamer.minigamecore.base.GameState;
 import me.hsgamer.minigamecore.implementation.feature.TimerFeature;
 
 import java.util.List;
+import java.util.UUID;
 
 public class DuelArena extends GameArena<DuelGame> {
     private final DuelExtension duelExtension;
 
-    public DuelArena(DuelExtension duelExtension, DuelGame duelGame, String name, ArenaManager arenaManager) {
-        super(name, duelGame, arenaManager);
+    public DuelArena(DuelExtension duelExtension, String name, GamePropertyMap propertyMap, DuelGame game, ArenaManager arenaManager, UUID owner) {
+        super(name, propertyMap, game, arenaManager, owner);
         this.duelExtension = duelExtension;
     }
 
     @Override
     protected DescriptionFeature createDescriptionFeature() {
-        return new GameDescriptionFeature(this);
+        return new GameDescriptionFeature(this, duelExtension);
     }
 
     @Override
@@ -37,8 +39,7 @@ public class DuelArena extends GameArena<DuelGame> {
         return List.of(
                 new InstanceFeature(this),
                 new WinnerFeature(this),
-                new TimerFeature(),
-                new ConfigFeature(game.getGameConfig())
+                new TimerFeature()
         );
     }
 
