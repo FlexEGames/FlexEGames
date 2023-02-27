@@ -1,23 +1,38 @@
 package me.hsgamer.flexegames.game.duel;
 
+import lombok.Getter;
 import me.hsgamer.flexegames.api.extension.SingleGameExtension;
 import me.hsgamer.flexegames.api.game.Game;
+import me.hsgamer.flexegames.game.duel.manager.DuelKitManager;
+import me.hsgamer.flexegames.game.duel.manager.DuelWorldManager;
 import me.hsgamer.flexegames.util.ConfigGeneratorUtil;
 
+@Getter
 public class DuelExtension extends SingleGameExtension {
     private final DuelMessageConfig messageConfig = ConfigGeneratorUtil.generate(DuelMessageConfig.class, getDataDirectory().resolve("messages.yml").toFile());
+    private final DuelMainConfig mainConfig = ConfigGeneratorUtil.generate(DuelMainConfig.class, getDataDirectory().resolve("config.yml").toFile());
+    private final DuelWorldManager duelWorldManager = new DuelWorldManager(this);
+    private final DuelKitManager duelKitManager = new DuelKitManager(this);
+
+    @Override
+    public void onEnable() {
+        duelWorldManager.init();
+        duelKitManager.init();
+    }
+
+    @Override
+    public void onDisable() {
+        duelWorldManager.clear();
+        duelKitManager.clear();
+    }
 
     @Override
     public Game getGame() {
-        return null;
+        return new DuelGame(this);
     }
 
     @Override
     public String getIdentifier() {
         return "duel";
-    }
-
-    public DuelMessageConfig getMessageConfig() {
-        return messageConfig;
     }
 }

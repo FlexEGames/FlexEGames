@@ -41,6 +41,7 @@ public interface DuelMessageConfig {
     default Component getStateEnding() {
         return Component.text("Ending");
     }
+
     @ConfigPath("display-name")
     default Component getDisplayName() {
         return Component.text("Duel").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD);
@@ -115,5 +116,13 @@ public interface DuelMessageConfig {
     @ConfigPath("no-winner-message")
     default Component getNoWinnerMessage() {
         return ComponentConverter.fromString("&cNo winner");
+    }
+
+    @ConfigPath("chat-format")
+    default Component getChatFormat() {
+        return Component.empty()
+                .append(Component.text("%player%").color(NamedTextColor.WHITE))
+                .append(Component.text(": ").color(NamedTextColor.YELLOW))
+                .append(Component.text("%message%").color(NamedTextColor.GOLD));
     }
 }

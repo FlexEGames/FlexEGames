@@ -22,12 +22,12 @@ public class InGameState implements GameState, ComponentDisplayName {
 
     @Override
     public void start(Arena arena) {
-        var gameConfig = arena.getFeature(ConfigFeature.class).config();
         var joinFeature = arena.getFeature(JoinFeature.class);
+        var posList = arena.getFeature(InstanceFeature.class).getDuelWorld().getPos();
         var players = new ArrayList<>(joinFeature.getPlayers());
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
-            Pos pos = gameConfig.getPos().get(i % gameConfig.getPos().size());
+            Pos pos = posList.get(i % posList.size());
             player.teleport(pos);
         }
         arena.getFeature(InstanceFeature.class).giveKit();

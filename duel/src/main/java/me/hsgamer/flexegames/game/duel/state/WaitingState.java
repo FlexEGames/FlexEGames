@@ -23,7 +23,7 @@ public class WaitingState implements GameState, ComponentDisplayName {
     public void start(Arena arena) {
         arena.getFeature(TimerFeature.class)
                 .setDuration(
-                        arena.getFeature(ConfigFeature.class).config().getWaitingTime(),
+                        duelExtension.getMainConfig().getWaitingTime(),
                         TimeUnit.SECONDS
                 );
     }

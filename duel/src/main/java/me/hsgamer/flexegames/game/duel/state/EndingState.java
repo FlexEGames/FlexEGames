@@ -25,7 +25,7 @@ public class EndingState implements GameState, ComponentDisplayName {
     public void start(Arena arena) {
         var winnerFeature = arena.getFeature(WinnerFeature.class);
         var descriptionFeature = arena.getFeature(DescriptionFeature.class);
-        arena.getFeature(TimerFeature.class).setDuration(gameConfig.getEndingTime(), TimeUnit.SECONDS);
+        arena.getFeature(TimerFeature.class).setDuration(duelExtension.getMainConfig().getEndingTime(), TimeUnit.SECONDS);
         Component message;
         if (winnerFeature.getWinner() != null) {
             message = ReplacementManager.replace(duelExtension.getMessageConfig().getWinnerMessage(), descriptionFeature.getReplacements());
