@@ -15,9 +15,9 @@ import me.hsgamer.flexegames.manager.GameManager;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.player.GamePlayer;
 import me.hsgamer.flexegames.util.AssetUtil;
+import me.hsgamer.flexegames.util.ConfigGeneratorUtil;
 import me.hsgamer.flexegames.util.ProxyType;
 import me.hsgamer.flexegames.util.SysOutErrRedirect;
-import me.hsgamer.flexegames.util.YamlConfigGenerator;
 import me.hsgamer.hscore.minestom.board.Board;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
@@ -50,19 +50,19 @@ public class GameServer {
     /**
      * The main config
      */
-    private final MainConfig mainConfig = YamlConfigGenerator.generate(MainConfig.class, new File("config.yml"), true, true);
+    private final MainConfig mainConfig = ConfigGeneratorUtil.generate(MainConfig.class, new File("config.yml"), true, true);
     /**
      * The lobby config
      */
-    private final LobbyConfig lobbyConfig = YamlConfigGenerator.generate(LobbyConfig.class, new File("lobby.yml"), true, true);
+    private final LobbyConfig lobbyConfig = ConfigGeneratorUtil.generate(LobbyConfig.class, new File("lobby.yml"), true, true);
     /**
      * The message config
      */
-    private final MessageConfig messageConfig = YamlConfigGenerator.generate(MessageConfig.class, new File("messages.yml"), true, true);
+    private final MessageConfig messageConfig = ConfigGeneratorUtil.generate(MessageConfig.class, new File("messages.yml"), true, true);
     /**
      * The game manager
      */
-    private final GameManager gameManager = new GameManager();
+    private final GameManager gameManager = new GameManager(this);
     /**
      * The arena manager
      */
@@ -135,8 +135,6 @@ public class GameServer {
 
     @ApiStatus.Internal
     void start() {
-        gameManager.prepare();
-
         ProxyType proxyType = mainConfig.getProxyType();
         proxyType.execute(this);
 
@@ -156,7 +154,6 @@ public class GameServer {
 
         lobby.init();
 
-        gameManager.init();
         arenaManager.init();
         arenaManager.postInit();
 
@@ -167,7 +164,6 @@ public class GameServer {
     void stop() {
         lobby.clear();
         arenaManager.clear();
-        gameManager.clear();
         MinecraftServer.stopCleanly();
     }
 

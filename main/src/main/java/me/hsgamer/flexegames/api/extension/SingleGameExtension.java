@@ -1,7 +1,7 @@
 package me.hsgamer.flexegames.api.extension;
 
+import me.hsgamer.flexegames.FlexEGames;
 import me.hsgamer.flexegames.api.game.Game;
-import me.hsgamer.flexegames.builder.GameBuilder;
 import net.minestom.server.extensions.Extension;
 
 /**
@@ -11,7 +11,7 @@ public abstract class SingleGameExtension extends Extension {
     @Override
     public final void initialize() {
         onEnable();
-        GameBuilder.INSTANCE.register((s, config) -> getInitializer().apply(config), getIdentifier()); // TODO
+        FlexEGames.getGameServer().getGameManager().registerGame(getIdentifier(), getGame());
     }
 
     @Override

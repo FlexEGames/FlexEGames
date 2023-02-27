@@ -3,13 +3,13 @@ package me.hsgamer.flexegames.game.duel;
 import me.hsgamer.flexegames.api.extension.SingleGameExtension;
 import me.hsgamer.flexegames.api.game.Game;
 import me.hsgamer.flexegames.util.ConfigUtil;
-import me.hsgamer.flexegames.util.YamlConfigGenerator;
+import me.hsgamer.flexegames.util.ConfigGeneratorUtil;
 import me.hsgamer.hscore.config.Config;
 
 import java.util.function.Function;
 
 public class DuelExtension extends SingleGameExtension {
-    private final DuelMessageConfig messageConfig = YamlConfigGenerator.generate(DuelMessageConfig.class, getDataDirectory().resolve("messages.yml").toFile());
+    private final DuelMessageConfig messageConfig = ConfigGeneratorUtil.generate(DuelMessageConfig.class, getDataDirectory().resolve("messages.yml").toFile());
 
     @Override
     public Function<Config, Game> getInitializer() {

@@ -11,17 +11,30 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import java.io.File;
 
 /**
- * The YAML config generator
+ * The utility class for config generator
  */
 @UtilityClass
-public class YamlConfigGenerator {
+public class ConfigGeneratorUtil {
     /**
-     * Generate a YAML config
+     * Check if the file is a config file
+     *
+     * @param file the file
+     * @return true if it is a config file
+     */
+    public static boolean isConfigFile(File file) {
+        return file.getName().endsWith(".yml") || file.getName().endsWith(".yaml");
+    }
+
+    /**
+     * Generate a config
      *
      * @param file the file
      * @return the config
      */
     public static Config createConfig(File file) {
+        if (!isConfigFile(file)) {
+            throw new IllegalArgumentException("The file is not a config file");
+        }
         return new ConfigurateConfig(file, YamlConfigurationLoader.builder()
                 .nodeStyle(NodeStyle.BLOCK)
                 .headerMode(HeaderMode.PRESERVE)
@@ -30,7 +43,7 @@ public class YamlConfigGenerator {
     }
 
     /**
-     * Generate a YAML config object
+     * Generate a config object
      *
      * @param clazz       the class
      * @param file        the file
@@ -45,7 +58,7 @@ public class YamlConfigGenerator {
     }
 
     /**
-     * Generate a YAML config object
+     * Generate a config object
      *
      * @param clazz       the class
      * @param file        the file
@@ -59,7 +72,7 @@ public class YamlConfigGenerator {
     }
 
     /**
-     * Generate a YAML config object
+     * Generate a config object
      *
      * @param clazz       the class
      * @param file        the file
@@ -72,7 +85,7 @@ public class YamlConfigGenerator {
     }
 
     /**
-     * Generate a YAML config object
+     * Generate a config object
      *
      * @param clazz the class
      * @param file  the file

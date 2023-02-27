@@ -237,8 +237,15 @@ public class Lobby extends InstanceContainer {
                 return games.get().stream()
                         .<Button>map(game -> new SimpleButton(new MinestomItem(game.getDisplayItem()), event -> {
                             var player = event.getViewerID().getPlayer();
-                            gameServer.getArenaManager().createArena(game, player.getUuid());
-                            openArenaInventory(player, false);
+                            gameServer.getGameManager().createArena(player, game).whenComplete((arenaCreated, throwable) -> {
+                                if (throwable != null) {
+                                    MinecraftServer.LOGGER.error("There is an exception when creating arena", throwable);
+                                    return;
+                                }
+                                if (arenaCreated) {
+                                    openArenaInventory(player, false);
+                                }
+                            });
                         }))
                         .toList();
             }
