@@ -2,10 +2,10 @@ package me.hsgamer.flexegames.util.editor;
 
 import me.hsgamer.flexegames.api.property.GamePropertyMap;
 import me.hsgamer.hscore.minecraft.gui.advanced.AdvancedButtonMap;
-import me.hsgamer.hscore.minecraft.gui.event.CloseEvent;
 import me.hsgamer.hscore.minecraft.gui.mask.MaskUtils;
 import me.hsgamer.hscore.minecraft.gui.mask.impl.ButtonMapMask;
 import me.hsgamer.hscore.minecraft.gui.mask.impl.StaticButtonPaginatedMask;
+import me.hsgamer.hscore.minestom.gui.MinestomGUIDisplay;
 import me.hsgamer.hscore.minestom.gui.MinestomGUIHolder;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.Player;
@@ -62,8 +62,8 @@ public abstract class PropertyEditor extends MinestomGUIHolder {
     }
 
     @Override
-    protected void onClose(@NotNull CloseEvent event) {
-        Optional.ofNullable(propertyMapFutureMap.remove(event.getViewerID()))
+    protected void onRemoveDisplay(@NotNull MinestomGUIDisplay display) {
+        Optional.ofNullable(propertyMapFutureMap.remove(display.getUniqueId()))
                 .filter(future -> !future.future().isDone())
                 .ifPresent(GamePropertyMapFuture::cancel);
     }
