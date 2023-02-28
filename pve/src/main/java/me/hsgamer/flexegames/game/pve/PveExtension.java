@@ -6,6 +6,9 @@ import me.hsgamer.flexegames.api.game.Game;
 import me.hsgamer.flexegames.util.ConfigGeneratorUtil;
 import me.hsgamer.flexegames.util.kit.GameKitManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 public class PveExtension extends SingleGameExtension {
     private final PveMessageConfig messageConfig = ConfigGeneratorUtil.generate(PveMessageConfig.class, getDataDirectory().resolve("messages.yml").toFile());
@@ -16,6 +19,12 @@ public class PveExtension extends SingleGameExtension {
     @Override
     public void onEnable() {
         gameKitManager.init();
+
+        List<String> kitNames = new ArrayList<>(gameKitManager.getGameKitMap().keySet());
+        if (!kitNames.isEmpty()) {
+            PveProperties.KIT.defaultValue(kitNames.get(0));
+        }
+
         propertyEditor.init();
     }
 

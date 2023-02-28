@@ -1,11 +1,37 @@
 package me.hsgamer.flexegames.api.property;
 
-public record GamePropertyKeyValue<T>(String key, T defaultValue, GamePropertyAdapter<T> adapter) {
+public final class GamePropertyKeyValue<T> {
+    private final String key;
+    private T defaultValue;
+    private final GamePropertyAdapter<T> adapter;
+
+    public GamePropertyKeyValue(String key, T defaultValue, GamePropertyAdapter<T> adapter) {
+        this.key = key;
+        this.defaultValue = defaultValue;
+        this.adapter = adapter;
+    }
+
     public T get(GamePropertyMap map) {
         return adapter.get(map, key, defaultValue);
     }
 
     public void set(GamePropertyMap map, T value) {
         adapter.set(map, key, value);
+    }
+
+    public String key() {
+        return key;
+    }
+
+    public T defaultValue() {
+        return defaultValue;
+    }
+
+    public void defaultValue(T defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    public GamePropertyAdapter<T> adapter() {
+        return adapter;
     }
 }

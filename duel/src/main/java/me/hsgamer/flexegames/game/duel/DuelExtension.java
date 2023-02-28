@@ -7,6 +7,9 @@ import me.hsgamer.flexegames.game.duel.manager.DuelWorldManager;
 import me.hsgamer.flexegames.util.ConfigGeneratorUtil;
 import me.hsgamer.flexegames.util.kit.GameKitManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 public class DuelExtension extends SingleGameExtension {
     private final DuelMessageConfig messageConfig = ConfigGeneratorUtil.generate(DuelMessageConfig.class, getDataDirectory().resolve("messages.yml").toFile());
@@ -19,6 +22,17 @@ public class DuelExtension extends SingleGameExtension {
     public void onEnable() {
         duelWorldManager.init();
         gameKitManager.init();
+
+        List<String> worldNames = new ArrayList<>(duelWorldManager.getDuelWorldMap().keySet());
+        if (!worldNames.isEmpty()) {
+            DuelProperties.WORLD.defaultValue(worldNames.get(0));
+        }
+
+        List<String> kitNames = new ArrayList<>(gameKitManager.getGameKitMap().keySet());
+        if (!kitNames.isEmpty()) {
+            DuelProperties.KIT.defaultValue(kitNames.get(0));
+        }
+
         propertyEditor.init();
     }
 
