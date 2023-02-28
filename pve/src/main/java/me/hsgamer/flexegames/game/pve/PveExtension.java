@@ -10,7 +10,7 @@ import me.hsgamer.flexegames.util.kit.GameKitManager;
 public class PveExtension extends SingleGameExtension {
     private final PveMessageConfig messageConfig = ConfigGeneratorUtil.generate(PveMessageConfig.class, getDataDirectory().resolve("messages.yml").toFile());
     private final PveMainConfig mainConfig = ConfigGeneratorUtil.generate(PveMainConfig.class, getDataDirectory().resolve("config.yml").toFile());
-    private final GameKitManager gameKitManager = new GameKitManager(ConfigGeneratorUtil.createConfig(getDataDirectory().resolve("kit.yml").toFile()));
+    private final GameKitManager gameKitManager = new GameKitManager(ConfigGeneratorUtil.createConfig(getDataDirectory().resolve("kit.yml").toFile()), true);
 
     @Override
     public void onEnable() {

@@ -32,8 +32,11 @@ public class GameKitManager {
     private final Config config;
     private final Map<String, GameKit> gameKitMap;
 
-    public GameKitManager(Config config) {
+    public GameKitManager(Config config, boolean setup) {
         this.config = config;
+        if (setup) {
+            config.setup();
+        }
         this.gameKitMap = new CaseInsensitiveStringHashMap<>();
     }
 
