@@ -3,7 +3,6 @@ package me.hsgamer.flexegames.game.pve.state;
 import me.hsgamer.flexegames.api.game.ComponentDisplayName;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.game.pve.PveExtension;
-import me.hsgamer.flexegames.game.pve.feature.ConfigFeature;
 import me.hsgamer.flexegames.game.pve.feature.InstanceFeature;
 import me.hsgamer.flexegames.game.pve.feature.MobGeneratorFeature;
 import me.hsgamer.flexegames.game.pve.feature.StageFeature;
@@ -22,9 +21,8 @@ public class FightingState implements GameState, ComponentDisplayName {
     @Override
     public void start(Arena arena) {
         arena.getFeature(MobGeneratorFeature.class).loadMobs();
-        var gameConfig = arena.getFeature(ConfigFeature.class).config();
         var descriptionFeature = arena.getFeature(DescriptionFeature.class);
-        Component message = ReplacementManager.replace(gameConfig.getStageStartMessage(), descriptionFeature.getReplacements());
+        Component message = ReplacementManager.replace(pveExtension.getMessageConfig().getStageStartMessage(), descriptionFeature.getReplacements());
         arena.getFeature(InstanceFeature.class).sendMessage(message);
     }
 
@@ -41,9 +39,8 @@ public class FightingState implements GameState, ComponentDisplayName {
             return;
         }
 
-        var gameConfig = arena.getFeature(ConfigFeature.class).config();
         var descriptionFeature = arena.getFeature(DescriptionFeature.class);
-        Component message = ReplacementManager.replace(gameConfig.getStageEndMessage(), descriptionFeature.getReplacements());
+        Component message = ReplacementManager.replace(pveExtension.getMessageConfig().getStageEndMessage(), descriptionFeature.getReplacements());
         arena.getFeature(InstanceFeature.class).sendMessage(message);
 
         arena.getFeature(StageFeature.class).increaseStage();

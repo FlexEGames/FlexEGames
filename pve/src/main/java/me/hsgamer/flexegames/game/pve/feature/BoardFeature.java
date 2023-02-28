@@ -1,6 +1,7 @@
 package me.hsgamer.flexegames.game.pve.feature;
 
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
+import me.hsgamer.flexegames.game.pve.PveExtension;
 import me.hsgamer.flexegames.game.pve.state.EndingState;
 import me.hsgamer.flexegames.game.pve.state.FightingState;
 import me.hsgamer.flexegames.game.pve.state.RestingState;
@@ -26,17 +27,18 @@ import java.util.List;
 
 public class BoardFeature implements Feature {
     private final Arena arena;
+    private final PveExtension pveExtension;
     private Board board;
     private Task task;
     private EventNode<InstanceEvent> boardEventNode;
 
-    public BoardFeature(Arena arena) {
+    public BoardFeature(Arena arena, PveExtension pveExtension) {
         this.arena = arena;
+        this.pveExtension = pveExtension;
     }
 
     @Override
     public void init() {
-        var gameConfig = arena.getFeature(ConfigFeature.class).config();
         var instance = arena.getFeature(InstanceFeature.class).getInstance();
         var descriptionFeature = arena.getFeature(DescriptionFeature.class);
         boardEventNode = EventNode.event("boardEventNode-" + arena.getName(), EventFilter.INSTANCE, event -> event.getInstance() == instance);
@@ -57,7 +59,7 @@ public class BoardFeature implements Feature {
                         .replaceGlobal()
                         .replace(descriptionFeature.getReplacements())
                         .replacePlayer(player)
-                        .build(gameConfig.getBoardTitle()),
+                        .build(pveExtension.getMessageConfig().getBoardTitle()),
                 player -> {
                     ReplacementManager.Builder builder = ReplacementManager.builder()
                             .replaceGlobal()
@@ -66,13 +68,13 @@ public class BoardFeature implements Feature {
                     var state = arena.getCurrentState();
                     List<Component> components = Collections.emptyList();
                     if (state == WaitingState.class) {
-                        components = gameConfig.getBoardLinesWaiting();
+                        components = pveExtension.getMessageConfig().getBoardLinesWaiting();
                     } else if (state == RestingState.class) {
-                        components = gameConfig.getBoardLinesResting();
+                        components = pveExtension.getMessageConfig().getBoardLinesResting();
                     } else if (state == FightingState.class) {
-                        components = gameConfig.getBoardLinesFighting();
+                        components = pveExtension.getMessageConfig().getBoardLinesFighting();
                     } else if (state == EndingState.class) {
-                        components = gameConfig.getBoardLinesEnding();
+                        components = pveExtension.getMessageConfig().getBoardLinesEnding();
                     }
                     return components.stream().map(builder::build).toList();
                 }

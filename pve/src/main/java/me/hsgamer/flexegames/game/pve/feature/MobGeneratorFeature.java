@@ -1,6 +1,9 @@
 package me.hsgamer.flexegames.game.pve.feature;
 
+import me.hsgamer.flexegames.feature.arena.GameFeature;
 import me.hsgamer.flexegames.feature.arena.JoinFeature;
+import me.hsgamer.flexegames.game.pve.PveExtension;
+import me.hsgamer.flexegames.game.pve.PveProperties;
 import me.hsgamer.flexegames.game.pve.mob.*;
 import me.hsgamer.hscore.common.Pair;
 import me.hsgamer.minigamecore.base.Arena;
@@ -49,19 +52,21 @@ public class MobGeneratorFeature implements Feature {
     );
 
     private final Arena arena;
+    private final PveExtension pveExtension;
     private final AtomicInteger maxMobCount = new AtomicInteger();
     private final Queue<ArenaMob> spawningMobs = new LinkedList<>();
     private final List<ArenaMob> spawnedMobs = new LinkedList<>();
 
-    public MobGeneratorFeature(Arena arena) {
+    public MobGeneratorFeature(Arena arena, PveExtension pveExtension) {
         this.arena = arena;
+        this.pveExtension = pveExtension;
     }
 
     public void loadMobs() {
         var random = ThreadLocalRandom.current();
         var stage = arena.getFeature(StageFeature.class).getStage();
-        var gameConfig = arena.getFeature(ConfigFeature.class).config();
-        int initialMobCount = Math.min((int) (stage * 1.5) * (gameConfig.isMayhem() ? 10 : 1), 200);
+        boolean mayhem = arena.getFeature(GameFeature.class).propertyMap().getProperty(PveProperties.MAYHEM);
+        int initialMobCount = Math.min((int) (stage * 1.5) * (mayhem ? 10 : 1), 200);
 
         List<ArenaMob> initialMobs = new ArrayList<>();
         while (initialMobs.size() < initialMobCount) {
@@ -74,9 +79,8 @@ public class MobGeneratorFeature implements Feature {
     }
 
     public void spawnMobs() {
-        var mobPerSpawn = arena.getFeature(ConfigFeature.class).config().getMobPerSpawn();
         var instance = arena.getFeature(InstanceFeature.class).getInstance();
-        for (int i = 0; i < mobPerSpawn; i++) {
+        for (int i = 0; i < pveExtension.getMainConfig().getMobPerSpawn(); i++) {
             if (spawningMobs.isEmpty()) {
                 break;
             }
@@ -94,7 +98,7 @@ public class MobGeneratorFeature implements Feature {
         var timerFeature = arena.getFeature(TimerFeature.class);
         if (timerFeature.getDuration() > 0) return;
         spawnMobs();
-        timerFeature.setDuration(arena.getFeature(ConfigFeature.class).config().getSpawnDelay());
+        timerFeature.setDuration(pveExtension.getMainConfig().getSpawnDelay());
     }
 
     public void clearMobs() {

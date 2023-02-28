@@ -3,7 +3,6 @@ package me.hsgamer.flexegames.game.pve.state;
 import me.hsgamer.flexegames.api.game.ComponentDisplayName;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.game.pve.PveExtension;
-import me.hsgamer.flexegames.game.pve.feature.ConfigFeature;
 import me.hsgamer.flexegames.game.pve.feature.InstanceFeature;
 import me.hsgamer.flexegames.game.pve.feature.MobGeneratorFeature;
 import me.hsgamer.flexegames.manager.ReplacementManager;
@@ -24,11 +23,10 @@ public class EndingState implements GameState, ComponentDisplayName {
 
     @Override
     public void start(Arena arena) {
-        var gameConfig = arena.getFeature(ConfigFeature.class).config();
         var descriptionFeature = arena.getFeature(DescriptionFeature.class);
-        arena.getFeature(TimerFeature.class).setDuration(gameConfig.getEndingTime(), TimeUnit.SECONDS);
+        arena.getFeature(TimerFeature.class).setDuration(pveExtension.getMainConfig().getEndingTime(), TimeUnit.SECONDS);
         arena.getFeature(InstanceFeature.class).clearInventory();
-        Component message = ReplacementManager.replace(gameConfig.getEndMessage(), descriptionFeature.getReplacements());
+        Component message = ReplacementManager.replace(pveExtension.getMessageConfig().getEndMessage(), descriptionFeature.getReplacements());
         arena.getFeature(InstanceFeature.class).sendMessage(message);
         arena.getFeature(MobGeneratorFeature.class).clearMobs();
     }

@@ -2,7 +2,6 @@ package me.hsgamer.flexegames.game.pve.state;
 
 import me.hsgamer.flexegames.api.game.ComponentDisplayName;
 import me.hsgamer.flexegames.game.pve.PveExtension;
-import me.hsgamer.flexegames.game.pve.feature.ConfigFeature;
 import me.hsgamer.flexegames.game.pve.feature.InstanceFeature;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.GameState;
@@ -22,7 +21,7 @@ public class RestingState implements GameState, ComponentDisplayName {
     public void start(Arena arena) {
         arena.getFeature(TimerFeature.class)
                 .setDuration(
-                        arena.getFeature(ConfigFeature.class).config().getRestingTime(),
+                        pveExtension.getMainConfig().getRestingTime(),
                         TimeUnit.SECONDS
                 );
         arena.getFeature(InstanceFeature.class).respawnDeadPlayers();

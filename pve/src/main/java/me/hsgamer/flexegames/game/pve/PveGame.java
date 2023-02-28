@@ -1,25 +1,26 @@
 package me.hsgamer.flexegames.game.pve;
 
 import me.hsgamer.flexegames.api.game.Game;
+import me.hsgamer.flexegames.api.property.GamePropertyMap;
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.util.ItemUtil;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaManager;
 import net.kyori.adventure.text.Component;
+import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
 
 import java.util.List;
-import java.util.function.Function;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class PveGame implements Game {
     public static final int SPAWN_RADIUS = 10;
     public static final int HEIGHT = 16;
     private final PveExtension pveExtension;
-    private final PveGameConfig gameConfig;
 
-    public PveGame(PveExtension pveExtension, PveGameConfig gameConfig) {
+    public PveGame(PveExtension pveExtension) {
         this.pveExtension = pveExtension;
-        this.gameConfig = gameConfig;
     }
 
     @Override
@@ -29,29 +30,30 @@ public class PveGame implements Game {
 
     @Override
     public Component getDisplayName() {
-        return gameConfig.getDisplayName();
+        return pveExtension.getMessageConfig().getDisplayName();
     }
 
     @Override
     public List<Component> getDescription() {
-        return gameConfig.getDescription();
+        return pveExtension.getMessageConfig().getDescription();
     }
 
     @Override
     public ItemStack getDisplayItem() {
         return ItemUtil.stripItalics(
-                ItemBuilder.buildItem(gameConfig.getDisplayItem())
+                ItemBuilder.buildItem(pveExtension.getMessageConfig().getDisplayItem())
                         .withDisplayName(getDisplayName())
                         .withLore(getDescription())
         );
     }
 
     @Override
-    public Function<ArenaManager, Arena> createArena(String name) {
-        return arenaManager -> new PveArena(pveExtension, this, name, arenaManager);
+    public CompletableFuture<GamePropertyMap> editProperty(Player player, GamePropertyMap gamePropertyMap) {
+        return CompletableFuture.completedFuture(gamePropertyMap); // TODO
     }
 
-    public PveGameConfig getGameConfig() {
-        return gameConfig;
+    @Override
+    public Arena create(String name, GamePropertyMap gamePropertyMap, ArenaManager arenaManager, UUID owner) {
+        return new PveArena(pveExtension, name, gamePropertyMap, this, arenaManager, owner);
     }
 }

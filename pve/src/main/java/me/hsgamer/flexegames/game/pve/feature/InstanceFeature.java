@@ -4,7 +4,10 @@ import io.github.bloepiloepi.pvp.events.EntityPreDeathEvent;
 import io.github.bloepiloepi.pvp.events.PlayerExhaustEvent;
 import me.hsgamer.flexegames.feature.LobbyFeature;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
+import me.hsgamer.flexegames.feature.arena.GameFeature;
+import me.hsgamer.flexegames.game.pve.PveExtension;
 import me.hsgamer.flexegames.game.pve.PveGame;
+import me.hsgamer.flexegames.game.pve.PveProperties;
 import me.hsgamer.flexegames.game.pve.instance.ArenaInstance;
 import me.hsgamer.flexegames.game.pve.state.EndingState;
 import me.hsgamer.flexegames.game.pve.state.FightingState;
@@ -36,11 +39,13 @@ public class InstanceFeature implements Feature {
     private static final Pos SPAWN_POS = new Pos(0, PveGame.HEIGHT, 0);
     private static final Tag<Boolean> DEAD_TAG = Tag.Boolean("pve:dead").defaultValue(false);
     private final Arena arena;
+    private final PveExtension pveExtension;
     private final Instance instance;
     private final EventNode<EntityEvent> entityEventNode;
 
-    public InstanceFeature(Arena arena) {
+    public InstanceFeature(Arena arena, PveExtension pveExtension) {
         this.arena = arena;
+        this.pveExtension = pveExtension;
         this.instance = new ArenaInstance();
         entityEventNode = EventNode.event("entityEvent-" + arena.getName(), EventFilter.ENTITY, entityEvent -> entityEvent.getEntity().getInstance() == instance);
     }
@@ -51,12 +56,12 @@ public class InstanceFeature implements Feature {
 
     @Override
     public void init() {
-        var gameConfig = arena.getFeature(ConfigFeature.class).config();
+        var propertyMap = arena.getFeature(GameFeature.class).propertyMap();
 
         entityEventNode.addListener(PlayerSpawnEvent.class, event -> event.getPlayer().teleport(SPAWN_POS));
         PvpUtil.applyExplosion(instance);
-        PvpUtil.applyPvp(instance.eventNode(), gameConfig.isUseLegacyPvp());
-        ChatUtil.apply(instance.eventNode(), gameConfig.getChatFormat(), player -> arena.getFeature(DescriptionFeature.class).getReplacements());
+        PvpUtil.applyPvp(instance.eventNode(), propertyMap.getProperty(PveProperties.LEGACY_PVP));
+        ChatUtil.apply(instance.eventNode(), pveExtension.getMessageConfig().getChatFormat(), player -> arena.getFeature(DescriptionFeature.class).getReplacements());
         PlayerBlockUtil.apply(instance.eventNode());
 
         instance.eventNode()
@@ -139,7 +144,7 @@ public class InstanceFeature implements Feature {
     }
 
     public void tryHealAll() {
-        if (arena.getFeature(ConfigFeature.class).config().isHealOnRest()) {
+        if (arena.getFeature(GameFeature.class).propertyMap().getProperty(PveProperties.HEAL_ON_REST)) {
             instance.getPlayers().forEach(player -> {
                 player.heal();
                 player.setFood(20);

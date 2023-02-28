@@ -1,30 +1,22 @@
 package me.hsgamer.flexegames.game.pve;
 
+import lombok.Getter;
 import me.hsgamer.flexegames.api.extension.SingleGameExtension;
 import me.hsgamer.flexegames.api.game.Game;
-import me.hsgamer.flexegames.util.ConfigUtil;
 import me.hsgamer.flexegames.util.ConfigGeneratorUtil;
-import me.hsgamer.hscore.config.Config;
 
-import java.util.function.Function;
-
+@Getter
 public class PveExtension extends SingleGameExtension {
     private final PveMessageConfig messageConfig = ConfigGeneratorUtil.generate(PveMessageConfig.class, getDataDirectory().resolve("messages.yml").toFile());
+    private final PveMainConfig mainConfig = ConfigGeneratorUtil.generate(PveMainConfig.class, getDataDirectory().resolve("config.yml").toFile());
 
     @Override
-    public Function<Config, Game> getInitializer() {
-        return config -> {
-            var gameConfig = ConfigUtil.getConfig(config, PveGameConfig.class);
-            return new PveGame(this, gameConfig);
-        };
+    public Game getGame() {
+        return null;
     }
 
     @Override
     public String getIdentifier() {
         return "pve";
-    }
-
-    public PveMessageConfig getMessageConfig() {
-        return messageConfig;
     }
 }
