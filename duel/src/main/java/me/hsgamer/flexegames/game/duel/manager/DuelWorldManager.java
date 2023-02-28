@@ -27,6 +27,7 @@ public class DuelWorldManager {
 
     public DuelWorldManager(DuelExtension duelExtension) {
         this.config = ConfigGeneratorUtil.createConfig(duelExtension.getDataDirectory().resolve("world.yml").toFile());
+        this.config.setup();
         this.duelWorldMap = new CaseInsensitiveStringHashMap<>();
     }
 
