@@ -1,12 +1,7 @@
 package me.hsgamer.flexegames.util.editor;
 
 import me.hsgamer.flexegames.api.property.GamePropertyMap;
-import me.hsgamer.flexegames.util.ItemUtil;
-import me.hsgamer.hscore.minecraft.gui.GUIDisplay;
 import me.hsgamer.hscore.minecraft.gui.advanced.AdvancedButtonMap;
-import me.hsgamer.hscore.minecraft.gui.button.Button;
-import me.hsgamer.hscore.minecraft.gui.button.impl.DummyButton;
-import me.hsgamer.hscore.minecraft.gui.button.impl.SimpleButton;
 import me.hsgamer.hscore.minecraft.gui.event.CloseEvent;
 import me.hsgamer.hscore.minecraft.gui.mask.MaskUtils;
 import me.hsgamer.hscore.minecraft.gui.mask.impl.ButtonMapMask;
@@ -38,32 +33,14 @@ public abstract class PropertyEditor extends MinestomGUIHolder {
         setButtonMap(buttonMap);
 
         StaticButtonPaginatedMask valueMask = new StaticButtonPaginatedMask("value", MaskUtils.generateAreaSlots(0, 0, 8, 1).boxed().toList()).addButton(getValueButtons());
-
-        Button nextPageButton = new SimpleButton(ItemUtil.asMinestomItem(getNextPageItem()), event -> {
-            valueMask.nextPage(event.getViewerID());
-            getDisplay(event.getViewerID()).ifPresent(GUIDisplay::update);
-        });
-        Button previousPageButton = new SimpleButton(ItemUtil.asMinestomItem(getPreviousPageItem()), event -> {
-            valueMask.previousPage(event.getViewerID());
-            getDisplay(event.getViewerID()).ifPresent(GUIDisplay::update);
-        });
-        Button completeButton = new SimpleButton(ItemUtil.asMinestomItem(getCompleteItem()), event -> complete(event.getViewerID()));
-        Button dummyButton = new DummyButton(ItemUtil.asMinestomItem(getDummyItem()));
-        ButtonMapMask actionMask = new ButtonMapMask("action")
-                .addButton(previousPageButton, 18)
-                .addButton(nextPageButton, 19)
-                .addButton(dummyButton, 20, 21, 22, 23, 24, 25)
-                .addButton(completeButton, 26);
-
+        ButtonMapMask actionMask = getActionMask(valueMask);
         buttonMap.addMask(valueMask);
         buttonMap.addMask(actionMask);
 
         super.init();
     }
 
-    protected abstract ItemStack getNextPageItem();
-
-    protected abstract ItemStack getPreviousPageItem();
+    protected abstract ButtonMapMask getActionMask(StaticButtonPaginatedMask valueMask);
 
     protected ItemStack getDummyItem() {
         return ItemStack.of(Material.BLACK_STAINED_GLASS_PANE).withDisplayName(Component.empty());
@@ -79,7 +56,7 @@ public abstract class PropertyEditor extends MinestomGUIHolder {
                 .orElse(null);
     }
 
-    private void complete(UUID uuid) {
+    protected void complete(UUID uuid) {
         Optional.ofNullable(propertyMapFutureMap.get(uuid))
                 .ifPresent(GamePropertyMapFuture::complete);
     }
@@ -100,7 +77,10 @@ public abstract class PropertyEditor extends MinestomGUIHolder {
 
     public CompletableFuture<GamePropertyMap> open(Player player, GamePropertyMap propertyMap) {
         CompletableFuture<GamePropertyMap> future = new CompletableFuture<>();
-        propertyMapFutureMap.put(player.getUuid(), new GamePropertyMapFuture(propertyMap, future));
+        var oldFuture = propertyMapFutureMap.put(player.getUuid(), new GamePropertyMapFuture(propertyMap, future));
+        if (oldFuture != null) {
+            oldFuture.cancel();
+        }
         createDisplay(player.getUuid()).open();
         return future;
     }

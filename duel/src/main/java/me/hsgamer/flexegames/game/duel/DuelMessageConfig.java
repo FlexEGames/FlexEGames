@@ -131,22 +131,6 @@ public interface DuelMessageConfig {
         return Component.text("Duel Editor").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD);
     }
 
-    @ConfigPath("editor.next-page")
-    default Map<String, Object> getEditorNextPage() {
-        return Map.of(
-                "material", Material.GREEN_STAINED_GLASS_PANE.name(),
-                "name", "&aNext page"
-        );
-    }
-
-    @ConfigPath("editor.previous-page")
-    default Map<String, Object> getEditorPreviousPage() {
-        return Map.of(
-                "material", Material.RED_STAINED_GLASS_PANE.name(),
-                "name", "&cPrevious page"
-        );
-    }
-
     @ConfigPath("editor.complete")
     default Map<String, Object> getEditorComplete() {
         return Map.of(
@@ -163,7 +147,7 @@ public interface DuelMessageConfig {
                 "lore", List.of(
                         "&7Legacy PVP",
                         "&7",
-                        "&7{value}"
+                        "&7%value%"
                 )
         );
     }

@@ -2,9 +2,9 @@ package me.hsgamer.flexegames.game.duel;
 
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.util.ItemUtil;
-import me.hsgamer.flexegames.util.editor.PropertyEditor;
 import me.hsgamer.flexegames.util.editor.PropertySingleValueButton;
 import me.hsgamer.flexegames.util.editor.PropertyValueButton;
+import me.hsgamer.flexegames.util.editor.SimplePropertyEditor;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.item.ItemStack;
 
@@ -13,22 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class DuelPropertyEditor extends PropertyEditor {
+public class DuelPropertyEditor extends SimplePropertyEditor {
     private final DuelExtension duelExtension;
 
     public DuelPropertyEditor(DuelExtension duelExtension) {
         this.duelExtension = duelExtension;
         setTitle(duelExtension.getMessageConfig().getEditorTitle());
-    }
-
-    @Override
-    protected ItemStack getNextPageItem() {
-        return ItemUtil.stripItalics(ItemBuilder.buildItem(duelExtension.getMessageConfig().getEditorNextPage()));
-    }
-
-    @Override
-    protected ItemStack getPreviousPageItem() {
-        return ItemUtil.stripItalics(ItemBuilder.buildItem(duelExtension.getMessageConfig().getEditorPreviousPage()));
     }
 
     @Override

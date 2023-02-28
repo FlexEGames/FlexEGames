@@ -155,4 +155,69 @@ public interface PveMessageConfig {
     default Component getEndMessage() {
         return Component.text("The game has ended!").color(NamedTextColor.GREEN);
     }
+
+    @ConfigPath("editor.title")
+    default Component getEditorTitle() {
+        return Component.text("PvE Editor").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD);
+    }
+
+    @ConfigPath("editor.complete")
+    default Map<String, Object> getEditorComplete() {
+        return Map.of(
+                "material", Material.EMERALD.name(),
+                "name", "&aComplete"
+        );
+    }
+
+    @ConfigPath("editor.legacy-pvp")
+    default Map<String, Object> getEditorLegacyPvp() {
+        return Map.of(
+                "material", Material.IRON_SWORD.name(),
+                "name", "&aLegacy PVP",
+                "lore", List.of(
+                        "&7Legacy PVP",
+                        "&7",
+                        "&7%value%"
+                )
+        );
+    }
+
+    @ConfigPath("editor.tough-mob")
+    default Map<String, Object> getEditorToughMob() {
+        return Map.of(
+                "material", Material.IRON_SWORD.name(),
+                "name", "&aTough Mob",
+                "lore", List.of(
+                        "&7Tough Mob",
+                        "&7",
+                        "&7%value%"
+                )
+        );
+    }
+
+    @ConfigPath("editor.mayhem")
+    default Map<String, Object> getEditorMayhem() {
+        return Map.of(
+                "material", Material.IRON_SWORD.name(),
+                "name", "&aMayhem",
+                "lore", List.of(
+                        "&7Mayhem",
+                        "&7",
+                        "&7%value%"
+                )
+        );
+    }
+
+    @ConfigPath("editor.heal-on-rest")
+    default Map<String, Object> getEditorHealOnRest() {
+        return Map.of(
+                "material", Material.GOLDEN_APPLE.name(),
+                "name", "&aHeal on Rest",
+                "lore", List.of(
+                        "&7Heal on Rest",
+                        "&7",
+                        "&7%value%"
+                )
+        );
+    }
 }

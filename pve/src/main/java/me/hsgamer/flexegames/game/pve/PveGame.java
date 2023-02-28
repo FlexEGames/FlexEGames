@@ -49,7 +49,7 @@ public class PveGame implements Game {
 
     @Override
     public CompletableFuture<GamePropertyMap> editProperty(Player player, GamePropertyMap gamePropertyMap) {
-        return CompletableFuture.completedFuture(gamePropertyMap); // TODO
+        return pveExtension.getPropertyEditor().open(player, gamePropertyMap);
     }
 
     @Override
