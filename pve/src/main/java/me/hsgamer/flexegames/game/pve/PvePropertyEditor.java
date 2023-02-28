@@ -72,17 +72,6 @@ public class PvePropertyEditor extends SimplePropertyEditor {
                 return !currentValue;
             }
         };
-        var mayhemEdit = new PropertySingleValueButton<>(this, PveProperties.MAYHEM) {
-            @Override
-            protected ItemStack display(Boolean value) {
-                return ItemUtil.stripItalics(ItemBuilder.buildItem(pveExtension.getMessageConfig().getEditorMayhem(), Map.of("value", () -> Component.text(Boolean.toString(value)))));
-            }
-
-            @Override
-            protected Boolean newValue(UUID uuid, Boolean currentValue) {
-                return !currentValue;
-            }
-        };
         var healOnRestEdit = new PropertySingleValueButton<>(this, PveProperties.HEAL_ON_REST) {
             @Override
             protected ItemStack display(Boolean value) {
@@ -94,6 +83,6 @@ public class PvePropertyEditor extends SimplePropertyEditor {
                 return !currentValue;
             }
         };
-        return List.of(kitEdit, pvpEdit, toughMobEdit, mayhemEdit, healOnRestEdit);
+        return List.of(kitEdit, pvpEdit, toughMobEdit, healOnRestEdit);
     }
 }

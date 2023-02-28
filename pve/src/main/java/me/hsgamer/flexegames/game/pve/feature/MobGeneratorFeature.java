@@ -1,9 +1,7 @@
 package me.hsgamer.flexegames.game.pve.feature;
 
-import me.hsgamer.flexegames.feature.arena.GameFeature;
 import me.hsgamer.flexegames.feature.arena.JoinFeature;
 import me.hsgamer.flexegames.game.pve.PveExtension;
-import me.hsgamer.flexegames.game.pve.PveProperties;
 import me.hsgamer.flexegames.game.pve.mob.*;
 import me.hsgamer.hscore.common.Pair;
 import me.hsgamer.minigamecore.base.Arena;
@@ -65,8 +63,7 @@ public class MobGeneratorFeature implements Feature {
     public void loadMobs() {
         var random = ThreadLocalRandom.current();
         var stage = arena.getFeature(StageFeature.class).getStage();
-        boolean mayhem = arena.getFeature(GameFeature.class).propertyMap().getProperty(PveProperties.MAYHEM);
-        int initialMobCount = Math.min((int) (stage * 1.5) * (mayhem ? 10 : 1), 200);
+        int initialMobCount = Math.min((int) (stage * 1.5), 200);
 
         List<ArenaMob> initialMobs = new ArrayList<>();
         while (initialMobs.size() < initialMobCount) {

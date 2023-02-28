@@ -195,19 +195,6 @@ public interface PveMessageConfig {
         );
     }
 
-    @ConfigPath("editor.mayhem")
-    default Map<String, Object> getEditorMayhem() {
-        return Map.of(
-                "material", Material.IRON_SWORD.name(),
-                "name", "&aMayhem",
-                "lore", List.of(
-                        "&7Mayhem",
-                        "&7",
-                        "&7%value%"
-                )
-        );
-    }
-
     @ConfigPath("editor.heal-on-rest")
     default Map<String, Object> getEditorHealOnRest() {
         return Map.of(
