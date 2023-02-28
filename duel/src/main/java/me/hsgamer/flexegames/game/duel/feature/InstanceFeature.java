@@ -4,12 +4,12 @@ import io.github.bloepiloepi.pvp.events.EntityPreDeathEvent;
 import io.github.bloepiloepi.pvp.events.FinalDamageEvent;
 import io.github.bloepiloepi.pvp.events.PlayerExhaustEvent;
 import lombok.Getter;
+import me.hsgamer.flexegames.api.property.GamePropertyMap;
 import me.hsgamer.flexegames.feature.LobbyFeature;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.feature.arena.GameFeature;
 import me.hsgamer.flexegames.game.duel.DuelExtension;
 import me.hsgamer.flexegames.game.duel.DuelProperties;
-import me.hsgamer.flexegames.game.duel.kit.DuelKit;
 import me.hsgamer.flexegames.game.duel.state.EndingState;
 import me.hsgamer.flexegames.game.duel.state.InGameState;
 import me.hsgamer.flexegames.game.duel.state.WaitingState;
@@ -18,6 +18,7 @@ import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.util.ChatUtil;
 import me.hsgamer.flexegames.util.PlayerBlockUtil;
 import me.hsgamer.flexegames.util.PvpUtil;
+import me.hsgamer.flexegames.util.kit.GameKit;
 import me.hsgamer.hscore.minestom.board.Board;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.Feature;
@@ -44,7 +45,7 @@ import java.util.List;
 public class InstanceFeature implements Feature {
     private final Arena arena;
     private final @Getter DuelWorld duelWorld;
-    private final @Getter DuelKit duelKit;
+    private final @Getter GameKit gameKit;
     private final DuelExtension duelExtension;
     private final @Getter Instance instance;
     private final EventNode<EntityEvent> entityEventNode;
@@ -52,10 +53,10 @@ public class InstanceFeature implements Feature {
     private Board board;
     private Task task;
 
-    public InstanceFeature(Arena arena, DuelWorld duelWorld, DuelKit duelKit, DuelExtension duelExtension) {
+    public InstanceFeature(Arena arena, DuelExtension duelExtension, GamePropertyMap propertyMap) {
         this.arena = arena;
-        this.duelWorld = duelWorld;
-        this.duelKit = duelKit;
+        this.duelWorld = duelExtension.getDuelWorldManager().getDuelWorld(propertyMap.getProperty(DuelProperties.WORLD));
+        this.gameKit = duelExtension.getGameKitManager().getGameKit(propertyMap.getProperty(DuelProperties.KIT));
         this.duelExtension = duelExtension;
         this.instance = duelWorld.createInstance(arena);
         entityEventNode = EventNode.event("entityEvent-" + arena.getName(), EventFilter.ENTITY, entityEvent -> entityEvent.getEntity().getInstance() == instance);
@@ -174,7 +175,7 @@ public class InstanceFeature implements Feature {
 
     public void giveKit(Player player) {
         var inventory = player.getInventory();
-        duelKit.getItems().forEach((slot, item) -> {
+        gameKit.getItems().forEach((slot, item) -> {
             if (slot < 0 || slot >= inventory.getSize()) return;
             player.getInventory().setItemStack(slot, item);
         });

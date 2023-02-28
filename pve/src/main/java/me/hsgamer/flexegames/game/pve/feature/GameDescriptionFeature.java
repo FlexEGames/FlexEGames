@@ -32,7 +32,8 @@ public class GameDescriptionFeature implements DescriptionFeature {
                 "stage", () -> Component.text(Integer.toString(arena.getFeature(StageFeature.class).getStage())),
                 "alive", () -> Component.text(Integer.toString(arena.getFeature(InstanceFeature.class).getAlivePlayers().size())),
                 "mob", () -> Component.text(Integer.toString(arena.getFeature(MobGeneratorFeature.class).getMobCount())),
-                "max-mob", () -> Component.text(Integer.toString(arena.getFeature(MobGeneratorFeature.class).getMaxMobCount()))
+                "max-mob", () -> Component.text(Integer.toString(arena.getFeature(MobGeneratorFeature.class).getMaxMobCount())),
+                "kit", () -> arena.getFeature(InstanceFeature.class).getGameKit().getDisplayName()
         ));
         return map;
     }

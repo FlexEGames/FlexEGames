@@ -1,9 +1,5 @@
-package me.hsgamer.flexegames.game.duel.manager;
+package me.hsgamer.flexegames.util.kit;
 
-import me.hsgamer.flexegames.game.duel.DuelExtension;
-import me.hsgamer.flexegames.game.duel.kit.DuelKit;
-import me.hsgamer.flexegames.game.duel.kit.SimpleDuelKit;
-import me.hsgamer.flexegames.util.ConfigGeneratorUtil;
 import me.hsgamer.flexegames.util.MapUtil;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringHashMap;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringMap;
@@ -16,11 +12,11 @@ import net.minestom.server.item.Material;
 import java.util.Collections;
 import java.util.Map;
 
-public class DuelKitManager {
-    private static final DuelKit DEFAULT_DUEL_KIT = new DuelKit() {
+public class GameKitManager {
+    private static final GameKit EMPTY_KIT = new GameKit() {
         @Override
         public Component getDisplayName() {
-            return Component.text("Default").decorate(TextDecoration.BOLD);
+            return Component.text("Empty Kit").decorate(TextDecoration.BOLD);
         }
 
         @Override
@@ -34,31 +30,31 @@ public class DuelKitManager {
         }
     };
     private final Config config;
-    private final Map<String, DuelKit> duelKitMap;
+    private final Map<String, GameKit> gameKitMap;
 
-    public DuelKitManager(DuelExtension duelExtension) {
-        this.config = ConfigGeneratorUtil.createConfig(duelExtension.getDataDirectory().resolve("kit.yml").toFile());
-        this.duelKitMap = new CaseInsensitiveStringHashMap<>();
+    public GameKitManager(Config config) {
+        this.config = config;
+        this.gameKitMap = new CaseInsensitiveStringHashMap<>();
     }
 
     public void init() {
         config.getNormalizedValues(false).forEach((key, value) -> {
             if (value instanceof Map<?, ?> rawMap) {
                 Map<String, Object> map = new CaseInsensitiveStringMap<>(MapUtil.toStringObjectMap(rawMap));
-                duelKitMap.put(key, new SimpleDuelKit(map));
+                gameKitMap.put(key, new SimpleGameKit(map));
             }
         });
     }
 
     public void clear() {
-        duelKitMap.clear();
+        gameKitMap.clear();
     }
 
-    public Map<String, DuelKit> getDuelKitMap() {
-        return duelKitMap;
+    public Map<String, GameKit> getGameKitMap() {
+        return gameKitMap;
     }
 
-    public DuelKit getDuelKit(String name) {
-        return duelKitMap.getOrDefault(name, DEFAULT_DUEL_KIT);
+    public GameKit getGameKit(String name) {
+        return gameKitMap.getOrDefault(name, EMPTY_KIT);
     }
 }

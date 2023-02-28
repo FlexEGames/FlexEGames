@@ -1,11 +1,11 @@
-package me.hsgamer.flexegames.game.duel.kit;
+package me.hsgamer.flexegames.util.kit;
 
 import net.kyori.adventure.text.Component;
 import net.minestom.server.item.ItemStack;
 
 import java.util.Map;
 
-public interface DuelKit {
+public interface GameKit {
     Component getDisplayName();
 
     ItemStack getDisplayItem();

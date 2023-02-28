@@ -2,6 +2,8 @@ package me.hsgamer.flexegames.game.pve.feature;
 
 import io.github.bloepiloepi.pvp.events.EntityPreDeathEvent;
 import io.github.bloepiloepi.pvp.events.PlayerExhaustEvent;
+import lombok.Getter;
+import me.hsgamer.flexegames.api.property.GamePropertyMap;
 import me.hsgamer.flexegames.feature.LobbyFeature;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.feature.arena.GameFeature;
@@ -16,6 +18,7 @@ import me.hsgamer.flexegames.game.pve.state.WaitingState;
 import me.hsgamer.flexegames.util.ChatUtil;
 import me.hsgamer.flexegames.util.PlayerBlockUtil;
 import me.hsgamer.flexegames.util.PvpUtil;
+import me.hsgamer.flexegames.util.kit.GameKit;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.Feature;
 import net.kyori.adventure.text.Component;
@@ -42,12 +45,14 @@ public class InstanceFeature implements Feature {
     private final PveExtension pveExtension;
     private final Instance instance;
     private final EventNode<EntityEvent> entityEventNode;
+    private final @Getter GameKit gameKit;
 
-    public InstanceFeature(Arena arena, PveExtension pveExtension) {
+    public InstanceFeature(Arena arena, PveExtension pveExtension, GamePropertyMap propertyMap) {
         this.arena = arena;
         this.pveExtension = pveExtension;
         this.instance = new ArenaInstance();
         entityEventNode = EventNode.event("entityEvent-" + arena.getName(), EventFilter.ENTITY, entityEvent -> entityEvent.getEntity().getInstance() == instance);
+        this.gameKit = pveExtension.getGameKitManager().getGameKit(propertyMap.getProperty(PveProperties.KIT));
     }
 
     public Instance getInstance() {
@@ -111,9 +116,8 @@ public class InstanceFeature implements Feature {
     }
 
     public void giveKit(Player player) {
-        var kit = arena.getFeature(ConfigFeature.class).config().getConvertedKit();
         var inventory = player.getInventory();
-        kit.forEach((slot, item) -> {
+        gameKit.getItems().forEach((slot, item) -> {
             if (slot < 0 || slot >= inventory.getSize()) return;
             player.getInventory().setItemStack(slot, item);
         });
