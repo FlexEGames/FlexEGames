@@ -47,7 +47,7 @@ public class DuelGame implements Game {
 
     @Override
     public CompletableFuture<GamePropertyMap> editProperty(Player player, GamePropertyMap gamePropertyMap) {
-        return CompletableFuture.completedFuture(gamePropertyMap); // TODO
+        return duelExtension.getDuelPropertyEditor().open(player, gamePropertyMap);
     }
 
     @Override

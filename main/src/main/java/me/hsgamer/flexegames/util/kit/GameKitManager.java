@@ -1,7 +1,7 @@
 package me.hsgamer.flexegames.util.kit;
 
 import me.hsgamer.flexegames.util.MapUtil;
-import me.hsgamer.hscore.collections.map.CaseInsensitiveStringHashMap;
+import me.hsgamer.hscore.collections.map.CaseInsensitiveStringLinkedMap;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringMap;
 import me.hsgamer.hscore.config.Config;
 import net.kyori.adventure.text.Component;
@@ -37,7 +37,7 @@ public class GameKitManager {
         if (setup) {
             config.setup();
         }
-        this.gameKitMap = new CaseInsensitiveStringHashMap<>();
+        this.gameKitMap = new CaseInsensitiveStringLinkedMap<>();
     }
 
     public void init() {

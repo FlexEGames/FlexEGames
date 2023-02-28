@@ -6,7 +6,7 @@ import me.hsgamer.flexegames.game.duel.world.DefaultDuelWorld;
 import me.hsgamer.flexegames.game.duel.world.DuelWorld;
 import me.hsgamer.flexegames.util.ConfigGeneratorUtil;
 import me.hsgamer.flexegames.util.MapUtil;
-import me.hsgamer.hscore.collections.map.CaseInsensitiveStringHashMap;
+import me.hsgamer.hscore.collections.map.CaseInsensitiveStringLinkedMap;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringMap;
 import me.hsgamer.hscore.config.Config;
 import net.minestom.server.MinecraftServer;
@@ -15,11 +15,11 @@ import java.util.Map;
 
 public class DuelWorldManager {
     private static final DefaultDuelWorld DEFAULT_DUEL_WORLD = new DefaultDuelWorld(Map.of(
-            "display-name", "&aDefault",
+            "display-name", "&f&lDefault World",
             "display-item", Map.of(
                     "material", "STONE",
                     "amount", 1,
-                    "name", "&aDefault"
+                    "name", "&f&lDefault World"
             )
     ));
     private final Config config;
@@ -28,7 +28,7 @@ public class DuelWorldManager {
     public DuelWorldManager(DuelExtension duelExtension) {
         this.config = ConfigGeneratorUtil.createConfig(duelExtension.getDataDirectory().resolve("world.yml").toFile());
         this.config.setup();
-        this.duelWorldMap = new CaseInsensitiveStringHashMap<>();
+        this.duelWorldMap = new CaseInsensitiveStringLinkedMap<>();
     }
 
     public void init() {

@@ -1,10 +1,10 @@
 package me.hsgamer.flexegames.api.property;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GamePropertyMap {
-    private final Map<String, Object> serializedMap = new HashMap<>();
+    private final Map<String, Object> serializedMap = new ConcurrentHashMap<>();
 
     private GamePropertyMap() {
         // EMPTY
