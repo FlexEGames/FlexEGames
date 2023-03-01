@@ -1,7 +1,7 @@
 package me.hsgamer.flexegames.game.duel;
 
 import me.hsgamer.flexegames.api.game.Game;
-import me.hsgamer.flexegames.api.property.GamePropertyMap;
+import me.hsgamer.flexegames.api.property.PropertyMap;
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.util.ItemUtil;
 import me.hsgamer.minigamecore.base.Arena;
@@ -46,12 +46,12 @@ public class DuelGame implements Game {
     }
 
     @Override
-    public CompletableFuture<GamePropertyMap> editProperty(Player player, GamePropertyMap gamePropertyMap) {
-        return duelExtension.getPropertyEditor().open(player, gamePropertyMap);
+    public CompletableFuture<PropertyMap> editProperty(Player player, PropertyMap propertyMap) {
+        return duelExtension.getPropertyEditor().open(player, propertyMap);
     }
 
     @Override
-    public Arena create(String name, GamePropertyMap gamePropertyMap, ArenaManager arenaManager, UUID owner) {
-        return new DuelArena(duelExtension, name, gamePropertyMap, this, arenaManager, owner);
+    public Arena create(String name, PropertyMap propertyMap, ArenaManager arenaManager, UUID owner) {
+        return new DuelArena(duelExtension, name, propertyMap, this, arenaManager, owner);
     }
 }

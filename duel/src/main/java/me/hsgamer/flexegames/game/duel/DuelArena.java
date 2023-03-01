@@ -1,7 +1,7 @@
 package me.hsgamer.flexegames.game.duel;
 
 import me.hsgamer.flexegames.api.game.GameArena;
-import me.hsgamer.flexegames.api.property.GamePropertyMap;
+import me.hsgamer.flexegames.api.property.PropertyMap;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.feature.arena.JoinFeature;
 import me.hsgamer.flexegames.game.duel.feature.GameDescriptionFeature;
@@ -22,7 +22,7 @@ import java.util.UUID;
 public class DuelArena extends GameArena<DuelGame> {
     private final DuelExtension duelExtension;
 
-    public DuelArena(DuelExtension duelExtension, String name, GamePropertyMap propertyMap, DuelGame game, ArenaManager arenaManager, UUID owner) {
+    public DuelArena(DuelExtension duelExtension, String name, PropertyMap propertyMap, DuelGame game, ArenaManager arenaManager, UUID owner) {
         super(name, propertyMap, game, arenaManager, owner);
         this.duelExtension = duelExtension;
     }

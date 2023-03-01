@@ -4,7 +4,7 @@ import io.github.bloepiloepi.pvp.events.EntityPreDeathEvent;
 import io.github.bloepiloepi.pvp.events.FinalDamageEvent;
 import io.github.bloepiloepi.pvp.events.PlayerExhaustEvent;
 import lombok.Getter;
-import me.hsgamer.flexegames.api.property.GamePropertyMap;
+import me.hsgamer.flexegames.api.property.PropertyMap;
 import me.hsgamer.flexegames.feature.LobbyFeature;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.feature.arena.GameFeature;
@@ -53,7 +53,7 @@ public class InstanceFeature implements Feature {
     private Board board;
     private Task task;
 
-    public InstanceFeature(Arena arena, DuelExtension duelExtension, GamePropertyMap propertyMap) {
+    public InstanceFeature(Arena arena, DuelExtension duelExtension, PropertyMap propertyMap) {
         this.arena = arena;
         this.duelWorld = duelExtension.getDuelWorldManager().getDuelWorld(propertyMap.getProperty(DuelProperties.WORLD));
         this.gameKit = duelExtension.getGameKitManager().getGameKit(propertyMap.getProperty(DuelProperties.KIT));

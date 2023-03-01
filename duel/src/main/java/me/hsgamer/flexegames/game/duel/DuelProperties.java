@@ -1,12 +1,12 @@
 package me.hsgamer.flexegames.game.duel;
 
 import lombok.experimental.UtilityClass;
-import me.hsgamer.flexegames.api.property.GamePropertyAdapter;
-import me.hsgamer.flexegames.api.property.GamePropertyKeyValue;
+import me.hsgamer.flexegames.api.property.PropertyAdapter;
+import me.hsgamer.flexegames.api.property.PropertyKeyValue;
 
 @UtilityClass
 public class DuelProperties {
-    public static final GamePropertyKeyValue<String> WORLD = new GamePropertyKeyValue<>("world", "default", new GamePropertyAdapter<>(String.class));
-    public static final GamePropertyKeyValue<Boolean> LEGACY_PVP = new GamePropertyKeyValue<>("legacy-pvp", false, new GamePropertyAdapter<>(Boolean.class));
-    public static final GamePropertyKeyValue<String> KIT = new GamePropertyKeyValue<>("kit", "default", new GamePropertyAdapter<>(String.class));
+    public static final PropertyKeyValue<String> WORLD = new PropertyKeyValue<>("world", "default", new PropertyAdapter<>(String.class));
+    public static final PropertyKeyValue<Boolean> LEGACY_PVP = new PropertyKeyValue<>("legacy-pvp", false, new PropertyAdapter<>(Boolean.class));
+    public static final PropertyKeyValue<String> KIT = new PropertyKeyValue<>("kit", "default", new PropertyAdapter<>(String.class));
 }

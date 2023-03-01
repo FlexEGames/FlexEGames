@@ -1,6 +1,6 @@
 package me.hsgamer.flexegames.helper.property;
 
-import me.hsgamer.flexegames.api.property.GamePropertyMap;
+import me.hsgamer.flexegames.api.property.PropertyMap;
 import me.hsgamer.hscore.minecraft.gui.event.OpenEvent;
 import me.hsgamer.hscore.minestom.gui.MinestomGUIDisplay;
 import me.hsgamer.hscore.minestom.gui.MinestomGUIHolder;
@@ -13,29 +13,29 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public abstract class PropertyEditor extends MinestomGUIHolder {
-    private final Map<UUID, GamePropertyMapFuture> propertyMapFutureMap = new ConcurrentHashMap<>();
+    private final Map<UUID, PropertyMapFuture> propertyMapFutureMap = new ConcurrentHashMap<>();
     private final List<Consumer<UUID>> onOpenListeners = new ArrayList<>();
 
     public void addOnOpenListener(Consumer<UUID> listener) {
         onOpenListeners.add(listener);
     }
 
-    protected GamePropertyMap getPropertyMap(UUID uuid) {
+    protected PropertyMap getPropertyMap(UUID uuid) {
         return Optional.ofNullable(propertyMapFutureMap.get(uuid))
-                .map(GamePropertyMapFuture::current)
+                .map(PropertyMapFuture::current)
                 .orElse(null);
     }
 
     protected void complete(UUID uuid) {
         Optional.ofNullable(propertyMapFutureMap.get(uuid))
-                .ifPresent(GamePropertyMapFuture::complete);
+                .ifPresent(PropertyMapFuture::complete);
     }
 
     @Override
     protected void onRemoveDisplay(@NotNull MinestomGUIDisplay display) {
         Optional.ofNullable(propertyMapFutureMap.remove(display.getUniqueId()))
                 .filter(future -> !future.future().isDone())
-                .ifPresent(GamePropertyMapFuture::cancel);
+                .ifPresent(PropertyMapFuture::cancel);
     }
 
     @Override
@@ -46,14 +46,14 @@ public abstract class PropertyEditor extends MinestomGUIHolder {
     @Override
     public void stop() {
         super.stop();
-        propertyMapFutureMap.values().forEach(GamePropertyMapFuture::cancel);
+        propertyMapFutureMap.values().forEach(PropertyMapFuture::cancel);
         propertyMapFutureMap.clear();
     }
 
-    public CompletableFuture<GamePropertyMap> open(Player player, GamePropertyMap propertyMap) {
-        GamePropertyMap clonedPropertyMap = propertyMap.clone();
-        CompletableFuture<GamePropertyMap> future = new CompletableFuture<>();
-        var oldFuture = propertyMapFutureMap.put(player.getUuid(), new GamePropertyMapFuture(clonedPropertyMap, future));
+    public CompletableFuture<PropertyMap> open(Player player, PropertyMap propertyMap) {
+        PropertyMap clonedPropertyMap = propertyMap.clone();
+        CompletableFuture<PropertyMap> future = new CompletableFuture<>();
+        var oldFuture = propertyMapFutureMap.put(player.getUuid(), new PropertyMapFuture(clonedPropertyMap, future));
         if (oldFuture != null) {
             oldFuture.cancel();
         }
@@ -61,7 +61,7 @@ public abstract class PropertyEditor extends MinestomGUIHolder {
         return future;
     }
 
-    private record GamePropertyMapFuture(GamePropertyMap current, CompletableFuture<GamePropertyMap> future) {
+    private record PropertyMapFuture(PropertyMap current, CompletableFuture<PropertyMap> future) {
         private void complete() {
             future.complete(current);
         }

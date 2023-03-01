@@ -1,6 +1,6 @@
 package me.hsgamer.flexegames.api.game;
 
-import me.hsgamer.flexegames.api.property.GamePropertyMap;
+import me.hsgamer.flexegames.api.property.PropertyMap;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaManager;
 import net.kyori.adventure.text.Component;
@@ -40,11 +40,11 @@ public interface Game {
      */
     ItemStack getDisplayItem();
 
-    CompletableFuture<GamePropertyMap> editProperty(Player player, GamePropertyMap gamePropertyMap);
+    CompletableFuture<PropertyMap> editProperty(Player player, PropertyMap propertyMap);
 
-    default CompletableFuture<GamePropertyMap> createProperty(Player player) {
-        return editProperty(player, GamePropertyMap.create());
+    default CompletableFuture<PropertyMap> createProperty(Player player) {
+        return editProperty(player, PropertyMap.create());
     }
 
-    Arena create(String name, GamePropertyMap gamePropertyMap, ArenaManager arenaManager, UUID owner);
+    Arena create(String name, PropertyMap propertyMap, ArenaManager arenaManager, UUID owner);
 }

@@ -1,7 +1,7 @@
 package me.hsgamer.flexegames.game.pve;
 
 import me.hsgamer.flexegames.api.game.GameArena;
-import me.hsgamer.flexegames.api.property.GamePropertyMap;
+import me.hsgamer.flexegames.api.property.PropertyMap;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.feature.arena.JoinFeature;
 import me.hsgamer.flexegames.game.pve.feature.*;
@@ -20,7 +20,7 @@ import java.util.UUID;
 public class PveArena extends GameArena<PveGame> {
     private final PveExtension pveExtension;
 
-    public PveArena(PveExtension pveExtension, String name, GamePropertyMap propertyMap, PveGame game, ArenaManager arenaManager, UUID owner) {
+    public PveArena(PveExtension pveExtension, String name, PropertyMap propertyMap, PveGame game, ArenaManager arenaManager, UUID owner) {
         super(name, propertyMap, game, arenaManager, owner);
         this.pveExtension = pveExtension;
     }

@@ -1,7 +1,7 @@
 package me.hsgamer.flexegames.feature.arena;
 
 import me.hsgamer.flexegames.api.game.Game;
-import me.hsgamer.flexegames.api.property.GamePropertyMap;
+import me.hsgamer.flexegames.api.property.PropertyMap;
 import me.hsgamer.minigamecore.base.Feature;
 
 /**
@@ -9,5 +9,5 @@ import me.hsgamer.minigamecore.base.Feature;
  *
  * @param game the game
  */
-public record GameFeature(Game game, GamePropertyMap propertyMap) implements Feature {
+public record GameFeature(Game game, PropertyMap propertyMap) implements Feature {
 }

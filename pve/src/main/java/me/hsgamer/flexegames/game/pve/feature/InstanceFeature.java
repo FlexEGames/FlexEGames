@@ -3,7 +3,7 @@ package me.hsgamer.flexegames.game.pve.feature;
 import io.github.bloepiloepi.pvp.events.EntityPreDeathEvent;
 import io.github.bloepiloepi.pvp.events.PlayerExhaustEvent;
 import lombok.Getter;
-import me.hsgamer.flexegames.api.property.GamePropertyMap;
+import me.hsgamer.flexegames.api.property.PropertyMap;
 import me.hsgamer.flexegames.feature.LobbyFeature;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.feature.arena.GameFeature;
@@ -47,7 +47,7 @@ public class InstanceFeature implements Feature {
     private final EventNode<EntityEvent> entityEventNode;
     private final @Getter GameKit gameKit;
 
-    public InstanceFeature(Arena arena, PveExtension pveExtension, GamePropertyMap propertyMap) {
+    public InstanceFeature(Arena arena, PveExtension pveExtension, PropertyMap propertyMap) {
         this.arena = arena;
         this.pveExtension = pveExtension;
         this.instance = new ArenaInstance();

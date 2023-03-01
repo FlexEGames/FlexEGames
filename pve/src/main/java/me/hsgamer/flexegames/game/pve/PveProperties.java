@@ -1,13 +1,13 @@
 package me.hsgamer.flexegames.game.pve;
 
 import lombok.experimental.UtilityClass;
-import me.hsgamer.flexegames.api.property.GamePropertyAdapter;
-import me.hsgamer.flexegames.api.property.GamePropertyKeyValue;
+import me.hsgamer.flexegames.api.property.PropertyAdapter;
+import me.hsgamer.flexegames.api.property.PropertyKeyValue;
 
 @UtilityClass
 public class PveProperties {
-    public static final GamePropertyKeyValue<Boolean> LEGACY_PVP = new GamePropertyKeyValue<>("legacy-pvp", false, new GamePropertyAdapter<>(Boolean.class));
-    public static final GamePropertyKeyValue<Boolean> TOUGH_MOB = new GamePropertyKeyValue<>("tough-mob", false, new GamePropertyAdapter<>(Boolean.class));
-    public static final GamePropertyKeyValue<Boolean> HEAL_ON_REST = new GamePropertyKeyValue<>("heal-on-rest", true, new GamePropertyAdapter<>(Boolean.class));
-    public static final GamePropertyKeyValue<String> KIT = new GamePropertyKeyValue<>("kit", "default", new GamePropertyAdapter<>(String.class));
+    public static final PropertyKeyValue<Boolean> LEGACY_PVP = new PropertyKeyValue<>("legacy-pvp", false, new PropertyAdapter<>(Boolean.class));
+    public static final PropertyKeyValue<Boolean> TOUGH_MOB = new PropertyKeyValue<>("tough-mob", false, new PropertyAdapter<>(Boolean.class));
+    public static final PropertyKeyValue<Boolean> HEAL_ON_REST = new PropertyKeyValue<>("heal-on-rest", true, new PropertyAdapter<>(Boolean.class));
+    public static final PropertyKeyValue<String> KIT = new PropertyKeyValue<>("kit", "default", new PropertyAdapter<>(String.class));
 }

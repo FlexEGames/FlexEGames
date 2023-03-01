@@ -1,7 +1,7 @@
 package me.hsgamer.flexegames.helper.property;
 
-import me.hsgamer.flexegames.api.property.GamePropertyKeyValue;
-import me.hsgamer.flexegames.api.property.GamePropertyMap;
+import me.hsgamer.flexegames.api.property.PropertyKeyValue;
+import me.hsgamer.flexegames.api.property.PropertyMap;
 import me.hsgamer.flexegames.util.ItemUtil;
 import me.hsgamer.hscore.minecraft.gui.button.Button;
 import me.hsgamer.hscore.minecraft.gui.object.Item;
@@ -14,16 +14,16 @@ import java.util.Optional;
 import java.util.UUID;
 
 public abstract class PropertyButton<T> implements Button {
-    protected final GamePropertyKeyValue<T> propertyKeyValue;
+    protected final PropertyKeyValue<T> propertyKeyValue;
     private final PropertyEditor propertyEditor;
 
-    protected PropertyButton(PropertyEditor propertyEditor, GamePropertyKeyValue<T> propertyKeyValue) {
+    protected PropertyButton(PropertyEditor propertyEditor, PropertyKeyValue<T> propertyKeyValue) {
         this.propertyEditor = propertyEditor;
         this.propertyKeyValue = propertyKeyValue;
         propertyEditor.addOnOpenListener(this::onOpen);
     }
 
-    protected GamePropertyMap getGamePropertyMap(UUID uuid) {
+    protected PropertyMap getPropertyMap(UUID uuid) {
         return propertyEditor.getPropertyMap(uuid);
     }
 
@@ -34,18 +34,18 @@ public abstract class PropertyButton<T> implements Button {
     }
 
     protected void setValue(UUID uuid, T value) {
-        getGamePropertyMap(uuid).setProperty(propertyKeyValue, value);
+        getPropertyMap(uuid).setProperty(propertyKeyValue, value);
         propertyEditor.getDisplay(uuid).ifPresent(Display::update);
     }
 
     protected T getValue(UUID uuid) {
-        return Optional.ofNullable(getGamePropertyMap(uuid))
+        return Optional.ofNullable(getPropertyMap(uuid))
                 .map(propertyMap -> propertyMap.getProperty(propertyKeyValue))
                 .orElse(null);
     }
 
     protected boolean isSet(UUID uuid) {
-        return Optional.ofNullable(getGamePropertyMap(uuid))
+        return Optional.ofNullable(getPropertyMap(uuid))
                 .map(propertyKeyValue::has)
                 .orElse(false);
     }

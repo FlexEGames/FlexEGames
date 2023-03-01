@@ -3,19 +3,19 @@ package me.hsgamer.flexegames.api.property;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class GamePropertyMap implements Cloneable {
+public class PropertyMap implements Cloneable {
     private final Map<String, Object> serializedMap = new ConcurrentHashMap<>();
 
-    private GamePropertyMap() {
+    private PropertyMap() {
         // EMPTY
     }
 
-    public static GamePropertyMap create() {
-        return new GamePropertyMap();
+    public static PropertyMap create() {
+        return new PropertyMap();
     }
 
-    public static GamePropertyMap create(Map<String, Object> propertyMap) {
-        GamePropertyMap gameProperties = new GamePropertyMap();
+    public static PropertyMap create(Map<String, Object> propertyMap) {
+        PropertyMap gameProperties = new PropertyMap();
         gameProperties.serializedMap.putAll(propertyMap);
         return gameProperties;
     }
@@ -36,23 +36,23 @@ public class GamePropertyMap implements Cloneable {
         return serializedMap.containsKey(key);
     }
 
-    public <T> T getProperty(String key, T defaultValue, GamePropertyAdapter<T> adapter) {
+    public <T> T getProperty(String key, T defaultValue, PropertyAdapter<T> adapter) {
         return adapter.get(this, key, defaultValue);
     }
 
-    public <T> void setProperty(String key, T value, GamePropertyAdapter<T> adapter) {
+    public <T> void setProperty(String key, T value, PropertyAdapter<T> adapter) {
         adapter.set(this, key, value);
     }
 
-    public <T> T getProperty(GamePropertyKeyValue<T> keyValue) {
+    public <T> T getProperty(PropertyKeyValue<T> keyValue) {
         return getProperty(keyValue.key(), keyValue.defaultValue(), keyValue.adapter());
     }
 
-    public <T> void setProperty(GamePropertyKeyValue<T> keyValue, T value) {
+    public <T> void setProperty(PropertyKeyValue<T> keyValue, T value) {
         setProperty(keyValue.key(), value, keyValue.adapter());
     }
 
-    public boolean hasProperty(GamePropertyKeyValue<?> keyValue) {
+    public boolean hasProperty(PropertyKeyValue<?> keyValue) {
         return hasProperty(keyValue.key());
     }
 
@@ -62,7 +62,7 @@ public class GamePropertyMap implements Cloneable {
 
     @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
-    public GamePropertyMap clone() {
+    public PropertyMap clone() {
         return create(serializedMap);
     }
 }

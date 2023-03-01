@@ -2,7 +2,7 @@ package me.hsgamer.flexegames.manager;
 
 import me.hsgamer.flexegames.GameServer;
 import me.hsgamer.flexegames.api.game.Game;
-import me.hsgamer.flexegames.api.property.GamePropertyMap;
+import me.hsgamer.flexegames.api.property.PropertyMap;
 import me.hsgamer.flexegames.feature.GameServerFeature;
 import me.hsgamer.flexegames.feature.LobbyFeature;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
@@ -71,7 +71,7 @@ public class GameArenaManager extends ArenaManager {
      * @param owner the owner of the {@link Arena}
      * @return the {@link Arena}
      */
-    public Arena createArena(String name, Game game, GamePropertyMap propertyMap, UUID owner) {
+    public Arena createArena(String name, Game game, PropertyMap propertyMap, UUID owner) {
         var arena = game.create(name, propertyMap, this, owner);
         if (addArena(arena)) {
             arena.postInit();
@@ -88,7 +88,7 @@ public class GameArenaManager extends ArenaManager {
      * @param owner the owner of the {@link Arena}
      * @return the {@link Arena}
      */
-    public Arena createArena(Game game, GamePropertyMap propertyMap, UUID owner) {
+    public Arena createArena(Game game, PropertyMap propertyMap, UUID owner) {
         String name;
         do {
             name = UUID.randomUUID().toString();
