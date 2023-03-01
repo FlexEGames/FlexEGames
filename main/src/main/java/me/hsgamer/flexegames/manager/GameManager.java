@@ -3,11 +3,15 @@ package me.hsgamer.flexegames.manager;
 import me.hsgamer.flexegames.GameServer;
 import me.hsgamer.flexegames.api.game.Game;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringHashMap;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -22,9 +26,13 @@ public class GameManager {
         this.gameServer = gameServer;
     }
 
+    // TODO: add the new Game Property API
     public CompletableFuture<Boolean> createArena(Player player, Game game) {
         return game.createProperty(player).exceptionally(throwable -> {
-            player.sendMessage("Failed to create the arena"); // TODO
+            if (!(throwable instanceof CancellationException)) {
+                MinecraftServer.LOGGER.error("Failed to create the arena", throwable);
+                player.sendMessage(Component.text("There was an error while creating the arena").color(NamedTextColor.RED));
+            }
             return null;
         }).thenApply(property -> {
             if (property == null) {
