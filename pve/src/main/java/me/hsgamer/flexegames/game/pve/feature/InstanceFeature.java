@@ -116,11 +116,7 @@ public class InstanceFeature implements Feature {
     }
 
     public void giveKit(Player player) {
-        var inventory = player.getInventory();
-        gameKit.getItems().forEach((slot, item) -> {
-            if (slot < 0 || slot >= inventory.getSize()) return;
-            player.getInventory().setItemStack(slot, item);
-        });
+        gameKit.giveItems(player);
     }
 
     public void giveKit() {
