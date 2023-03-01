@@ -8,6 +8,10 @@ public class ComponentConverter extends StringToObjectConverter<Component> {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(rawValue);
     }
 
+    public static String toString(Component value) {
+        return LegacyComponentSerializer.legacyAmpersand().serialize(value);
+    }
+
     @Override
     public Component deserialize(String rawValue) {
         return fromString(rawValue);
@@ -15,6 +19,6 @@ public class ComponentConverter extends StringToObjectConverter<Component> {
 
     @Override
     public String serialize(Component value) {
-        return LegacyComponentSerializer.legacyAmpersand().serialize(value);
+        return toString(value);
     }
 }

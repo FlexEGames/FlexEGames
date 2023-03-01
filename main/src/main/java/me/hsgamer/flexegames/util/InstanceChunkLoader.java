@@ -1,5 +1,6 @@
 package me.hsgamer.flexegames.util;
 
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.instance.Chunk;
 import net.minestom.server.instance.IChunkLoader;
 import net.minestom.server.instance.Instance;
@@ -44,9 +45,13 @@ public class InstanceChunkLoader implements IChunkLoader {
 
     @Override
     public @NotNull CompletableFuture<@Nullable Chunk> loadChunk(@NotNull Instance instance, int chunkX, int chunkZ) {
-        return loader.loadChunk(instance, chunkX, chunkZ).thenApplyAsync(chunk -> {
+        return loader.loadChunk(instance, chunkX, chunkZ).whenComplete((chunk, throwable) -> {
+            if (throwable != null) {
+                MinecraftServer.LOGGER.error("Failed to load chunk", throwable);
+                return;
+            }
             if (chunk == null) {
-                return null;
+                return;
             }
             for (int y = instance.getDimensionType().getMinY(); y < instance.getDimensionType().getMaxY(); y++) {
                 for (int x = 0; x < Chunk.CHUNK_SIZE_X; x++) {
@@ -59,7 +64,6 @@ public class InstanceChunkLoader implements IChunkLoader {
                     }
                 }
             }
-            return chunk;
         });
     }
 
