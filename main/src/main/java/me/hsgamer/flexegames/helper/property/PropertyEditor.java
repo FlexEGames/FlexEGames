@@ -76,8 +76,9 @@ public abstract class PropertyEditor extends MinestomGUIHolder {
     }
 
     public CompletableFuture<GamePropertyMap> open(Player player, GamePropertyMap propertyMap) {
+        GamePropertyMap clonedPropertyMap = propertyMap.clone();
         CompletableFuture<GamePropertyMap> future = new CompletableFuture<>();
-        var oldFuture = propertyMapFutureMap.put(player.getUuid(), new GamePropertyMapFuture(propertyMap, future));
+        var oldFuture = propertyMapFutureMap.put(player.getUuid(), new GamePropertyMapFuture(clonedPropertyMap, future));
         if (oldFuture != null) {
             oldFuture.cancel();
         }
