@@ -1,19 +1,24 @@
 package me.hsgamer.flexegames.helper.property;
 
 import me.hsgamer.flexegames.api.property.GamePropertyMap;
+import me.hsgamer.hscore.minecraft.gui.event.OpenEvent;
 import me.hsgamer.hscore.minestom.gui.MinestomGUIDisplay;
 import me.hsgamer.hscore.minestom.gui.MinestomGUIHolder;
 import net.minestom.server.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 public abstract class PropertyEditor extends MinestomGUIHolder {
     private final Map<UUID, GamePropertyMapFuture> propertyMapFutureMap = new ConcurrentHashMap<>();
+    private final List<Consumer<UUID>> onOpenListeners = new ArrayList<>();
+
+    public void addOnOpenListener(Consumer<UUID> listener) {
+        onOpenListeners.add(listener);
+    }
 
     protected GamePropertyMap getPropertyMap(UUID uuid) {
         return Optional.ofNullable(propertyMapFutureMap.get(uuid))
@@ -31,6 +36,11 @@ public abstract class PropertyEditor extends MinestomGUIHolder {
         Optional.ofNullable(propertyMapFutureMap.remove(display.getUniqueId()))
                 .filter(future -> !future.future().isDone())
                 .ifPresent(GamePropertyMapFuture::cancel);
+    }
+
+    @Override
+    protected void onOpen(@NotNull OpenEvent event) {
+        onOpenListeners.forEach(listener -> listener.accept(event.getViewerID()));
     }
 
     @Override

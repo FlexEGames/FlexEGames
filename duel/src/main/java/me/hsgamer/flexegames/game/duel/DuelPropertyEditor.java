@@ -1,8 +1,8 @@
 package me.hsgamer.flexegames.game.duel;
 
 import me.hsgamer.flexegames.builder.ItemBuilder;
-import me.hsgamer.flexegames.helper.property.button.SinglePropertyButton;
 import me.hsgamer.flexegames.helper.property.PropertyButton;
+import me.hsgamer.flexegames.helper.property.button.SinglePropertyButton;
 import me.hsgamer.flexegames.helper.property.editor.SinglePropertyEditor;
 import me.hsgamer.flexegames.util.ItemUtil;
 import net.kyori.adventure.text.Component;
@@ -49,6 +49,15 @@ public class DuelPropertyEditor extends SinglePropertyEditor {
             protected ItemStack display(String value) {
                 return duelExtension.getDuelWorldManager().getDuelWorld(value).getDisplayItem();
             }
+
+            @Override
+            protected void onOpen(UUID uuid) {
+                if (isSet(uuid)) return;
+                List<String> worldNames = new ArrayList<>(duelExtension.getDuelWorldManager().getDuelWorldMap().keySet());
+                if (!worldNames.isEmpty()) {
+                    setValue(uuid, worldNames.get(0));
+                }
+            }
         };
         var kitEdit = new SinglePropertyButton<>(this, DuelProperties.KIT) {
             @Override
@@ -70,6 +79,15 @@ public class DuelPropertyEditor extends SinglePropertyEditor {
             @Override
             protected ItemStack display(String value) {
                 return duelExtension.getGameKitManager().getGameKit(value).getDisplayItem();
+            }
+
+            @Override
+            protected void onOpen(UUID uuid) {
+                if (isSet(uuid)) return;
+                List<String> kitNames = new ArrayList<>(duelExtension.getGameKitManager().getGameKitMap().keySet());
+                if (!kitNames.isEmpty()) {
+                    setValue(uuid, kitNames.get(0));
+                }
             }
         };
         var pvpEdit = new SinglePropertyButton<>(this, DuelProperties.LEGACY_PVP) {

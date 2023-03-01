@@ -14,12 +14,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 public abstract class PropertyButton<T> implements Button {
+    protected final GamePropertyKeyValue<T> propertyKeyValue;
     private final PropertyEditor propertyEditor;
-    private final GamePropertyKeyValue<T> propertyKeyValue;
 
     protected PropertyButton(PropertyEditor propertyEditor, GamePropertyKeyValue<T> propertyKeyValue) {
         this.propertyEditor = propertyEditor;
         this.propertyKeyValue = propertyKeyValue;
+        propertyEditor.addOnOpenListener(this::onOpen);
     }
 
     protected GamePropertyMap getGamePropertyMap(UUID uuid) {
@@ -27,6 +28,10 @@ public abstract class PropertyButton<T> implements Button {
     }
 
     protected abstract ItemStack display(T value);
+
+    protected void onOpen(UUID uuid) {
+        // NOOP
+    }
 
     protected void setValue(UUID uuid, T value) {
         getGamePropertyMap(uuid).setProperty(propertyKeyValue, value);
@@ -37,6 +42,12 @@ public abstract class PropertyButton<T> implements Button {
         return Optional.ofNullable(getGamePropertyMap(uuid))
                 .map(propertyMap -> propertyMap.getProperty(propertyKeyValue))
                 .orElse(null);
+    }
+
+    protected boolean isSet(UUID uuid) {
+        return Optional.ofNullable(getGamePropertyMap(uuid))
+                .map(propertyKeyValue::has)
+                .orElse(false);
     }
 
     @Override

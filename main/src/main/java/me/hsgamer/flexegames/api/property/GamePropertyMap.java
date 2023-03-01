@@ -32,6 +32,10 @@ public class GamePropertyMap implements Cloneable {
         return serializedMap.get(key);
     }
 
+    boolean hasProperty(String key) {
+        return serializedMap.containsKey(key);
+    }
+
     public <T> T getProperty(String key, T defaultValue, GamePropertyAdapter<T> adapter) {
         return adapter.get(this, key, defaultValue);
     }
@@ -46,6 +50,10 @@ public class GamePropertyMap implements Cloneable {
 
     public <T> void setProperty(GamePropertyKeyValue<T> keyValue, T value) {
         setProperty(keyValue.key(), value, keyValue.adapter());
+    }
+
+    public boolean hasProperty(GamePropertyKeyValue<?> keyValue) {
+        return hasProperty(keyValue.key());
     }
 
     public final Map<String, Object> getSerializedMap() {

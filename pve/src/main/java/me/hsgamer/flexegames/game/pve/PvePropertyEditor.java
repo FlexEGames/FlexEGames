@@ -1,8 +1,8 @@
 package me.hsgamer.flexegames.game.pve;
 
 import me.hsgamer.flexegames.builder.ItemBuilder;
-import me.hsgamer.flexegames.helper.property.button.SinglePropertyButton;
 import me.hsgamer.flexegames.helper.property.PropertyButton;
+import me.hsgamer.flexegames.helper.property.button.SinglePropertyButton;
 import me.hsgamer.flexegames.helper.property.editor.SinglePropertyEditor;
 import me.hsgamer.flexegames.util.ItemUtil;
 import net.kyori.adventure.text.Component;
@@ -48,6 +48,15 @@ public class PvePropertyEditor extends SinglePropertyEditor {
             @Override
             protected ItemStack display(String value) {
                 return pveExtension.getGameKitManager().getGameKit(value).getDisplayItem();
+            }
+
+            @Override
+            protected void onOpen(UUID uuid) {
+                if (isSet(uuid)) return;
+                List<String> kitNames = new ArrayList<>(pveExtension.getGameKitManager().getGameKitMap().keySet());
+                if (!kitNames.isEmpty()) {
+                    setValue(uuid, kitNames.get(0));
+                }
             }
         };
         var pvpEdit = new SinglePropertyButton<>(this, PveProperties.LEGACY_PVP) {
