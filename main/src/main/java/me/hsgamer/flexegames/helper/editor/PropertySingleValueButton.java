@@ -1,4 +1,4 @@
-package me.hsgamer.flexegames.util.editor;
+package me.hsgamer.flexegames.helper.editor;
 
 import me.hsgamer.flexegames.api.property.GamePropertyKeyValue;
 import me.hsgamer.hscore.minecraft.gui.event.ClickEvent;

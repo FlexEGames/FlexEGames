@@ -18,7 +18,7 @@ import me.hsgamer.flexegames.game.pve.state.WaitingState;
 import me.hsgamer.flexegames.util.ChatUtil;
 import me.hsgamer.flexegames.util.PlayerBlockUtil;
 import me.hsgamer.flexegames.util.PvpUtil;
-import me.hsgamer.flexegames.util.kit.GameKit;
+import me.hsgamer.flexegames.helper.kit.GameKit;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.Feature;
 import net.kyori.adventure.text.Component;

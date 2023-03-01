@@ -1,4 +1,4 @@
-package me.hsgamer.flexegames.util.kit;
+package me.hsgamer.flexegames.helper.kit;
 
 import net.kyori.adventure.text.Component;
 import net.minestom.server.item.ItemStack;

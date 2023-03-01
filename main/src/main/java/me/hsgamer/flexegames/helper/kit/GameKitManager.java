@@ -1,4 +1,4 @@
-package me.hsgamer.flexegames.util.kit;
+package me.hsgamer.flexegames.helper.kit;
 
 import me.hsgamer.flexegames.util.MapUtil;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringLinkedMap;

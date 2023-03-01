@@ -1,4 +1,4 @@
-package me.hsgamer.flexegames.util.editor;
+package me.hsgamer.flexegames.helper.editor;
 
 import me.hsgamer.flexegames.util.ItemUtil;
 import me.hsgamer.hscore.minecraft.gui.button.Button;

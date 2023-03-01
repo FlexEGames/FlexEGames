@@ -18,7 +18,7 @@ import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.util.ChatUtil;
 import me.hsgamer.flexegames.util.PlayerBlockUtil;
 import me.hsgamer.flexegames.util.PvpUtil;
-import me.hsgamer.flexegames.util.kit.GameKit;
+import me.hsgamer.flexegames.helper.kit.GameKit;
 import me.hsgamer.hscore.minestom.board.Board;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.Feature;

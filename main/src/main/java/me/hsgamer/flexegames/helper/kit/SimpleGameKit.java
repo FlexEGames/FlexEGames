@@ -1,4 +1,4 @@
-package me.hsgamer.flexegames.util.kit;
+package me.hsgamer.flexegames.helper.kit;
 
 import me.hsgamer.flexegames.config.converter.ComponentConverter;
 import me.hsgamer.flexegames.util.ItemUtil;

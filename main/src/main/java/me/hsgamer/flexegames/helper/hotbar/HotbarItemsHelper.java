@@ -1,6 +1,7 @@
-package me.hsgamer.flexegames.util;
+package me.hsgamer.flexegames.helper.hotbar;
 
 import me.hsgamer.flexegames.builder.ItemBuilder;
+import me.hsgamer.flexegames.util.ItemUtil;
 import me.hsgamer.hscore.common.Validate;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
