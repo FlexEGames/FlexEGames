@@ -1,9 +1,9 @@
 package me.hsgamer.flexegames.game.duel;
 
 import me.hsgamer.flexegames.builder.ItemBuilder;
-import me.hsgamer.flexegames.helper.property.PropertySingleValueButton;
-import me.hsgamer.flexegames.helper.property.PropertyValueButton;
-import me.hsgamer.flexegames.helper.property.SimplePropertyEditor;
+import me.hsgamer.flexegames.helper.property.button.SinglePropertyButton;
+import me.hsgamer.flexegames.helper.property.PropertyButton;
+import me.hsgamer.flexegames.helper.property.editor.SinglePropertyEditor;
 import me.hsgamer.flexegames.util.ItemUtil;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.item.ItemStack;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class DuelPropertyEditor extends SimplePropertyEditor {
+public class DuelPropertyEditor extends SinglePropertyEditor {
     private final DuelExtension duelExtension;
 
     public DuelPropertyEditor(DuelExtension duelExtension) {
@@ -27,8 +27,8 @@ public class DuelPropertyEditor extends SimplePropertyEditor {
     }
 
     @Override
-    protected List<PropertyValueButton<?>> getValueButtons() {
-        var worldEdit = new PropertySingleValueButton<>(this, DuelProperties.WORLD) {
+    protected List<PropertyButton<?>> getPropertyButtons() {
+        var worldEdit = new SinglePropertyButton<>(this, DuelProperties.WORLD) {
             @Override
             protected String newValue(UUID uuid, String currentValue) {
                 List<String> list = new ArrayList<>(duelExtension.getDuelWorldManager().getDuelWorldMap().keySet());
@@ -50,7 +50,7 @@ public class DuelPropertyEditor extends SimplePropertyEditor {
                 return duelExtension.getDuelWorldManager().getDuelWorld(value).getDisplayItem();
             }
         };
-        var kitEdit = new PropertySingleValueButton<>(this, DuelProperties.KIT) {
+        var kitEdit = new SinglePropertyButton<>(this, DuelProperties.KIT) {
             @Override
             protected String newValue(UUID uuid, String currentValue) {
                 List<String> list = new ArrayList<>(duelExtension.getGameKitManager().getGameKitMap().keySet());
@@ -72,7 +72,7 @@ public class DuelPropertyEditor extends SimplePropertyEditor {
                 return duelExtension.getGameKitManager().getGameKit(value).getDisplayItem();
             }
         };
-        var pvpEdit = new PropertySingleValueButton<>(this, DuelProperties.LEGACY_PVP) {
+        var pvpEdit = new SinglePropertyButton<>(this, DuelProperties.LEGACY_PVP) {
             @Override
             protected ItemStack display(Boolean value) {
                 return ItemUtil.stripItalics(ItemBuilder.buildItem(duelExtension.getMessageConfig().getEditorLegacyPvp(), Map.of("value", () -> Component.text(Boolean.toString(value)))));

@@ -1,4 +1,4 @@
-package me.hsgamer.flexegames.helper.property;
+package me.hsgamer.flexegames.helper.property.editor;
 
 import me.hsgamer.flexegames.util.ItemUtil;
 import me.hsgamer.hscore.minecraft.gui.button.Button;
@@ -7,7 +7,7 @@ import me.hsgamer.hscore.minecraft.gui.button.impl.SimpleButton;
 import me.hsgamer.hscore.minecraft.gui.mask.impl.ButtonMapMask;
 import me.hsgamer.hscore.minecraft.gui.mask.impl.StaticButtonPaginatedMask;
 
-public abstract class SimplePropertyEditor extends PropertyEditor {
+public abstract class SinglePropertyEditor extends SimplePropertyEditor {
     @Override
     protected ButtonMapMask getActionMask(StaticButtonPaginatedMask valueMask) {
         Button completeButton = new SimpleButton(ItemUtil.asMinestomItem(getCompleteItem()), event -> complete(event.getViewerID()));

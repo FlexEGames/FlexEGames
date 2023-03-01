@@ -1,4 +1,4 @@
-package me.hsgamer.flexegames.helper.property;
+package me.hsgamer.flexegames.helper.property.editor;
 
 import me.hsgamer.flexegames.util.ItemUtil;
 import me.hsgamer.hscore.minecraft.gui.GUIDisplay;
@@ -9,7 +9,7 @@ import me.hsgamer.hscore.minecraft.gui.mask.impl.ButtonMapMask;
 import me.hsgamer.hscore.minecraft.gui.mask.impl.StaticButtonPaginatedMask;
 import net.minestom.server.item.ItemStack;
 
-public abstract class PaginatedPropertyEditor extends PropertyEditor {
+public abstract class PaginatedPropertyEditor extends SimplePropertyEditor {
     @Override
     protected ButtonMapMask getActionMask(StaticButtonPaginatedMask valueMask) {
         Button nextPageButton = new SimpleButton(ItemUtil.asMinestomItem(getNextPageItem()), event -> {

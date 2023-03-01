@@ -13,16 +13,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-public abstract class PropertyValueButton<T> implements Button {
+public abstract class PropertyButton<T> implements Button {
     private final PropertyEditor propertyEditor;
     private final GamePropertyKeyValue<T> propertyKeyValue;
 
-    protected PropertyValueButton(PropertyEditor propertyEditor, GamePropertyKeyValue<T> propertyKeyValue) {
+    protected PropertyButton(PropertyEditor propertyEditor, GamePropertyKeyValue<T> propertyKeyValue) {
         this.propertyEditor = propertyEditor;
         this.propertyKeyValue = propertyKeyValue;
     }
 
-    private GamePropertyMap getGamePropertyMap(UUID uuid) {
+    protected GamePropertyMap getGamePropertyMap(UUID uuid) {
         return propertyEditor.getPropertyMap(uuid);
     }
 

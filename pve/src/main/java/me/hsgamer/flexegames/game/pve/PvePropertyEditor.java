@@ -1,9 +1,9 @@
 package me.hsgamer.flexegames.game.pve;
 
 import me.hsgamer.flexegames.builder.ItemBuilder;
-import me.hsgamer.flexegames.helper.property.PropertySingleValueButton;
-import me.hsgamer.flexegames.helper.property.PropertyValueButton;
-import me.hsgamer.flexegames.helper.property.SimplePropertyEditor;
+import me.hsgamer.flexegames.helper.property.button.SinglePropertyButton;
+import me.hsgamer.flexegames.helper.property.PropertyButton;
+import me.hsgamer.flexegames.helper.property.editor.SinglePropertyEditor;
 import me.hsgamer.flexegames.util.ItemUtil;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.item.ItemStack;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class PvePropertyEditor extends SimplePropertyEditor {
+public class PvePropertyEditor extends SinglePropertyEditor {
     private final PveExtension pveExtension;
 
     public PvePropertyEditor(PveExtension pveExtension) {
@@ -27,8 +27,8 @@ public class PvePropertyEditor extends SimplePropertyEditor {
     }
 
     @Override
-    protected List<PropertyValueButton<?>> getValueButtons() {
-        var kitEdit = new PropertySingleValueButton<>(this, PveProperties.KIT) {
+    protected List<PropertyButton<?>> getPropertyButtons() {
+        var kitEdit = new SinglePropertyButton<>(this, PveProperties.KIT) {
             @Override
             protected String newValue(UUID uuid, String currentValue) {
                 List<String> list = new ArrayList<>(pveExtension.getGameKitManager().getGameKitMap().keySet());
@@ -50,7 +50,7 @@ public class PvePropertyEditor extends SimplePropertyEditor {
                 return pveExtension.getGameKitManager().getGameKit(value).getDisplayItem();
             }
         };
-        var pvpEdit = new PropertySingleValueButton<>(this, PveProperties.LEGACY_PVP) {
+        var pvpEdit = new SinglePropertyButton<>(this, PveProperties.LEGACY_PVP) {
             @Override
             protected ItemStack display(Boolean value) {
                 return ItemUtil.stripItalics(ItemBuilder.buildItem(pveExtension.getMessageConfig().getEditorLegacyPvp(), Map.of("value", () -> Component.text(Boolean.toString(value)))));
@@ -61,7 +61,7 @@ public class PvePropertyEditor extends SimplePropertyEditor {
                 return !currentValue;
             }
         };
-        var toughMobEdit = new PropertySingleValueButton<>(this, PveProperties.TOUGH_MOB) {
+        var toughMobEdit = new SinglePropertyButton<>(this, PveProperties.TOUGH_MOB) {
             @Override
             protected ItemStack display(Boolean value) {
                 return ItemUtil.stripItalics(ItemBuilder.buildItem(pveExtension.getMessageConfig().getEditorToughMob(), Map.of("value", () -> Component.text(Boolean.toString(value)))));
@@ -72,7 +72,7 @@ public class PvePropertyEditor extends SimplePropertyEditor {
                 return !currentValue;
             }
         };
-        var healOnRestEdit = new PropertySingleValueButton<>(this, PveProperties.HEAL_ON_REST) {
+        var healOnRestEdit = new SinglePropertyButton<>(this, PveProperties.HEAL_ON_REST) {
             @Override
             protected ItemStack display(Boolean value) {
                 return ItemUtil.stripItalics(ItemBuilder.buildItem(pveExtension.getMessageConfig().getEditorHealOnRest(), Map.of("value", () -> Component.text(Boolean.toString(value)))));

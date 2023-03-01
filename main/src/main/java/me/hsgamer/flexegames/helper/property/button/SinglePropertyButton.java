@@ -1,14 +1,16 @@
-package me.hsgamer.flexegames.helper.property;
+package me.hsgamer.flexegames.helper.property.button;
 
 import me.hsgamer.flexegames.api.property.GamePropertyKeyValue;
+import me.hsgamer.flexegames.helper.property.PropertyButton;
+import me.hsgamer.flexegames.helper.property.PropertyEditor;
 import me.hsgamer.hscore.minecraft.gui.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.UUID;
 
-public abstract class PropertySingleValueButton<T> extends PropertyValueButton<T> {
-    protected PropertySingleValueButton(PropertyEditor propertyEditor, GamePropertyKeyValue<T> propertyKeyValue) {
+public abstract class SinglePropertyButton<T> extends PropertyButton<T> {
+    protected SinglePropertyButton(PropertyEditor propertyEditor, GamePropertyKeyValue<T> propertyKeyValue) {
         super(propertyEditor, propertyKeyValue);
     }
 

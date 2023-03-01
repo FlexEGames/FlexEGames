@@ -1,20 +1,11 @@
 package me.hsgamer.flexegames.helper.property;
 
 import me.hsgamer.flexegames.api.property.GamePropertyMap;
-import me.hsgamer.hscore.minecraft.gui.advanced.AdvancedButtonMap;
-import me.hsgamer.hscore.minecraft.gui.mask.MaskUtils;
-import me.hsgamer.hscore.minecraft.gui.mask.impl.ButtonMapMask;
-import me.hsgamer.hscore.minecraft.gui.mask.impl.StaticButtonPaginatedMask;
 import me.hsgamer.hscore.minestom.gui.MinestomGUIDisplay;
 import me.hsgamer.hscore.minestom.gui.MinestomGUIHolder;
-import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.Player;
-import net.minestom.server.inventory.InventoryType;
-import net.minestom.server.item.ItemStack;
-import net.minestom.server.item.Material;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,33 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class PropertyEditor extends MinestomGUIHolder {
     private final Map<UUID, GamePropertyMapFuture> propertyMapFutureMap = new ConcurrentHashMap<>();
 
-    @Override
-    public void init() {
-        setInventoryType(InventoryType.CHEST_3_ROW);
-        setRemoveDisplayOnClose(true);
-
-        AdvancedButtonMap buttonMap = new AdvancedButtonMap();
-        setButtonMap(buttonMap);
-
-        StaticButtonPaginatedMask valueMask = new StaticButtonPaginatedMask("value", MaskUtils.generateAreaSlots(0, 0, 8, 1).boxed().toList()).addButton(getValueButtons());
-        ButtonMapMask actionMask = getActionMask(valueMask);
-        buttonMap.addMask(valueMask);
-        buttonMap.addMask(actionMask);
-
-        super.init();
-    }
-
-    protected abstract ButtonMapMask getActionMask(StaticButtonPaginatedMask valueMask);
-
-    protected ItemStack getDummyItem() {
-        return ItemStack.of(Material.BLACK_STAINED_GLASS_PANE).withDisplayName(Component.empty());
-    }
-
-    protected abstract ItemStack getCompleteItem();
-
-    protected abstract List<PropertyValueButton<?>> getValueButtons();
-
-    GamePropertyMap getPropertyMap(UUID uuid) {
+    protected GamePropertyMap getPropertyMap(UUID uuid) {
         return Optional.ofNullable(propertyMapFutureMap.get(uuid))
                 .map(GamePropertyMapFuture::current)
                 .orElse(null);
