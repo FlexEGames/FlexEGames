@@ -1,7 +1,6 @@
 package me.hsgamer.flexegames.game.duel;
 
 import me.hsgamer.flexegames.config.converter.ComponentConverter;
-import me.hsgamer.flexegames.config.converter.ComponentListConverter;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -70,10 +69,10 @@ public interface DuelMessageConfig {
                 "material", Material.WOODEN_SWORD.name(),
                 "name", "%game%",
                 "lore", List.of(
-                        "&bOwner: &f%owner%",
-                        "&bPlayer: &f%players%/%max-players%",
-                        "&bTime: &f%time%",
-                        "&bStatus: &f%state%"
+                        ComponentConverter.toString(Component.text("Owner: ").color(NamedTextColor.BLUE).append(Component.text("%owner%").color(NamedTextColor.WHITE))),
+                        ComponentConverter.toString(Component.text("Player: ").color(NamedTextColor.BLUE).append(Component.text("%players%/%max-players%").color(NamedTextColor.WHITE))),
+                        ComponentConverter.toString(Component.text("Time: ").color(NamedTextColor.BLUE).append(Component.text("%time%").color(NamedTextColor.WHITE))),
+                        ComponentConverter.toString(Component.text("Status: ").color(NamedTextColor.BLUE).append(Component.text("%state%").color(NamedTextColor.WHITE)))
                 ),
                 "hide", "all"
         );
@@ -81,41 +80,43 @@ public interface DuelMessageConfig {
 
     @ConfigPath("board.title")
     default Component getBoardTitle() {
-        return ComponentConverter.fromString("&6&lDuel");
+        return Component.text("Duel").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD);
     }
 
     @ConfigPath("board.lines.waiting")
     default List<Component> getBoardLinesWaiting() {
-        return ComponentListConverter.fromStringList(List.of(
-                "&eWaiting for players",
-                "&ePlayers: &a%players%",
-                "&eTime Left: &a%time%"
-        ));
+        return List.of(
+                Component.text("Waiting for players").color(NamedTextColor.YELLOW),
+                Component.text("Players: ").color(NamedTextColor.YELLOW).append(Component.text("%players%").color(NamedTextColor.WHITE)),
+                Component.text("Time Left: ").color(NamedTextColor.YELLOW).append(Component.text("%time%").color(NamedTextColor.WHITE))
+        );
     }
 
     @ConfigPath("board.lines.ingame")
     default List<Component> getBoardLinesIngame() {
-        return ComponentListConverter.fromStringList(List.of(
-                "&eAlive: &a%alive%"
-        ));
+        return List.of(
+                Component.text("Alive: ").color(NamedTextColor.YELLOW).append(Component.text("%alive%").color(NamedTextColor.WHITE))
+        );
     }
 
     @ConfigPath("board.lines.ending")
     default List<Component> getBoardLinesEnding() {
-        return ComponentListConverter.fromStringList(List.of(
-                "&eEnding in: &a%time%",
-                "&eWinner: &a%winner%"
-        ));
+        return List.of(
+                Component.text("Ending in: ").color(NamedTextColor.YELLOW).append(Component.text("%time%").color(NamedTextColor.WHITE)),
+                Component.text("Winner: ").color(NamedTextColor.YELLOW).append(Component.text("%winner%").color(NamedTextColor.WHITE))
+        );
     }
 
     @ConfigPath("winner-message")
     default Component getWinnerMessage() {
-        return ComponentConverter.fromString("&a%winner% &ewon the game");
+        return Component.empty()
+                .append(Component.text("%winner%").color(NamedTextColor.GREEN))
+                .append(Component.text(" won the game").color(NamedTextColor.YELLOW));
     }
 
     @ConfigPath("no-winner-message")
     default Component getNoWinnerMessage() {
-        return ComponentConverter.fromString("&cNo winner");
+        return Component.text("No winner").color(NamedTextColor.RED);
     }
 
     @ConfigPath("chat-format")
@@ -135,7 +136,7 @@ public interface DuelMessageConfig {
     default Map<String, Object> getEditorComplete() {
         return Map.of(
                 "material", Material.EMERALD.name(),
-                "name", "&aComplete"
+                "name", ComponentConverter.toString(Component.text("Complete").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
         );
     }
 
@@ -143,11 +144,11 @@ public interface DuelMessageConfig {
     default Map<String, Object> getEditorLegacyPvp() {
         return Map.of(
                 "material", Material.IRON_SWORD.name(),
-                "name", "&aLegacy PVP",
+                "name", ComponentConverter.toString(Component.text("Legacy PVP").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD)),
                 "lore", List.of(
-                        "&7Legacy PVP",
-                        "&7",
-                        "&7%value%"
+                        ComponentConverter.toString(Component.text("Enable this to use 1.8 PVP mechanics").color(NamedTextColor.WHITE)),
+                        "",
+                        ComponentConverter.toString(Component.text("Current: ").color(NamedTextColor.WHITE).append(Component.text("%value%").color(NamedTextColor.GREEN)))
                 )
         );
     }
