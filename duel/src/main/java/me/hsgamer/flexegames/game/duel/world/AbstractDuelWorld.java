@@ -28,8 +28,6 @@ public abstract class AbstractDuelWorld implements DuelWorld {
         this(ComponentConverter.fromString(String.valueOf(map.get("display-name"))), ItemUtil.getItemOrStone(map.get("display-item")), getBorderDiameter(map));
     }
 
-    protected abstract void modifyInstance(InstanceContainer instance, Arena arena);
-
     private static double getBorderDiameter(Map<String, Object> map) {
         try {
             return Double.parseDouble(String.valueOf(map.get("border-diameter")));
@@ -37,6 +35,8 @@ public abstract class AbstractDuelWorld implements DuelWorld {
             return 50.0;
         }
     }
+
+    protected abstract void modifyInstance(InstanceContainer instance, Arena arena);
 
     @Override
     public final Instance createInstance(Arena arena) {

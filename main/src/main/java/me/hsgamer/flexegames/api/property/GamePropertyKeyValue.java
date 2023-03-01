@@ -2,8 +2,8 @@ package me.hsgamer.flexegames.api.property;
 
 public final class GamePropertyKeyValue<T> {
     private final String key;
-    private T defaultValue;
     private final GamePropertyAdapter<T> adapter;
+    private T defaultValue;
 
     public GamePropertyKeyValue(String key, T defaultValue, GamePropertyAdapter<T> adapter) {
         this.key = key;

@@ -4,8 +4,8 @@ import lombok.Getter;
 import me.hsgamer.flexegames.api.extension.SingleGameExtension;
 import me.hsgamer.flexegames.api.game.Game;
 import me.hsgamer.flexegames.game.duel.manager.DuelWorldManager;
-import me.hsgamer.flexegames.util.ConfigGeneratorUtil;
 import me.hsgamer.flexegames.helper.kit.GameKitManager;
+import me.hsgamer.flexegames.util.ConfigGeneratorUtil;
 
 import java.util.ArrayList;
 import java.util.List;
