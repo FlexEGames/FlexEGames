@@ -14,19 +14,23 @@ import net.minestom.server.item.ItemStack;
 import java.util.Map;
 
 public abstract class AbstractDuelWorld implements DuelWorld {
-    protected final Map<String, Object> map;
     private final Component displayName;
     private final ItemStack displayItem;
+    private final double borderDiameter;
+
+    protected AbstractDuelWorld(Component displayName, ItemStack displayItem, double borderDiameter) {
+        this.displayName = displayName;
+        this.displayItem = displayItem;
+        this.borderDiameter = borderDiameter;
+    }
 
     protected AbstractDuelWorld(Map<String, Object> map) {
-        this.map = map;
-        this.displayName = ComponentConverter.fromString(String.valueOf(map.get("display-name")));
-        this.displayItem = ItemUtil.getItemOrStone(map.get("display-item"));
+        this(ComponentConverter.fromString(String.valueOf(map.get("display-name"))), ItemUtil.getItemOrStone(map.get("display-item")), getBorderDiameter(map));
     }
 
     protected abstract void modifyInstance(InstanceContainer instance, Arena arena);
 
-    protected double getBorderDiameter() {
+    private static double getBorderDiameter(Map<String, Object> map) {
         try {
             return Double.parseDouble(String.valueOf(map.get("border-diameter")));
         } catch (Exception e) {
@@ -42,7 +46,7 @@ public abstract class AbstractDuelWorld implements DuelWorld {
         instance.setTimeRate(0);
         instance.setTime(6000);
         instance.getWorldBorder().setCenter((float) joinPos.x(), (float) joinPos.z());
-        instance.getWorldBorder().setDiameter(getBorderDiameter());
+        instance.getWorldBorder().setDiameter(borderDiameter);
         return instance;
     }
 

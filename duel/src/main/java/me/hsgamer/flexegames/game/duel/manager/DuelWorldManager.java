@@ -14,14 +14,7 @@ import net.minestom.server.MinecraftServer;
 import java.util.Map;
 
 public class DuelWorldManager {
-    private static final DefaultDuelWorld DEFAULT_DUEL_WORLD = new DefaultDuelWorld(Map.of(
-            "display-name", "&f&lDefault World",
-            "display-item", Map.of(
-                    "material", "STONE",
-                    "amount", 1,
-                    "name", "&f&lDefault World"
-            )
-    ));
+    private static final DefaultDuelWorld DEFAULT_DUEL_WORLD = DefaultDuelWorld.defaultDuelWorld();
     private final Config config;
     private final Map<String, DuelWorld> duelWorldMap;
 
