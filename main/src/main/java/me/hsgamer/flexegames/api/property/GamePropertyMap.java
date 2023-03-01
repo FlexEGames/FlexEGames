@@ -3,7 +3,7 @@ package me.hsgamer.flexegames.api.property;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class GamePropertyMap {
+public class GamePropertyMap implements Cloneable {
     private final Map<String, Object> serializedMap = new ConcurrentHashMap<>();
 
     private GamePropertyMap() {
@@ -50,5 +50,11 @@ public class GamePropertyMap {
 
     public final Map<String, Object> getSerializedMap() {
         return serializedMap;
+    }
+
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
+    @Override
+    public GamePropertyMap clone() {
+        return create(serializedMap);
     }
 }
