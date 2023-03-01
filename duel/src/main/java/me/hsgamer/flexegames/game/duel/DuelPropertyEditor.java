@@ -1,9 +1,9 @@
 package me.hsgamer.flexegames.game.duel;
 
 import me.hsgamer.flexegames.builder.ItemBuilder;
-import me.hsgamer.flexegames.helper.editor.PropertySingleValueButton;
-import me.hsgamer.flexegames.helper.editor.PropertyValueButton;
-import me.hsgamer.flexegames.helper.editor.SimplePropertyEditor;
+import me.hsgamer.flexegames.helper.property.PropertySingleValueButton;
+import me.hsgamer.flexegames.helper.property.PropertyValueButton;
+import me.hsgamer.flexegames.helper.property.SimplePropertyEditor;
 import me.hsgamer.flexegames.util.ItemUtil;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.item.ItemStack;
