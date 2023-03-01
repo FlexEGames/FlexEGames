@@ -144,6 +144,7 @@ public interface DuelMessageConfig {
     default Map<String, Object> getEditorLegacyPvp() {
         return Map.of(
                 "material", Material.IRON_SWORD.name(),
+                "hide", "all",
                 "name", ComponentConverter.toString(Component.text("Legacy PVP").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD)),
                 "lore", List.of(
                         ComponentConverter.toString(Component.text("Enable this to use 1.8 PVP mechanics").color(NamedTextColor.WHITE)),

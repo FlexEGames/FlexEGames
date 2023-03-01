@@ -172,6 +172,7 @@ public interface PveMessageConfig {
     default Map<String, Object> getEditorLegacyPvp() {
         return Map.of(
                 "material", Material.IRON_SWORD.name(),
+                "hide", "all",
                 "name", ComponentConverter.toString(Component.text("Legacy PVP").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD)),
                 "lore", List.of(
                         ComponentConverter.toString(Component.text("Enable this to use 1.8 PVP mechanics").color(NamedTextColor.WHITE)),
@@ -184,7 +185,7 @@ public interface PveMessageConfig {
     @ConfigPath("editor.tough-mob")
     default Map<String, Object> getEditorToughMob() {
         return Map.of(
-                "material", Material.IRON_SWORD.name(),
+                "material", Material.ZOMBIE_HEAD.name(),
                 "name", ComponentConverter.toString(Component.text("Tough Mob").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD)),
                 "lore", List.of(
                         ComponentConverter.toString(Component.text("Enable this to make mobs tougher").color(NamedTextColor.WHITE)),
