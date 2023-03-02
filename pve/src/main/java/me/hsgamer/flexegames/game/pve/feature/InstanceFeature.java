@@ -42,16 +42,13 @@ public class InstanceFeature implements Feature {
     private static final Tag<Boolean> DEAD_TAG = Tag.Boolean("pve:dead").defaultValue(false);
     private final Arena arena;
     private final PveExtension pveExtension;
-    private final Instance instance;
-    private final EventNode<EntityEvent> entityEventNode;
-    private final @Getter GameKit gameKit;
+    private Instance instance;
+    private EventNode<EntityEvent> entityEventNode;
+    private @Getter GameKit gameKit;
 
     public InstanceFeature(Arena arena, PveExtension pveExtension) {
         this.arena = arena;
         this.pveExtension = pveExtension;
-        this.instance = new ArenaInstance();
-        entityEventNode = EventNode.event("entityEvent-" + arena.getName(), EventFilter.ENTITY, entityEvent -> entityEvent.getEntity().getInstance() == instance);
-        this.gameKit = pveExtension.getGameKitManager().getGameKit(arena.getFeature(GameFeature.class).propertyMap().getProperty(PveProperties.KIT));
     }
 
     public Instance getInstance() {
@@ -61,14 +58,17 @@ public class InstanceFeature implements Feature {
     @Override
     public void init() {
         var propertyMap = arena.getFeature(GameFeature.class).propertyMap();
+        this.gameKit = pveExtension.getGameKitManager().getGameKit(propertyMap.getProperty(PveProperties.KIT));
 
+        this.instance = new ArenaInstance();
+        var instanceEventNode = instance.eventNode();
+        entityEventNode = EventNode.event("entityEvent-" + arena.getName(), EventFilter.ENTITY, entityEvent -> entityEvent.getEntity().getInstance() == instance);
         entityEventNode.addListener(PlayerSpawnEvent.class, event -> event.getPlayer().teleport(SPAWN_POS));
         PvpUtil.applyExplosion(instance);
-        PvpUtil.applyPvp(instance.eventNode(), propertyMap.getProperty(PveProperties.LEGACY_PVP));
-        ChatUtil.apply(instance.eventNode(), pveExtension.getMessageConfig().getChatFormat(), player -> arena.getFeature(DescriptionFeature.class).getReplacements());
-        PlayerBlockUtil.apply(instance.eventNode());
-
-        instance.eventNode()
+        PvpUtil.applyPvp(instanceEventNode, propertyMap.getProperty(PveProperties.LEGACY_PVP));
+        ChatUtil.apply(instanceEventNode, pveExtension.getMessageConfig().getChatFormat(), player -> arena.getFeature(DescriptionFeature.class).getReplacements());
+        PlayerBlockUtil.apply(instanceEventNode);
+        instanceEventNode
                 .addListener(AddEntityToInstanceEvent.class, event -> {
                     if (event.getEntity() instanceof Player player) {
                         player.setRespawnPoint(SPAWN_POS);
@@ -143,7 +143,7 @@ public class InstanceFeature implements Feature {
     }
 
     public void tryHealAll() {
-        if (arena.getFeature(GameFeature.class).propertyMap().getProperty(PveProperties.HEAL_ON_REST)) {
+        if (Boolean.TRUE.equals(arena.getFeature(GameFeature.class).propertyMap().getProperty(PveProperties.HEAL_ON_REST))) {
             instance.getPlayers().forEach(player -> {
                 player.heal();
                 player.setFood(20);

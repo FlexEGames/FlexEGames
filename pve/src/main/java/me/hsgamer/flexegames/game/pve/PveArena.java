@@ -42,7 +42,7 @@ public class PveArena extends GameArena<PveGame> {
                 new InstanceFeature(this, pveExtension),
                 new StageFeature(),
                 new MobGeneratorFeature(this, pveExtension),
-                new BoardFeature(this, pveExtension)
+                new GameBoardFeature(this, pveExtension)
         );
     }
 

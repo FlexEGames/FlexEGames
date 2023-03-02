@@ -4,10 +4,7 @@ import me.hsgamer.flexegames.api.game.GameArena;
 import me.hsgamer.flexegames.api.property.PropertyMap;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.feature.arena.JoinFeature;
-import me.hsgamer.flexegames.game.duel.feature.GameDescriptionFeature;
-import me.hsgamer.flexegames.game.duel.feature.GameJoinFeature;
-import me.hsgamer.flexegames.game.duel.feature.InstanceFeature;
-import me.hsgamer.flexegames.game.duel.feature.WinnerFeature;
+import me.hsgamer.flexegames.game.duel.feature.*;
 import me.hsgamer.flexegames.game.duel.state.EndingState;
 import me.hsgamer.flexegames.game.duel.state.InGameState;
 import me.hsgamer.flexegames.game.duel.state.WaitingState;
@@ -42,7 +39,8 @@ public class DuelArena extends GameArena<DuelGame> {
         return List.of(
                 new InstanceFeature(this, duelExtension),
                 new WinnerFeature(this),
-                new TimerFeature()
+                new TimerFeature(),
+                new GameBoardFeature(this, duelExtension)
         );
     }
 

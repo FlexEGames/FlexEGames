@@ -4,22 +4,17 @@ import io.github.bloepiloepi.pvp.events.EntityPreDeathEvent;
 import io.github.bloepiloepi.pvp.events.FinalDamageEvent;
 import io.github.bloepiloepi.pvp.events.PlayerExhaustEvent;
 import lombok.Getter;
-import me.hsgamer.flexegames.api.property.PropertyMap;
 import me.hsgamer.flexegames.feature.LobbyFeature;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.feature.arena.GameFeature;
 import me.hsgamer.flexegames.game.duel.DuelExtension;
 import me.hsgamer.flexegames.game.duel.DuelProperties;
-import me.hsgamer.flexegames.game.duel.state.EndingState;
 import me.hsgamer.flexegames.game.duel.state.InGameState;
-import me.hsgamer.flexegames.game.duel.state.WaitingState;
 import me.hsgamer.flexegames.game.duel.world.DuelWorld;
 import me.hsgamer.flexegames.helper.kit.GameKit;
-import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.util.ChatUtil;
 import me.hsgamer.flexegames.util.PlayerBlockUtil;
 import me.hsgamer.flexegames.util.PvpUtil;
-import me.hsgamer.hscore.minestom.board.Board;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.Feature;
 import net.kyori.adventure.text.Component;
@@ -35,32 +30,21 @@ import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.trait.EntityEvent;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.tag.Tag;
-import net.minestom.server.timer.ExecutionType;
-import net.minestom.server.timer.Task;
-import net.minestom.server.timer.TaskSchedule;
 
-import java.util.Collections;
 import java.util.List;
 
 public class InstanceFeature implements Feature {
     private final Arena arena;
-    private final @Getter DuelWorld duelWorld;
-    private final @Getter GameKit gameKit;
     private final DuelExtension duelExtension;
-    private final @Getter Instance instance;
-    private final EventNode<EntityEvent> entityEventNode;
     private final Tag<Boolean> deadTag = Tag.Boolean("duel:dead").defaultValue(false);
-    private Board board;
-    private Task task;
+    private @Getter DuelWorld duelWorld;
+    private @Getter GameKit gameKit;
+    private @Getter Instance instance;
+    private EventNode<EntityEvent> entityEventNode;
 
     public InstanceFeature(Arena arena, DuelExtension duelExtension) {
         this.arena = arena;
-        PropertyMap propertyMap = arena.getFeature(GameFeature.class).propertyMap();
-        this.duelWorld = duelExtension.getDuelWorldManager().getDuelWorld(propertyMap.getProperty(DuelProperties.WORLD));
-        this.gameKit = duelExtension.getGameKitManager().getGameKit(propertyMap.getProperty(DuelProperties.KIT));
         this.duelExtension = duelExtension;
-        this.instance = duelWorld.createInstance(arena);
-        entityEventNode = EventNode.event("entityEvent-" + arena.getName(), EventFilter.ENTITY, entityEvent -> entityEvent.getEntity().getInstance() == instance);
     }
 
     private boolean isInGame() {
@@ -69,37 +53,22 @@ public class InstanceFeature implements Feature {
 
     @Override
     public void init() {
+        var propertyMap = arena.getFeature(GameFeature.class).propertyMap();
         var descriptionFeature = arena.getFeature(DescriptionFeature.class);
-        this.board = new Board(
-                player -> ReplacementManager.builder()
-                        .replaceGlobal()
-                        .replace(descriptionFeature.getReplacements())
-                        .replacePlayer(player)
-                        .build(duelExtension.getMessageConfig().getBoardTitle()),
-                player -> {
-                    ReplacementManager.Builder builder = ReplacementManager.builder()
-                            .replaceGlobal()
-                            .replace(descriptionFeature.getReplacements())
-                            .replacePlayer(player);
-                    List<Component> components = Collections.emptyList();
-                    if (arena.getCurrentState() == WaitingState.class) {
-                        components = duelExtension.getMessageConfig().getBoardLinesWaiting();
-                    } else if (arena.getCurrentState() == InGameState.class) {
-                        components = duelExtension.getMessageConfig().getBoardLinesIngame();
-                    } else if (arena.getCurrentState() == EndingState.class) {
-                        components = duelExtension.getMessageConfig().getBoardLinesEnding();
-                    }
-                    return components.stream().map(builder::build).toList();
-                }
-        );
 
+        this.duelWorld = duelExtension.getDuelWorldManager().getDuelWorld(propertyMap.getProperty(DuelProperties.WORLD));
+        this.gameKit = duelExtension.getGameKitManager().getGameKit(propertyMap.getProperty(DuelProperties.KIT));
+
+        this.instance = duelWorld.createInstance(arena);
+        var instanceEventNode = instance.eventNode();
+        entityEventNode = EventNode.event("entityEvent-" + arena.getName(), EventFilter.ENTITY, entityEvent -> entityEvent.getEntity().getInstance() == instance);
         entityEventNode.addListener(PlayerSpawnEvent.class, event -> event.getPlayer().teleport(duelWorld.getJoinPos()));
         MinecraftServer.getGlobalEventHandler().addChild(entityEventNode);
-        PvpUtil.applyPvp(instance.eventNode(), arena.getFeature(GameFeature.class).propertyMap().getProperty(DuelProperties.LEGACY_PVP));
+        PvpUtil.applyPvp(instanceEventNode, propertyMap.getProperty(DuelProperties.LEGACY_PVP));
         PvpUtil.applyExplosion(instance);
-        ChatUtil.apply(instance.eventNode(), duelExtension.getMessageConfig().getChatFormat(), player -> descriptionFeature.getReplacements());
-        PlayerBlockUtil.apply(instance.eventNode());
-        instance.eventNode()
+        ChatUtil.apply(instanceEventNode, duelExtension.getMessageConfig().getChatFormat(), player -> descriptionFeature.getReplacements());
+        PlayerBlockUtil.apply(instanceEventNode);
+        instanceEventNode
                 .addListener(EntityPreDeathEvent.class, event -> {
                     if (event.getEntity() instanceof Player player) {
                         event.setCancelled(true);
@@ -120,7 +89,6 @@ public class InstanceFeature implements Feature {
                     if (event.getEntity() instanceof Player player) {
                         player.setRespawnPoint(duelWorld.getJoinPos());
                         player.setGameMode(GameMode.SURVIVAL);
-                        board.addPlayer(player);
                     }
                 })
                 .addListener(PlayerMoveEvent.class, event -> {
@@ -133,22 +101,13 @@ public class InstanceFeature implements Feature {
                 .addListener(RemoveEntityFromInstanceEvent.class, event -> {
                     if (event.getEntity() instanceof Player player) {
                         player.removeTag(deadTag);
-                        board.removePlayer(player);
                     }
                 });
-
         MinecraftServer.getInstanceManager().registerInstance(instance);
-        task = instance.scheduler()
-                .buildTask(board::updateAll)
-                .repeat(TaskSchedule.nextTick())
-                .executionType(ExecutionType.ASYNC)
-                .schedule();
     }
 
     @Override
     public void clear() {
-        task.cancel();
-        board.removeAll();
         backToLobby();
         MinecraftServer.getGlobalEventHandler().removeChild(entityEventNode);
         MinecraftServer.getInstanceManager().unregisterInstance(instance);
