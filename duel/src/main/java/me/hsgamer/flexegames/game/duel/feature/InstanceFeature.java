@@ -53,8 +53,9 @@ public class InstanceFeature implements Feature {
     private Board board;
     private Task task;
 
-    public InstanceFeature(Arena arena, DuelExtension duelExtension, PropertyMap propertyMap) {
+    public InstanceFeature(Arena arena, DuelExtension duelExtension) {
         this.arena = arena;
+        PropertyMap propertyMap = arena.getFeature(GameFeature.class).propertyMap();
         this.duelWorld = duelExtension.getDuelWorldManager().getDuelWorld(propertyMap.getProperty(DuelProperties.WORLD));
         this.gameKit = duelExtension.getGameKitManager().getGameKit(propertyMap.getProperty(DuelProperties.KIT));
         this.duelExtension = duelExtension;

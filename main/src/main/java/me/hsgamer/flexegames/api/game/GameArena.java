@@ -70,13 +70,13 @@ public abstract class GameArena<T extends Game> extends Arena {
 
     @Override
     protected final List<Feature> loadFeatures() {
-        List<Feature> features = new ArrayList<>(loadExtraFeatures());
-        features.addAll(List.of(
+        List<Feature> features = new ArrayList<>(List.of(
                 new GameFeature(game, propertyMap),
                 new OwnerFeature(owner),
                 createDescriptionFeature(),
                 createJoinFeature()
         ));
+        features.addAll(loadExtraFeatures());
         return features;
     }
 

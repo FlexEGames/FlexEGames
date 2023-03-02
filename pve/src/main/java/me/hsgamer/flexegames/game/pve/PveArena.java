@@ -39,7 +39,7 @@ public class PveArena extends GameArena<PveGame> {
     protected List<Feature> loadExtraFeatures() {
         return List.of(
                 new TimerFeature(),
-                new InstanceFeature(this, pveExtension, propertyMap),
+                new InstanceFeature(this, pveExtension),
                 new StageFeature(),
                 new MobGeneratorFeature(this, pveExtension),
                 new BoardFeature(this, pveExtension)
