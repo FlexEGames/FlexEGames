@@ -2,6 +2,7 @@ package me.hsgamer.flexegames.game.pve.feature;
 
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
+import me.hsgamer.flexegames.feature.arena.KitFeature;
 import me.hsgamer.flexegames.game.pve.PveExtension;
 import me.hsgamer.flexegames.util.ItemUtil;
 import me.hsgamer.flexegames.util.TimeUtil;
@@ -33,7 +34,7 @@ public class GameDescriptionFeature implements DescriptionFeature {
                 "alive", () -> Component.text(Integer.toString(arena.getFeature(InstanceFeature.class).getAlivePlayers().size())),
                 "mob", () -> Component.text(Integer.toString(arena.getFeature(MobGeneratorFeature.class).getMobCount())),
                 "max-mob", () -> Component.text(Integer.toString(arena.getFeature(MobGeneratorFeature.class).getMaxMobCount())),
-                "kit", () -> arena.getFeature(InstanceFeature.class).getKit().getDisplayName()
+                "kit", () -> arena.getFeature(KitFeature.class).getKit().getDisplayName()
         ));
         return map;
     }

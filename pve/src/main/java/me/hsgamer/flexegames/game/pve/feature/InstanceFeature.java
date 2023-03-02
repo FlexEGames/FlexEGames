@@ -2,10 +2,10 @@ package me.hsgamer.flexegames.game.pve.feature;
 
 import io.github.bloepiloepi.pvp.events.EntityPreDeathEvent;
 import io.github.bloepiloepi.pvp.events.PlayerExhaustEvent;
-import lombok.Getter;
 import me.hsgamer.flexegames.feature.LobbyFeature;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.feature.arena.GameFeature;
+import me.hsgamer.flexegames.feature.arena.KitFeature;
 import me.hsgamer.flexegames.game.pve.PveExtension;
 import me.hsgamer.flexegames.game.pve.PveGame;
 import me.hsgamer.flexegames.game.pve.PveProperties;
@@ -14,7 +14,6 @@ import me.hsgamer.flexegames.game.pve.state.EndingState;
 import me.hsgamer.flexegames.game.pve.state.FightingState;
 import me.hsgamer.flexegames.game.pve.state.RestingState;
 import me.hsgamer.flexegames.game.pve.state.WaitingState;
-import me.hsgamer.flexegames.helper.kit.Kit;
 import me.hsgamer.flexegames.util.ChatUtil;
 import me.hsgamer.flexegames.util.PlayerBlockUtil;
 import me.hsgamer.flexegames.util.PvpUtil;
@@ -44,7 +43,6 @@ public class InstanceFeature implements Feature {
     private final PveExtension pveExtension;
     private Instance instance;
     private EventNode<EntityEvent> entityEventNode;
-    private @Getter Kit kit;
 
     public InstanceFeature(Arena arena, PveExtension pveExtension) {
         this.arena = arena;
@@ -58,7 +56,6 @@ public class InstanceFeature implements Feature {
     @Override
     public void init() {
         var propertyMap = arena.getFeature(GameFeature.class).propertyMap();
-        this.kit = pveExtension.getKitManager().getKit(propertyMap.getProperty(PveProperties.KIT));
 
         this.instance = new ArenaInstance();
         var instanceEventNode = instance.eventNode();
@@ -115,19 +112,19 @@ public class InstanceFeature implements Feature {
     }
 
     public void giveKit(Player player) {
-        kit.giveItems(player);
+        arena.getFeature(KitFeature.class).giveKit(player);
     }
 
     public void giveKit() {
-        instance.getPlayers().forEach(this::giveKit);
+        arena.getFeature(KitFeature.class).giveKit(instance);
     }
 
-    public void clearInventory(Player player) {
-        player.getInventory().clear();
+    public void clearKit(Player player) {
+        arena.getFeature(KitFeature.class).clearKit(player);
     }
 
-    public void clearInventory() {
-        instance.getPlayers().forEach(this::clearInventory);
+    public void clearKit() {
+        arena.getFeature(KitFeature.class).clearKit(instance);
     }
 
     public void respawnDeadPlayers() {
@@ -171,7 +168,7 @@ public class InstanceFeature implements Feature {
         player.heal();
         player.setFood(20);
         if (isFighting()) {
-            clearInventory(player);
+            clearKit(player);
             player.setTag(DEAD_TAG, true);
             player.setGameMode(GameMode.SPECTATOR);
             player.setInvisible(true);

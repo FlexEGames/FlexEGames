@@ -25,7 +25,7 @@ public class EndingState implements GameState, ComponentDisplayName {
     public void start(Arena arena) {
         var descriptionFeature = arena.getFeature(DescriptionFeature.class);
         arena.getFeature(TimerFeature.class).setDuration(pveExtension.getMainConfig().getEndingTime(), TimeUnit.SECONDS);
-        arena.getFeature(InstanceFeature.class).clearInventory();
+        arena.getFeature(InstanceFeature.class).clearKit();
         Component message = ReplacementManager.replace(pveExtension.getMessageConfig().getEndMessage(), descriptionFeature.getReplacements());
         arena.getFeature(InstanceFeature.class).sendMessage(message);
         arena.getFeature(MobGeneratorFeature.class).clearMobs();

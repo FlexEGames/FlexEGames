@@ -1,9 +1,12 @@
 package me.hsgamer.flexegames.helper.kit;
 
+import me.hsgamer.flexegames.api.property.PropertyKeyValue;
+import me.hsgamer.flexegames.feature.arena.KitFeature;
 import me.hsgamer.flexegames.util.MapUtil;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringLinkedMap;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringMap;
 import me.hsgamer.hscore.config.Config;
+import me.hsgamer.minigamecore.base.Arena;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.item.ItemStack;
@@ -59,5 +62,9 @@ public class KitManager {
 
     public Kit getKit(String name) {
         return kitMap.getOrDefault(name, EMPTY_KIT);
+    }
+
+    public KitFeature createFeature(Arena arena, PropertyKeyValue<String> kitProperty) {
+        return new KitFeature(arena, this, kitProperty);
     }
 }

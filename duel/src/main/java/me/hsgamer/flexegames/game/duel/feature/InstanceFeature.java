@@ -7,11 +7,11 @@ import lombok.Getter;
 import me.hsgamer.flexegames.feature.LobbyFeature;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.feature.arena.GameFeature;
+import me.hsgamer.flexegames.feature.arena.KitFeature;
 import me.hsgamer.flexegames.game.duel.DuelExtension;
 import me.hsgamer.flexegames.game.duel.DuelProperties;
 import me.hsgamer.flexegames.game.duel.state.InGameState;
 import me.hsgamer.flexegames.game.duel.world.DuelWorld;
-import me.hsgamer.flexegames.helper.kit.Kit;
 import me.hsgamer.flexegames.util.ChatUtil;
 import me.hsgamer.flexegames.util.PlayerBlockUtil;
 import me.hsgamer.flexegames.util.PvpUtil;
@@ -38,7 +38,6 @@ public class InstanceFeature implements Feature {
     private final DuelExtension duelExtension;
     private final Tag<Boolean> deadTag = Tag.Boolean("duel:dead").defaultValue(false);
     private @Getter DuelWorld duelWorld;
-    private @Getter Kit kit;
     private @Getter Instance instance;
     private EventNode<EntityEvent> entityEventNode;
 
@@ -57,7 +56,6 @@ public class InstanceFeature implements Feature {
         var descriptionFeature = arena.getFeature(DescriptionFeature.class);
 
         this.duelWorld = duelExtension.getDuelWorldManager().getDuelWorld(propertyMap.getProperty(DuelProperties.WORLD));
-        this.kit = duelExtension.getKitManager().getKit(propertyMap.getProperty(DuelProperties.KIT));
 
         this.instance = duelWorld.createInstance(arena);
         var instanceEventNode = instance.eventNode();
@@ -125,27 +123,23 @@ public class InstanceFeature implements Feature {
         instance.sendMessage(component);
     }
 
-    public void clearInventory(Player player) {
-        player.getInventory().clear();
+    public void clearKit(Player player) {
+        arena.getFeature(KitFeature.class).clearKit(player);
     }
 
-    public void clearInventory() {
-        instance.getPlayers().forEach(this::clearInventory);
-    }
-
-    public void giveKit(Player player) {
-        kit.giveItems(player);
+    public void clearKit() {
+        arena.getFeature(KitFeature.class).clearKit(instance);
     }
 
     public void giveKit() {
-        instance.getPlayers().forEach(this::giveKit);
+        arena.getFeature(KitFeature.class).giveKit(instance);
     }
 
     private void onKill(Player player) {
         player.heal();
         player.setFood(20);
         if (isInGame()) {
-            clearInventory(player);
+            clearKit(player);
             player.setTag(deadTag, true);
             player.setGameMode(GameMode.SPECTATOR);
             player.setInvisible(true);

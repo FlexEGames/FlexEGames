@@ -2,6 +2,7 @@ package me.hsgamer.flexegames.game.duel.feature;
 
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
+import me.hsgamer.flexegames.feature.arena.KitFeature;
 import me.hsgamer.flexegames.game.duel.DuelExtension;
 import me.hsgamer.flexegames.util.ItemUtil;
 import me.hsgamer.flexegames.util.TimeUtil;
@@ -34,7 +35,7 @@ public class GameDescriptionFeature implements DescriptionFeature {
                 "winner", () -> Optional.ofNullable(arena.getFeature(WinnerFeature.class).getWinner()).map(Player::getName).orElse(Component.empty()),
                 "alive", () -> Component.text(Integer.toString(arena.getFeature(InstanceFeature.class).getAlivePlayers().size())),
                 "world", () -> arena.getFeature(InstanceFeature.class).getDuelWorld().getDisplayName(),
-                "kit", () -> arena.getFeature(InstanceFeature.class).getKit().getDisplayName()
+                "kit", () -> arena.getFeature(KitFeature.class).getKit().getDisplayName()
         ));
         return map;
     }

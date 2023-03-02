@@ -37,6 +37,7 @@ public class DuelArena extends GameArena<DuelGame> {
     @Override
     protected List<Feature> loadExtraFeatures() {
         return List.of(
+                duelExtension.getKitManager().createFeature(this, DuelProperties.KIT),
                 new InstanceFeature(this, duelExtension),
                 new WinnerFeature(this),
                 new TimerFeature(),
