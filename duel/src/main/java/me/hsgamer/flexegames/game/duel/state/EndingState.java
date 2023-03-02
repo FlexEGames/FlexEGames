@@ -32,7 +32,7 @@ public class EndingState implements GameState, ComponentDisplayName {
         } else {
             message = ReplacementManager.replace(duelExtension.getMessageConfig().getNoWinnerMessage(), descriptionFeature.getReplacements());
         }
-        arena.getFeature(InstanceFeature.class).clearKit();
+        arena.getFeature(InstanceFeature.class).clearInventory();
         arena.getFeature(InstanceFeature.class).sendMessage(message);
     }
 

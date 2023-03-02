@@ -119,12 +119,12 @@ public class InstanceFeature implements Feature {
         arena.getFeature(KitFeature.class).giveKit(instance);
     }
 
-    public void clearKit(Player player) {
-        arena.getFeature(KitFeature.class).clearKit(player);
+    public void clearInventory(Player player) {
+        player.getInventory().clear();
     }
 
-    public void clearKit() {
-        arena.getFeature(KitFeature.class).clearKit(instance);
+    public void clearInventory() {
+        instance.getPlayers().forEach(this::clearInventory);
     }
 
     public void respawnDeadPlayers() {
@@ -168,7 +168,7 @@ public class InstanceFeature implements Feature {
         player.heal();
         player.setFood(20);
         if (isFighting()) {
-            clearKit(player);
+            clearInventory(player);
             player.setTag(DEAD_TAG, true);
             player.setGameMode(GameMode.SPECTATOR);
             player.setInvisible(true);
