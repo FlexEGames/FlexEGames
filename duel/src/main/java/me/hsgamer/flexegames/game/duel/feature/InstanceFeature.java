@@ -11,7 +11,7 @@ import me.hsgamer.flexegames.game.duel.DuelExtension;
 import me.hsgamer.flexegames.game.duel.DuelProperties;
 import me.hsgamer.flexegames.game.duel.state.InGameState;
 import me.hsgamer.flexegames.game.duel.world.DuelWorld;
-import me.hsgamer.flexegames.helper.kit.GameKit;
+import me.hsgamer.flexegames.helper.kit.Kit;
 import me.hsgamer.flexegames.util.ChatUtil;
 import me.hsgamer.flexegames.util.PlayerBlockUtil;
 import me.hsgamer.flexegames.util.PvpUtil;
@@ -38,7 +38,7 @@ public class InstanceFeature implements Feature {
     private final DuelExtension duelExtension;
     private final Tag<Boolean> deadTag = Tag.Boolean("duel:dead").defaultValue(false);
     private @Getter DuelWorld duelWorld;
-    private @Getter GameKit gameKit;
+    private @Getter Kit kit;
     private @Getter Instance instance;
     private EventNode<EntityEvent> entityEventNode;
 
@@ -57,7 +57,7 @@ public class InstanceFeature implements Feature {
         var descriptionFeature = arena.getFeature(DescriptionFeature.class);
 
         this.duelWorld = duelExtension.getDuelWorldManager().getDuelWorld(propertyMap.getProperty(DuelProperties.WORLD));
-        this.gameKit = duelExtension.getGameKitManager().getGameKit(propertyMap.getProperty(DuelProperties.KIT));
+        this.kit = duelExtension.getKitManager().getKit(propertyMap.getProperty(DuelProperties.KIT));
 
         this.instance = duelWorld.createInstance(arena);
         var instanceEventNode = instance.eventNode();
@@ -134,7 +134,7 @@ public class InstanceFeature implements Feature {
     }
 
     public void giveKit(Player player) {
-        gameKit.giveItems(player);
+        kit.giveItems(player);
     }
 
     public void giveKit() {

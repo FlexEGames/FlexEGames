@@ -6,7 +6,7 @@ import net.minestom.server.item.ItemStack;
 
 import java.util.Map;
 
-public interface GameKit {
+public interface Kit {
     Component getDisplayName();
 
     ItemStack getDisplayItem();

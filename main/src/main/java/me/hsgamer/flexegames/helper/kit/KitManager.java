@@ -12,8 +12,8 @@ import net.minestom.server.item.Material;
 import java.util.Collections;
 import java.util.Map;
 
-public class GameKitManager {
-    private static final GameKit EMPTY_KIT = new GameKit() {
+public class KitManager {
+    private static final Kit EMPTY_KIT = new Kit() {
         @Override
         public Component getDisplayName() {
             return Component.text("Empty Kit").decorate(TextDecoration.BOLD);
@@ -30,34 +30,34 @@ public class GameKitManager {
         }
     };
     private final Config config;
-    private final Map<String, GameKit> gameKitMap;
+    private final Map<String, Kit> kitMap;
 
-    public GameKitManager(Config config, boolean setup) {
+    public KitManager(Config config, boolean setup) {
         this.config = config;
         if (setup) {
             config.setup();
         }
-        this.gameKitMap = new CaseInsensitiveStringLinkedMap<>();
+        this.kitMap = new CaseInsensitiveStringLinkedMap<>();
     }
 
     public void init() {
         config.getNormalizedValues(false).forEach((key, value) -> {
             if (value instanceof Map<?, ?> rawMap) {
                 Map<String, Object> map = new CaseInsensitiveStringMap<>(MapUtil.toStringObjectMap(rawMap));
-                gameKitMap.put(key, new SimpleGameKit(map));
+                kitMap.put(key, new SimpleKit(map));
             }
         });
     }
 
     public void clear() {
-        gameKitMap.clear();
+        kitMap.clear();
     }
 
-    public Map<String, GameKit> getGameKitMap() {
-        return gameKitMap;
+    public Map<String, Kit> getKitMap() {
+        return kitMap;
     }
 
-    public GameKit getGameKit(String name) {
-        return gameKitMap.getOrDefault(name, EMPTY_KIT);
+    public Kit getKit(String name) {
+        return kitMap.getOrDefault(name, EMPTY_KIT);
     }
 }

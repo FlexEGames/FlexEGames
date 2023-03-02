@@ -34,7 +34,7 @@ public class GameDescriptionFeature implements DescriptionFeature {
                 "winner", () -> Optional.ofNullable(arena.getFeature(WinnerFeature.class).getWinner()).map(Player::getName).orElse(Component.empty()),
                 "alive", () -> Component.text(Integer.toString(arena.getFeature(InstanceFeature.class).getAlivePlayers().size())),
                 "world", () -> arena.getFeature(InstanceFeature.class).getDuelWorld().getDisplayName(),
-                "kit", () -> arena.getFeature(InstanceFeature.class).getGameKit().getDisplayName()
+                "kit", () -> arena.getFeature(InstanceFeature.class).getKit().getDisplayName()
         ));
         return map;
     }

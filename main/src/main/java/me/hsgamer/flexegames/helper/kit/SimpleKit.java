@@ -9,12 +9,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SimpleGameKit implements GameKit {
+public class SimpleKit implements Kit {
     private final Component displayName;
     private final ItemStack displayItem;
     private final Map<Integer, ItemStack> items;
 
-    public SimpleGameKit(Map<String, Object> map) {
+    public SimpleKit(Map<String, Object> map) {
         this.displayName = ComponentConverter.fromString(String.valueOf(map.get("display-name")));
         this.displayItem = ItemUtil.getItemOrStone(map.get("display-item"));
 

@@ -28,10 +28,10 @@ public class PvePropertyEditor extends SinglePropertyEditor {
 
     @Override
     protected List<PropertyButton<?>> getPropertyButtons() {
-        var kitEdit = new ListPropertyButton<>(this, PveProperties.KIT, new ArrayList<>(pveExtension.getGameKitManager().getGameKitMap().keySet())) {
+        var kitEdit = new ListPropertyButton<>(this, PveProperties.KIT, new ArrayList<>(pveExtension.getKitManager().getKitMap().keySet())) {
             @Override
             protected ItemStack display(String value) {
-                return pveExtension.getGameKitManager().getGameKit(value).getDisplayItem();
+                return pveExtension.getKitManager().getKit(value).getDisplayItem();
             }
         };
         var pvpEdit = new BooleanPropertyButton(this, PveProperties.LEGACY_PVP) {

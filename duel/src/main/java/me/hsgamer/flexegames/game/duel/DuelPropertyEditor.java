@@ -34,10 +34,10 @@ public class DuelPropertyEditor extends SinglePropertyEditor {
                 return duelExtension.getDuelWorldManager().getDuelWorld(value).getDisplayItem();
             }
         };
-        var kitEdit = new ListPropertyButton<>(this, DuelProperties.KIT, new ArrayList<>(duelExtension.getGameKitManager().getGameKitMap().keySet())) {
+        var kitEdit = new ListPropertyButton<>(this, DuelProperties.KIT, new ArrayList<>(duelExtension.getKitManager().getKitMap().keySet())) {
             @Override
             protected ItemStack display(String value) {
-                return duelExtension.getGameKitManager().getGameKit(value).getDisplayItem();
+                return duelExtension.getKitManager().getKit(value).getDisplayItem();
             }
         };
         var pvpEdit = new BooleanPropertyButton(this, DuelProperties.LEGACY_PVP) {

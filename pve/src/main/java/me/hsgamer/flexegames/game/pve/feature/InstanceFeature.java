@@ -14,7 +14,7 @@ import me.hsgamer.flexegames.game.pve.state.EndingState;
 import me.hsgamer.flexegames.game.pve.state.FightingState;
 import me.hsgamer.flexegames.game.pve.state.RestingState;
 import me.hsgamer.flexegames.game.pve.state.WaitingState;
-import me.hsgamer.flexegames.helper.kit.GameKit;
+import me.hsgamer.flexegames.helper.kit.Kit;
 import me.hsgamer.flexegames.util.ChatUtil;
 import me.hsgamer.flexegames.util.PlayerBlockUtil;
 import me.hsgamer.flexegames.util.PvpUtil;
@@ -44,7 +44,7 @@ public class InstanceFeature implements Feature {
     private final PveExtension pveExtension;
     private Instance instance;
     private EventNode<EntityEvent> entityEventNode;
-    private @Getter GameKit gameKit;
+    private @Getter Kit kit;
 
     public InstanceFeature(Arena arena, PveExtension pveExtension) {
         this.arena = arena;
@@ -58,7 +58,7 @@ public class InstanceFeature implements Feature {
     @Override
     public void init() {
         var propertyMap = arena.getFeature(GameFeature.class).propertyMap();
-        this.gameKit = pveExtension.getGameKitManager().getGameKit(propertyMap.getProperty(PveProperties.KIT));
+        this.kit = pveExtension.getKitManager().getKit(propertyMap.getProperty(PveProperties.KIT));
 
         this.instance = new ArenaInstance();
         var instanceEventNode = instance.eventNode();
@@ -115,7 +115,7 @@ public class InstanceFeature implements Feature {
     }
 
     public void giveKit(Player player) {
-        gameKit.giveItems(player);
+        kit.giveItems(player);
     }
 
     public void giveKit() {
