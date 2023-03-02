@@ -26,6 +26,30 @@ public class ConfigGeneratorUtil {
     }
 
     /**
+     * Get the config file
+     *
+     * @param parent the parent
+     * @param name   the name
+     * @return the config file
+     */
+    public static File getConfigFile(File parent, String name) {
+        if (name.endsWith(".yml") || name.endsWith(".yaml")) {
+            return new File(parent, name);
+        }
+        return new File(parent, name + ".yml");
+    }
+
+    /**
+     * Get the config file
+     *
+     * @param name the name
+     * @return the config file
+     */
+    public static File getConfigFile(String name) {
+        return getConfigFile(new File("."), name);
+    }
+
+    /**
      * Generate a config
      *
      * @param file the file

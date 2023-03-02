@@ -50,15 +50,15 @@ public class GameServer {
     /**
      * The main config
      */
-    private final MainConfig mainConfig = ConfigGeneratorUtil.generate(MainConfig.class, new File("config.yml"), true, true);
+    private final MainConfig mainConfig = ConfigGeneratorUtil.generate(MainConfig.class, ConfigGeneratorUtil.getConfigFile("config"), true, true);
     /**
      * The lobby config
      */
-    private final LobbyConfig lobbyConfig = ConfigGeneratorUtil.generate(LobbyConfig.class, new File("lobby.yml"), true, true);
+    private final LobbyConfig lobbyConfig = ConfigGeneratorUtil.generate(LobbyConfig.class, ConfigGeneratorUtil.getConfigFile("lobby"), true, true);
     /**
      * The message config
      */
-    private final MessageConfig messageConfig = ConfigGeneratorUtil.generate(MessageConfig.class, new File("messages.yml"), true, true);
+    private final MessageConfig messageConfig = ConfigGeneratorUtil.generate(MessageConfig.class, ConfigGeneratorUtil.getConfigFile("messages"), true, true);
     /**
      * The game manager
      */

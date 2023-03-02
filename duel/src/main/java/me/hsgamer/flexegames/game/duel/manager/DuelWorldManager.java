@@ -19,7 +19,7 @@ public class DuelWorldManager {
     private final Map<String, DuelWorld> duelWorldMap;
 
     public DuelWorldManager(DuelExtension duelExtension) {
-        this.config = ConfigGeneratorUtil.createConfig(duelExtension.getDataDirectory().resolve("world.yml").toFile());
+        this.config = ConfigGeneratorUtil.createConfig(ConfigGeneratorUtil.getConfigFile(duelExtension.getDataDirectory().toFile(), "world"));
         this.config.setup();
         this.duelWorldMap = new CaseInsensitiveStringLinkedMap<>();
     }
