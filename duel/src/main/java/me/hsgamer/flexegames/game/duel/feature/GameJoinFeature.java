@@ -25,7 +25,7 @@ public class GameJoinFeature implements JoinFeature {
 
     @Override
     public int getMaxPlayers() {
-        return arena.getFeature(ConfigFeature.class).config().getPos().size();
+        return arena.getFeature(InstanceFeature.class).getDuelWorld().getPos().size();
     }
 
     @Override
@@ -35,7 +35,7 @@ public class GameJoinFeature implements JoinFeature {
         }
         var instanceFeature = arena.getFeature(InstanceFeature.class);
         var instance = instanceFeature.getInstance();
-        if (instance.getPlayers().size() >= arena.getFeature(ConfigFeature.class).config().getPos().size()) {
+        if (instance.getPlayers().size() >= getMaxPlayers()) {
             return JoinResponse.fail(duelExtension.getMessageConfig().getMaxPlayersReached());
         }
         player.setInstance(instance);

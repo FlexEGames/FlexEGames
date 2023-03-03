@@ -1,10 +1,5 @@
-package me.hsgamer.flexegames.game.pve.feature;
+package me.hsgamer.flexegames.feature.arena;
 
-import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
-import me.hsgamer.flexegames.game.pve.state.EndingState;
-import me.hsgamer.flexegames.game.pve.state.FightingState;
-import me.hsgamer.flexegames.game.pve.state.RestingState;
-import me.hsgamer.flexegames.game.pve.state.WaitingState;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.hscore.minestom.board.Board;
 import me.hsgamer.minigamecore.base.Arena;
@@ -17,28 +12,62 @@ import net.minestom.server.event.EventNode;
 import net.minestom.server.event.instance.AddEntityToInstanceEvent;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
 import net.minestom.server.event.trait.InstanceEvent;
+import net.minestom.server.instance.Instance;
 import net.minestom.server.timer.ExecutionType;
 import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskSchedule;
 
-import java.util.Collections;
 import java.util.List;
 
-public class BoardFeature implements Feature {
-    private final Arena arena;
+/**
+ * The feature to show the {@link Board} for all players in the {@link Instance}.
+ * It would replace the placeholders in the title and lines, and update the board every tick.
+ * The placeholders are took from the {@link DescriptionFeature} of the {@link Arena}.
+ */
+public abstract class BoardFeature implements Feature {
+    /**
+     * The arena
+     */
+    protected final Arena arena;
     private Board board;
     private Task task;
     private EventNode<InstanceEvent> boardEventNode;
 
-    public BoardFeature(Arena arena) {
+    /**
+     * Create a new feature
+     *
+     * @param arena the arena
+     */
+    protected BoardFeature(Arena arena) {
         this.arena = arena;
     }
 
+    /**
+     * Get the instance
+     *
+     * @return the instance
+     */
+    protected abstract Instance getInstance();
+
+    /**
+     * Get the title
+     *
+     * @param player the player
+     * @return the title
+     */
+    protected abstract Component getTitle(Player player);
+
+    /**
+     * Get the lines
+     *
+     * @param player the player
+     * @return the lines
+     */
+    protected abstract List<Component> getLines(Player player);
+
     @Override
     public void init() {
-        var gameConfig = arena.getFeature(ConfigFeature.class).config();
-        var instance = arena.getFeature(InstanceFeature.class).getInstance();
-        var descriptionFeature = arena.getFeature(DescriptionFeature.class);
+        var instance = getInstance();
         boardEventNode = EventNode.event("boardEventNode-" + arena.getName(), EventFilter.INSTANCE, event -> event.getInstance() == instance);
         MinecraftServer.getGlobalEventHandler().addChild(boardEventNode);
         boardEventNode
@@ -52,28 +81,19 @@ public class BoardFeature implements Feature {
                         board.removePlayer(player);
                     }
                 });
+        var descriptionFeature = arena.getFeature(DescriptionFeature.class);
         this.board = new Board(
                 player -> ReplacementManager.builder()
                         .replaceGlobal()
                         .replace(descriptionFeature.getReplacements())
                         .replacePlayer(player)
-                        .build(gameConfig.getBoardTitle()),
+                        .build(getTitle(player)),
                 player -> {
                     ReplacementManager.Builder builder = ReplacementManager.builder()
                             .replaceGlobal()
                             .replace(descriptionFeature.getReplacements())
                             .replacePlayer(player);
-                    var state = arena.getCurrentState();
-                    List<Component> components = Collections.emptyList();
-                    if (state == WaitingState.class) {
-                        components = gameConfig.getBoardLinesWaiting();
-                    } else if (state == RestingState.class) {
-                        components = gameConfig.getBoardLinesResting();
-                    } else if (state == FightingState.class) {
-                        components = gameConfig.getBoardLinesFighting();
-                    } else if (state == EndingState.class) {
-                        components = gameConfig.getBoardLinesEnding();
-                    }
+                    List<Component> components = getLines(player);
                     return components.stream().map(builder::build).toList();
                 }
         );

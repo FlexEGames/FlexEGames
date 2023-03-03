@@ -1,6 +1,7 @@
 package me.hsgamer.flexegames.game.pve;
 
 import me.hsgamer.flexegames.api.game.GameArena;
+import me.hsgamer.flexegames.api.property.PropertyMap;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.feature.arena.JoinFeature;
 import me.hsgamer.flexegames.game.pve.feature.*;
@@ -14,18 +15,19 @@ import me.hsgamer.minigamecore.base.GameState;
 import me.hsgamer.minigamecore.implementation.feature.TimerFeature;
 
 import java.util.List;
+import java.util.UUID;
 
 public class PveArena extends GameArena<PveGame> {
     private final PveExtension pveExtension;
 
-    public PveArena(PveExtension pveExtension, PveGame game, String name, ArenaManager arenaManager) {
-        super(name, game, arenaManager);
+    public PveArena(PveExtension pveExtension, String name, PropertyMap propertyMap, PveGame game, ArenaManager arenaManager, UUID owner) {
+        super(name, propertyMap, game, arenaManager, owner);
         this.pveExtension = pveExtension;
     }
 
     @Override
     protected DescriptionFeature createDescriptionFeature() {
-        return new GameDescriptionFeature(this);
+        return new GameDescriptionFeature(this, pveExtension);
     }
 
     @Override
@@ -37,11 +39,11 @@ public class PveArena extends GameArena<PveGame> {
     protected List<Feature> loadExtraFeatures() {
         return List.of(
                 new TimerFeature(),
-                new InstanceFeature(this),
+                pveExtension.getKitManager().createFeature(this, PveProperties.KIT),
+                new InstanceFeature(this, pveExtension),
                 new StageFeature(),
-                new MobGeneratorFeature(this),
-                new BoardFeature(this),
-                new ConfigFeature(game.getGameConfig())
+                new MobGeneratorFeature(this, pveExtension),
+                new GameBoardFeature(this, pveExtension)
         );
     }
 

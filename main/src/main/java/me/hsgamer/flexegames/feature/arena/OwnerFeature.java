@@ -1,7 +1,5 @@
 package me.hsgamer.flexegames.feature.arena;
 
-import lombok.Getter;
-import lombok.Setter;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.Feature;
 import net.kyori.adventure.text.Component;
@@ -13,15 +11,10 @@ import java.util.UUID;
 
 /**
  * The feature to get the owner of the specific {@link Arena}
+ *
+ * @param owner the owner of the {@link Arena}
  */
-@Getter
-@Setter
-public class OwnerFeature implements Feature {
-    /**
-     * The owner of the {@link Arena}
-     */
-    private UUID owner;
-
+public record OwnerFeature(UUID owner) implements Feature {
     /**
      * Get the display name of the owner
      *

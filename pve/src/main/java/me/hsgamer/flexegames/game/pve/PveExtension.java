@@ -1,30 +1,37 @@
 package me.hsgamer.flexegames.game.pve;
 
+import lombok.Getter;
 import me.hsgamer.flexegames.api.extension.SingleGameExtension;
 import me.hsgamer.flexegames.api.game.Game;
+import me.hsgamer.flexegames.helper.kit.KitManager;
 import me.hsgamer.flexegames.util.ConfigUtil;
-import me.hsgamer.flexegames.util.YamlConfigGenerator;
-import me.hsgamer.hscore.config.Config;
 
-import java.util.function.Function;
-
+@Getter
 public class PveExtension extends SingleGameExtension {
-    private final PveMessageConfig messageConfig = YamlConfigGenerator.generate(PveMessageConfig.class, getDataDirectory().resolve("messages.yml").toFile());
+    private final PveMessageConfig messageConfig = ConfigUtil.generate(PveMessageConfig.class, ConfigUtil.getConfigFile(getDataDirectory().toFile(), "messages"));
+    private final PveMainConfig mainConfig = ConfigUtil.generate(PveMainConfig.class, ConfigUtil.getConfigFile(getDataDirectory().toFile(), "config"));
+    private final KitManager kitManager = new KitManager();
+    private final PvePropertyEditor propertyEditor = new PvePropertyEditor(this);
 
     @Override
-    public Function<Config, Game> getInitializer() {
-        return config -> {
-            var gameConfig = ConfigUtil.getConfig(config, PveGameConfig.class);
-            return new PveGame(this, gameConfig);
-        };
+    public void onEnable() {
+        kitManager.loadFromConfig(ConfigUtil.createConfig(ConfigUtil.getConfigFile(getDataDirectory().toFile(), "kit")), true);
+        propertyEditor.init();
     }
 
     @Override
-    public String[] getId() {
-        return new String[]{"pve"};
+    public void onDisable() {
+        propertyEditor.stop();
+        kitManager.clear();
     }
 
-    public PveMessageConfig getMessageConfig() {
-        return messageConfig;
+    @Override
+    public Game getGame() {
+        return new PveGame(this);
+    }
+
+    @Override
+    public String getIdentifier() {
+        return "pve";
     }
 }

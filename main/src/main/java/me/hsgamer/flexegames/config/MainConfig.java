@@ -34,11 +34,6 @@ public interface MainConfig {
         return false;
     }
 
-    @ConfigPath("server.velocity-secret")
-    default String getVelocitySecret() {
-        return "";
-    }
-
     @ConfigPath("server.brand")
     default String getServerBrand() {
         return FlexEGames.class.getSimpleName();

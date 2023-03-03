@@ -1,21 +1,17 @@
 package me.hsgamer.flexegames.api.game;
 
+import me.hsgamer.flexegames.api.property.PropertyMap;
 import me.hsgamer.minigamecore.base.Arena;
 import me.hsgamer.minigamecore.base.ArenaManager;
 import net.kyori.adventure.text.Component;
+import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
 
 import java.util.List;
-import java.util.function.Function;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public interface Game {
-    /**
-     * Check if the game is configured
-     *
-     * @return true if configured
-     */
-    boolean isConfigured();
-
     /**
      * Get the display name of the {@link Game}
      *
@@ -38,10 +34,32 @@ public interface Game {
     ItemStack getDisplayItem();
 
     /**
-     * Get the {@link Arena} of the {@link Game}
+     * Edit the property of the {@link Game}
      *
-     * @param name the name of the {@link Arena}
-     * @return the function to create the {@link Arena}
+     * @param player      the involved player
+     * @param propertyMap the property map
+     * @return the future that contains the edited property map
      */
-    Function<ArenaManager, Arena> createArena(String name);
+    CompletableFuture<PropertyMap> editProperty(Player player, PropertyMap propertyMap);
+
+    /**
+     * Create the property of the {@link Game}
+     *
+     * @param player the involved player
+     * @return the future that contains the created property map
+     */
+    default CompletableFuture<PropertyMap> createProperty(Player player) {
+        return editProperty(player, PropertyMap.create());
+    }
+
+    /**
+     * Create the {@link Arena} of the {@link Game}
+     *
+     * @param name         the name of the arena
+     * @param propertyMap  the property map
+     * @param arenaManager the arena manager
+     * @param owner        the owner of the arena
+     * @return the created arena
+     */
+    Arena create(String name, PropertyMap propertyMap, ArenaManager arenaManager, UUID owner);
 }

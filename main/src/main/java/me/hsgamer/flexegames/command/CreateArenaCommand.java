@@ -31,7 +31,7 @@ public class CreateArenaCommand extends Command {
         addSyntax((sender, context) -> {
             if (!playerLobbyPredicate.test(sender)) return;
             Game game = context.get(gameArgument);
-            gameServer.getArenaManager().createArena(game, ((Player) sender).getUuid());
+            gameServer.getGameManager().createArena((Player) sender, game);
             sender.sendMessage(gameServer.getMessageConfig().getResponseCreateArenaSuccessful());
         }, gameArgument);
         addSyntax((sender, context) -> {

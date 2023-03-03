@@ -2,6 +2,8 @@ package me.hsgamer.flexegames.game.duel.feature;
 
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
+import me.hsgamer.flexegames.feature.arena.KitFeature;
+import me.hsgamer.flexegames.game.duel.DuelExtension;
 import me.hsgamer.flexegames.util.ItemUtil;
 import me.hsgamer.flexegames.util.TimeUtil;
 import me.hsgamer.minigamecore.base.Arena;
@@ -18,9 +20,11 @@ import java.util.function.Supplier;
 
 public class GameDescriptionFeature implements DescriptionFeature {
     private final Arena arena;
+    private final DuelExtension duelExtension;
 
-    public GameDescriptionFeature(Arena arena) {
+    public GameDescriptionFeature(Arena arena, DuelExtension duelExtension) {
         this.arena = arena;
+        this.duelExtension = duelExtension;
     }
 
     @Override
@@ -29,7 +33,9 @@ public class GameDescriptionFeature implements DescriptionFeature {
         map.putAll(Map.of(
                 "time", () -> Component.text(TimeUtil.format(arena.getFeature(TimerFeature.class).getDuration())),
                 "winner", () -> Optional.ofNullable(arena.getFeature(WinnerFeature.class).getWinner()).map(Player::getName).orElse(Component.empty()),
-                "alive", () -> Component.text(Integer.toString(arena.getFeature(InstanceFeature.class).getAlivePlayers().size()))
+                "alive", () -> Component.text(Integer.toString(arena.getFeature(InstanceFeature.class).getAlivePlayers().size())),
+                "world", () -> arena.getFeature(InstanceFeature.class).getDuelWorld().getDisplayName(),
+                "kit", () -> arena.getFeature(KitFeature.class).getKit().getDisplayName()
         ));
         return map;
     }
@@ -37,7 +43,7 @@ public class GameDescriptionFeature implements DescriptionFeature {
     @Override
     public ItemStack getDisplayItem() {
         return ItemUtil.stripItalics(
-                ItemBuilder.buildItem(arena.getFeature(ConfigFeature.class).config().getArenaDisplayItem(), getReplacements())
+                ItemBuilder.buildItem(duelExtension.getMessageConfig().getArenaDisplayItem(), getReplacements())
         );
     }
 }

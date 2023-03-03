@@ -25,7 +25,7 @@ public class GameJoinFeature implements JoinFeature {
 
     @Override
     public int getMaxPlayers() {
-        return arena.getFeature(ConfigFeature.class).config().getMaxPlayers();
+        return pveExtension.getMainConfig().getMaxPlayers();
     }
 
     @Override
@@ -35,7 +35,7 @@ public class GameJoinFeature implements JoinFeature {
         }
         var instanceFeature = arena.getFeature(InstanceFeature.class);
         var instance = instanceFeature.getInstance();
-        if (instance.getPlayers().size() >= arena.getFeature(ConfigFeature.class).config().getMaxPlayers()) {
+        if (instance.getPlayers().size() >= getMaxPlayers()) {
             return JoinResponse.fail(pveExtension.getMessageConfig().getMaxPlayersReached());
         }
         player.setInstance(instance);

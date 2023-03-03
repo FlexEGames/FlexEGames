@@ -2,6 +2,8 @@ package me.hsgamer.flexegames.game.pve.feature;
 
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
+import me.hsgamer.flexegames.feature.arena.KitFeature;
+import me.hsgamer.flexegames.game.pve.PveExtension;
 import me.hsgamer.flexegames.util.ItemUtil;
 import me.hsgamer.flexegames.util.TimeUtil;
 import me.hsgamer.minigamecore.base.Arena;
@@ -16,9 +18,11 @@ import java.util.function.Supplier;
 
 public class GameDescriptionFeature implements DescriptionFeature {
     private final Arena arena;
+    private final PveExtension pveExtension;
 
-    public GameDescriptionFeature(Arena arena) {
+    public GameDescriptionFeature(Arena arena, PveExtension pveExtension) {
         this.arena = arena;
+        this.pveExtension = pveExtension;
     }
 
     @Override
@@ -29,7 +33,8 @@ public class GameDescriptionFeature implements DescriptionFeature {
                 "stage", () -> Component.text(Integer.toString(arena.getFeature(StageFeature.class).getStage())),
                 "alive", () -> Component.text(Integer.toString(arena.getFeature(InstanceFeature.class).getAlivePlayers().size())),
                 "mob", () -> Component.text(Integer.toString(arena.getFeature(MobGeneratorFeature.class).getMobCount())),
-                "max-mob", () -> Component.text(Integer.toString(arena.getFeature(MobGeneratorFeature.class).getMaxMobCount()))
+                "max-mob", () -> Component.text(Integer.toString(arena.getFeature(MobGeneratorFeature.class).getMaxMobCount())),
+                "kit", () -> arena.getFeature(KitFeature.class).getKit().getDisplayName()
         ));
         return map;
     }
@@ -37,7 +42,7 @@ public class GameDescriptionFeature implements DescriptionFeature {
     @Override
     public ItemStack getDisplayItem() {
         return ItemUtil.stripItalics(
-                ItemBuilder.buildItem(arena.getFeature(ConfigFeature.class).config().getArenaDisplayItem(), getReplacements())
+                ItemBuilder.buildItem(pveExtension.getMessageConfig().getArenaDisplayItem(), getReplacements())
         );
     }
 }

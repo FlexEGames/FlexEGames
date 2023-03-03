@@ -1,11 +1,8 @@
 package me.hsgamer.flexegames.api.extension;
 
+import me.hsgamer.flexegames.FlexEGames;
 import me.hsgamer.flexegames.api.game.Game;
-import me.hsgamer.flexegames.builder.GameBuilder;
-import me.hsgamer.hscore.config.Config;
 import net.minestom.server.extensions.Extension;
-
-import java.util.function.Function;
 
 /**
  * An {@link Extension} to register a single game
@@ -14,7 +11,7 @@ public abstract class SingleGameExtension extends Extension {
     @Override
     public final void initialize() {
         onEnable();
-        GameBuilder.INSTANCE.register((s, config) -> getInitializer().apply(config), getId());
+        FlexEGames.getGameServer().getGameManager().registerGame(getIdentifier(), getGame());
     }
 
     @Override
@@ -37,16 +34,16 @@ public abstract class SingleGameExtension extends Extension {
     }
 
     /**
-     * Get the initializer that registers the game
+     * Get the game
      *
-     * @return the initializer
+     * @return the game
      */
-    public abstract Function<Config, Game> getInitializer();
+    public abstract Game getGame();
 
     /**
      * Get the id (type) of the game
      *
      * @return the id
      */
-    public abstract String[] getId();
+    public abstract String getIdentifier();
 }

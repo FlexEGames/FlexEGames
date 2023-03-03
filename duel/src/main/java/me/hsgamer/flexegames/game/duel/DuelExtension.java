@@ -1,30 +1,41 @@
 package me.hsgamer.flexegames.game.duel;
 
+import lombok.Getter;
 import me.hsgamer.flexegames.api.extension.SingleGameExtension;
 import me.hsgamer.flexegames.api.game.Game;
+import me.hsgamer.flexegames.game.duel.manager.DuelWorldManager;
+import me.hsgamer.flexegames.helper.kit.KitManager;
 import me.hsgamer.flexegames.util.ConfigUtil;
-import me.hsgamer.flexegames.util.YamlConfigGenerator;
-import me.hsgamer.hscore.config.Config;
 
-import java.util.function.Function;
-
+@Getter
 public class DuelExtension extends SingleGameExtension {
-    private final DuelMessageConfig messageConfig = YamlConfigGenerator.generate(DuelMessageConfig.class, getDataDirectory().resolve("messages.yml").toFile());
+    private final DuelMessageConfig messageConfig = ConfigUtil.generate(DuelMessageConfig.class, ConfigUtil.getConfigFile(getDataDirectory().toFile(), "messages"));
+    private final DuelMainConfig mainConfig = ConfigUtil.generate(DuelMainConfig.class, ConfigUtil.getConfigFile(getDataDirectory().toFile(), "config"));
+    private final DuelWorldManager duelWorldManager = new DuelWorldManager(this);
+    private final KitManager kitManager = new KitManager();
+    private final DuelPropertyEditor propertyEditor = new DuelPropertyEditor(this);
 
     @Override
-    public Function<Config, Game> getInitializer() {
-        return config -> {
-            var gameConfig = ConfigUtil.getConfig(config, DuelGameConfig.class);
-            return new DuelGame(this, gameConfig);
-        };
+    public void onEnable() {
+        duelWorldManager.init();
+        kitManager.loadFromConfig(ConfigUtil.createConfig(ConfigUtil.getConfigFile(getDataDirectory().toFile(), "kit")), true);
+        propertyEditor.init();
     }
 
     @Override
-    public String[] getId() {
-        return new String[]{"duel"};
+    public void onDisable() {
+        propertyEditor.stop();
+        duelWorldManager.clear();
+        kitManager.clear();
     }
 
-    public DuelMessageConfig getMessageConfig() {
-        return messageConfig;
+    @Override
+    public Game getGame() {
+        return new DuelGame(this);
+    }
+
+    @Override
+    public String getIdentifier() {
+        return "duel";
     }
 }

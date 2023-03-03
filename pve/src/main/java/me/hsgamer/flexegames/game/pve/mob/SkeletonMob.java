@@ -1,7 +1,8 @@
 package me.hsgamer.flexegames.game.pve.mob;
 
 import io.github.bloepiloepi.pvp.projectile.Arrow;
-import me.hsgamer.flexegames.game.pve.feature.ConfigFeature;
+import me.hsgamer.flexegames.feature.arena.GameFeature;
+import me.hsgamer.flexegames.game.pve.PveProperties;
 import me.hsgamer.minigamecore.base.Arena;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
@@ -25,9 +26,9 @@ public final class SkeletonMob extends ArenaMob {
                 this, Duration.of(40, TimeUnit.SERVER_TICK),
                 16, 8, false, 1, 0.1);
 
-        var gameConfig = arena.getFeature(ConfigFeature.class).config();
+        boolean legacyPvP = arena.getFeature(GameFeature.class).propertyMap().getProperty(PveProperties.LEGACY_PVP);
         rangedAttackGoal.setProjectileGenerator((shooter, target, power, spread) -> {
-            HomingArrow projectile = new HomingArrow(shooter, EntityType.PLAYER, gameConfig.isUseLegacyPvp());
+            HomingArrow projectile = new HomingArrow(shooter, EntityType.PLAYER, legacyPvP);
             projectile.scheduleRemove(Duration.of(100, TimeUnit.SERVER_TICK));
             projectile.setInstance(shooter.getInstance(), shooter.getPosition().add(0D, shooter.getEyeHeight(), 0D));
             projectile.shoot(target, power, spread);

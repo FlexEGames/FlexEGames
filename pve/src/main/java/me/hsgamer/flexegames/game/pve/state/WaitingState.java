@@ -4,7 +4,6 @@ import me.hsgamer.flexegames.api.game.ComponentDisplayName;
 import me.hsgamer.flexegames.feature.arena.DescriptionFeature;
 import me.hsgamer.flexegames.feature.arena.JoinFeature;
 import me.hsgamer.flexegames.game.pve.PveExtension;
-import me.hsgamer.flexegames.game.pve.feature.ConfigFeature;
 import me.hsgamer.flexegames.game.pve.feature.InstanceFeature;
 import me.hsgamer.flexegames.game.pve.feature.StageFeature;
 import me.hsgamer.flexegames.manager.ReplacementManager;
@@ -27,7 +26,7 @@ public class WaitingState implements GameState, ComponentDisplayName {
     public void start(Arena arena) {
         arena.getFeature(TimerFeature.class)
                 .setDuration(
-                        arena.getFeature(ConfigFeature.class).config().getWaitingTime(),
+                        pveExtension.getMainConfig().getWaitingTime(),
                         TimeUnit.SECONDS
                 );
     }
@@ -35,7 +34,7 @@ public class WaitingState implements GameState, ComponentDisplayName {
     @Override
     public void update(Arena arena) {
         if (arena.getFeature(TimerFeature.class).getDuration(TimeUnit.MILLISECONDS) > 0) return;
-        if (arena.getFeature(JoinFeature.class).getPlayerCount() >= arena.getFeature(ConfigFeature.class).config().getMinPlayers()) {
+        if (arena.getFeature(JoinFeature.class).getPlayerCount() >= pveExtension.getMainConfig().getMinPlayers()) {
             arena.setNextState(RestingState.class);
         } else {
             Component message = pveExtension.getMessageConfig().getNotEnoughPlayers();
@@ -47,9 +46,8 @@ public class WaitingState implements GameState, ComponentDisplayName {
     @Override
     public void end(Arena arena) {
         arena.getFeature(StageFeature.class).setStage(1);
-        var gameConfig = arena.getFeature(ConfigFeature.class).config();
         var descriptionFeature = arena.getFeature(DescriptionFeature.class);
-        Component message = ReplacementManager.replace(gameConfig.getStartMessage(), descriptionFeature.getReplacements());
+        Component message = ReplacementManager.replace(pveExtension.getMessageConfig().getStartMessage(), descriptionFeature.getReplacements());
         arena.getFeature(InstanceFeature.class).sendMessage(message);
         arena.getFeature(InstanceFeature.class).giveKit();
     }
