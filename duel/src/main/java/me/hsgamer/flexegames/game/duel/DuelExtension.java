@@ -5,6 +5,7 @@ import me.hsgamer.flexegames.api.extension.SingleGameExtension;
 import me.hsgamer.flexegames.api.game.Game;
 import me.hsgamer.flexegames.game.duel.manager.DuelWorldManager;
 import me.hsgamer.flexegames.helper.kit.KitManager;
+import me.hsgamer.flexegames.helper.kit.SimpleKit;
 import me.hsgamer.flexegames.util.ConfigUtil;
 
 @Getter
@@ -19,6 +20,7 @@ public class DuelExtension extends SingleGameExtension {
     public void onEnable() {
         duelWorldManager.init();
         kitManager.loadFromConfig(ConfigUtil.createConfig(ConfigUtil.getConfigFile(getDataDirectory().toFile(), "kit")), true);
+        kitManager.setDefaultKit(new SimpleKit(mainConfig.getDefaultKit()));
         propertyEditor.init();
     }
 

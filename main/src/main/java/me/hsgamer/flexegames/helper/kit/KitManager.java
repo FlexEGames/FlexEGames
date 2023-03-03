@@ -101,7 +101,7 @@ public class KitManager {
      * Get the kit
      *
      * @param name the name of the kit
-     * @return the kit
+     * @return the kit or the default kit if not found
      */
     public Kit getKit(String name) {
         return kitMap.getOrDefault(name, defaultKit);
