@@ -10,12 +10,12 @@ import me.hsgamer.flexegames.util.ConfigGeneratorUtil;
 public class PveExtension extends SingleGameExtension {
     private final PveMessageConfig messageConfig = ConfigGeneratorUtil.generate(PveMessageConfig.class, ConfigGeneratorUtil.getConfigFile(getDataDirectory().toFile(), "messages"));
     private final PveMainConfig mainConfig = ConfigGeneratorUtil.generate(PveMainConfig.class, ConfigGeneratorUtil.getConfigFile(getDataDirectory().toFile(), "config"));
-    private final KitManager kitManager = new KitManager(ConfigGeneratorUtil.createConfig(ConfigGeneratorUtil.getConfigFile(getDataDirectory().toFile(), "kit")), true);
+    private final KitManager kitManager = new KitManager();
     private final PvePropertyEditor propertyEditor = new PvePropertyEditor(this);
 
     @Override
     public void onEnable() {
-        kitManager.init();
+        kitManager.loadFromConfig(ConfigGeneratorUtil.createConfig(ConfigGeneratorUtil.getConfigFile(getDataDirectory().toFile(), "kit")), true);
         propertyEditor.init();
     }
 

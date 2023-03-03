@@ -12,13 +12,13 @@ public class DuelExtension extends SingleGameExtension {
     private final DuelMessageConfig messageConfig = ConfigGeneratorUtil.generate(DuelMessageConfig.class, ConfigGeneratorUtil.getConfigFile(getDataDirectory().toFile(), "messages"));
     private final DuelMainConfig mainConfig = ConfigGeneratorUtil.generate(DuelMainConfig.class, ConfigGeneratorUtil.getConfigFile(getDataDirectory().toFile(), "config"));
     private final DuelWorldManager duelWorldManager = new DuelWorldManager(this);
-    private final KitManager kitManager = new KitManager(ConfigGeneratorUtil.createConfig(ConfigGeneratorUtil.getConfigFile(getDataDirectory().toFile(), "kit")), true);
+    private final KitManager kitManager = new KitManager();
     private final DuelPropertyEditor propertyEditor = new DuelPropertyEditor(this);
 
     @Override
     public void onEnable() {
         duelWorldManager.init();
-        kitManager.init();
+        kitManager.loadFromConfig(ConfigGeneratorUtil.createConfig(ConfigGeneratorUtil.getConfigFile(getDataDirectory().toFile(), "kit")), true);
         propertyEditor.init();
     }
 

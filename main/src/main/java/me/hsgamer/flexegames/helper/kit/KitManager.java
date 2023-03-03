@@ -32,24 +32,26 @@ public class KitManager {
             return Collections.emptyMap();
         }
     };
-    private final Config config;
     private final Map<String, Kit> kitMap;
 
-    public KitManager(Config config, boolean setup) {
-        this.config = config;
-        if (setup) {
-            config.setup();
-        }
+    public KitManager() {
         this.kitMap = new CaseInsensitiveStringLinkedMap<>();
     }
 
-    public void init() {
+    public void loadFromConfig(Config config, boolean setup) {
+        if (setup) {
+            config.setup();
+        }
         config.getNormalizedValues(false).forEach((key, value) -> {
             if (value instanceof Map<?, ?> rawMap) {
                 Map<String, Object> map = new CaseInsensitiveStringMap<>(MapUtil.toStringObjectMap(rawMap));
                 kitMap.put(key, new SimpleKit(map));
             }
         });
+    }
+
+    public void addKit(String name, Kit kit) {
+        kitMap.put(name, kit);
     }
 
     public void clear() {
