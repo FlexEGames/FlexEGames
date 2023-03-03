@@ -1,3 +1,3 @@
 # FlexEGames
 
-An Minestom implementation for minigames per instance
+A Minestom implementation for minigames per instance
