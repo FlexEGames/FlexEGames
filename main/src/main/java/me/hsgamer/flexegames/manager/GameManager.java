@@ -43,6 +43,12 @@ public class GameManager {
         });
     }
 
+    /**
+     * Register a {@link Game}
+     *
+     * @param identifier the identifier
+     * @param game       the {@link Game}
+     */
     public void registerGame(String identifier, Game game) {
         if (gameMap.containsKey(identifier)) {
             throw new IllegalArgumentException("Game " + identifier + " already exists");

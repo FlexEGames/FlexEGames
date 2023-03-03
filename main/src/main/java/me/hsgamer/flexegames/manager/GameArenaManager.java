@@ -66,9 +66,10 @@ public class GameArenaManager extends ArenaManager {
     /**
      * Create the {@link Arena} of the {@link Game}
      *
-     * @param name  the name of the {@link Arena}
-     * @param game  the {@link Game}
-     * @param owner the owner of the {@link Arena}
+     * @param name        the name of the {@link Arena}
+     * @param game        the {@link Game}
+     * @param propertyMap the {@link PropertyMap}
+     * @param owner       the owner of the {@link Arena}
      * @return the {@link Arena}
      */
     public Arena createArena(String name, Game game, PropertyMap propertyMap, UUID owner) {
@@ -85,6 +86,7 @@ public class GameArenaManager extends ArenaManager {
      * Create the {@link Arena} of the {@link Game}
      *
      * @param game  the {@link Game}
+     * @param propertyMap the {@link PropertyMap}
      * @param owner the owner of the {@link Arena}
      * @return the {@link Arena}
      */

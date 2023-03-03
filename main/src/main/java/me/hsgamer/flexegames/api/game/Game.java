@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * The game
+ */
 public interface Game {
     /**
      * Get the display name of the {@link Game}

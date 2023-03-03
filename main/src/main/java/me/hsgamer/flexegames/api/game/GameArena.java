@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * The arena for the game
+ * The {@link Arena} of the {@link Game}
  */
 public abstract class GameArena<T extends Game> extends Arena {
     /**
