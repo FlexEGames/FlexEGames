@@ -13,6 +13,9 @@ import net.minestom.server.item.Material;
 
 import java.util.List;
 
+/**
+ * The simple {@link PropertyEditor}
+ */
 public abstract class SimplePropertyEditor extends PropertyEditor {
     @Override
     public void init() {
@@ -30,13 +33,34 @@ public abstract class SimplePropertyEditor extends PropertyEditor {
         super.init();
     }
 
+    /**
+     * Get the action mask
+     *
+     * @param valueMask the value mask
+     * @return the action mask
+     */
     protected abstract ButtonMapMask getActionMask(StaticButtonPaginatedMask valueMask);
 
+    /**
+     * Get the dummy item
+     *
+     * @return the dummy item
+     */
     protected ItemStack getDummyItem() {
         return ItemStack.of(Material.BLACK_STAINED_GLASS_PANE).withDisplayName(Component.empty());
     }
 
+    /**
+     * Get the complete item
+     *
+     * @return the complete item
+     */
     protected abstract ItemStack getCompleteItem();
 
+    /**
+     * Get the property buttons
+     *
+     * @return the property buttons
+     */
     protected abstract List<PropertyButton<?>> getPropertyButtons();
 }

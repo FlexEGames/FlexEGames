@@ -22,11 +22,6 @@ public class DuelGame implements Game {
     }
 
     @Override
-    public boolean isConfigured() {
-        return true;
-    }
-
-    @Override
     public Component getDisplayName() {
         return duelExtension.getMessageConfig().getDisplayName();
     }

@@ -7,6 +7,9 @@ import me.hsgamer.hscore.minecraft.gui.button.impl.SimpleButton;
 import me.hsgamer.hscore.minecraft.gui.mask.impl.ButtonMapMask;
 import me.hsgamer.hscore.minecraft.gui.mask.impl.StaticButtonPaginatedMask;
 
+/**
+ * The {@link me.hsgamer.flexegames.helper.property.PropertyEditor} for single page
+ */
 public abstract class SinglePropertyEditor extends SimplePropertyEditor {
     @Override
     protected ButtonMapMask getActionMask(StaticButtonPaginatedMask valueMask) {

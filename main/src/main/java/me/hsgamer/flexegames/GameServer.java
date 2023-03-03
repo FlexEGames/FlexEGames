@@ -15,7 +15,7 @@ import me.hsgamer.flexegames.manager.GameManager;
 import me.hsgamer.flexegames.manager.ReplacementManager;
 import me.hsgamer.flexegames.player.GamePlayer;
 import me.hsgamer.flexegames.util.AssetUtil;
-import me.hsgamer.flexegames.util.ConfigGeneratorUtil;
+import me.hsgamer.flexegames.util.ConfigUtil;
 import me.hsgamer.flexegames.util.ProxyType;
 import me.hsgamer.flexegames.util.SysOutErrRedirect;
 import me.hsgamer.hscore.minestom.board.Board;
@@ -50,15 +50,15 @@ public class GameServer {
     /**
      * The main config
      */
-    private final MainConfig mainConfig = ConfigGeneratorUtil.generate(MainConfig.class, ConfigGeneratorUtil.getConfigFile("config"), true, true);
+    private final MainConfig mainConfig = ConfigUtil.generate(MainConfig.class, ConfigUtil.getConfigFile("config"), true, true);
     /**
      * The lobby config
      */
-    private final LobbyConfig lobbyConfig = ConfigGeneratorUtil.generate(LobbyConfig.class, ConfigGeneratorUtil.getConfigFile("lobby"), true, true);
+    private final LobbyConfig lobbyConfig = ConfigUtil.generate(LobbyConfig.class, ConfigUtil.getConfigFile("lobby"), true, true);
     /**
      * The message config
      */
-    private final MessageConfig messageConfig = ConfigGeneratorUtil.generate(MessageConfig.class, ConfigGeneratorUtil.getConfigFile("messages"), true, true);
+    private final MessageConfig messageConfig = ConfigUtil.generate(MessageConfig.class, ConfigUtil.getConfigFile("messages"), true, true);
     /**
      * The game manager
      */

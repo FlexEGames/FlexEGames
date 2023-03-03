@@ -3,7 +3,7 @@ package me.hsgamer.flexegames.game.pve;
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.helper.property.PropertyButton;
 import me.hsgamer.flexegames.helper.property.button.BooleanPropertyButton;
-import me.hsgamer.flexegames.helper.property.button.ListPropertyButton;
+import me.hsgamer.flexegames.helper.property.button.ListSwitchPropertyButton;
 import me.hsgamer.flexegames.helper.property.editor.SinglePropertyEditor;
 import me.hsgamer.flexegames.util.ItemUtil;
 import net.kyori.adventure.text.Component;
@@ -28,7 +28,7 @@ public class PvePropertyEditor extends SinglePropertyEditor {
 
     @Override
     protected List<PropertyButton<?>> getPropertyButtons() {
-        var kitEdit = new ListPropertyButton<>(this, PveProperties.KIT, new ArrayList<>(pveExtension.getKitManager().getKitMap().keySet())) {
+        var kitEdit = new ListSwitchPropertyButton<>(this, PveProperties.KIT, new ArrayList<>(pveExtension.getKitManager().getKitMap().keySet())) {
             @Override
             protected ItemStack display(String value) {
                 return pveExtension.getKitManager().getKit(value).getDisplayItem();

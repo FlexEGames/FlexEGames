@@ -6,10 +6,22 @@ import me.hsgamer.flexegames.helper.property.PropertyEditor;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class ListPropertyButton<T> extends SinglePropertyButton<T> {
+/**
+ * The property button to pick a value from a list
+ *
+ * @param <T> the type of the value
+ */
+public abstract class ListSwitchPropertyButton<T> extends SinglePropertyButton<T> {
     private final List<T> valueList;
 
-    protected ListPropertyButton(PropertyEditor propertyEditor, PropertyKeyValue<T> propertyKeyValue, List<T> valueList) {
+    /**
+     * Create a new property button
+     *
+     * @param propertyEditor   the property editor
+     * @param propertyKeyValue the property key-value
+     * @param valueList        the list of values
+     */
+    protected ListSwitchPropertyButton(PropertyEditor propertyEditor, PropertyKeyValue<T> propertyKeyValue, List<T> valueList) {
         super(propertyEditor, propertyKeyValue);
         this.valueList = valueList;
     }

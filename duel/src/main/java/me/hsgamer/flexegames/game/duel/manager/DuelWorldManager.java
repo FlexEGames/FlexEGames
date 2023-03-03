@@ -4,7 +4,7 @@ import me.hsgamer.flexegames.game.duel.DuelExtension;
 import me.hsgamer.flexegames.game.duel.world.AssetDuelWorld;
 import me.hsgamer.flexegames.game.duel.world.DefaultDuelWorld;
 import me.hsgamer.flexegames.game.duel.world.DuelWorld;
-import me.hsgamer.flexegames.util.ConfigGeneratorUtil;
+import me.hsgamer.flexegames.util.ConfigUtil;
 import me.hsgamer.flexegames.util.MapUtil;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringLinkedMap;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringMap;
@@ -19,7 +19,7 @@ public class DuelWorldManager {
     private final Map<String, DuelWorld> duelWorldMap;
 
     public DuelWorldManager(DuelExtension duelExtension) {
-        this.config = ConfigGeneratorUtil.createConfig(ConfigGeneratorUtil.getConfigFile(duelExtension.getDataDirectory().toFile(), "world"));
+        this.config = ConfigUtil.createConfig(ConfigUtil.getConfigFile(duelExtension.getDataDirectory().toFile(), "world"));
         this.config.setup();
         this.duelWorldMap = new CaseInsensitiveStringLinkedMap<>();
     }

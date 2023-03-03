@@ -13,13 +13,6 @@ import java.util.concurrent.CompletableFuture;
 
 public interface Game {
     /**
-     * Check if the game is configured
-     *
-     * @return true if configured
-     */
-    boolean isConfigured();
-
-    /**
      * Get the display name of the {@link Game}
      *
      * @return the display name
@@ -40,11 +33,33 @@ public interface Game {
      */
     ItemStack getDisplayItem();
 
+    /**
+     * Edit the property of the {@link Game}
+     *
+     * @param player      the involved player
+     * @param propertyMap the property map
+     * @return the future that contains the edited property map
+     */
     CompletableFuture<PropertyMap> editProperty(Player player, PropertyMap propertyMap);
 
+    /**
+     * Create the property of the {@link Game}
+     *
+     * @param player the involved player
+     * @return the future that contains the created property map
+     */
     default CompletableFuture<PropertyMap> createProperty(Player player) {
         return editProperty(player, PropertyMap.create());
     }
 
+    /**
+     * Create the {@link Arena} of the {@link Game}
+     *
+     * @param name         the name of the arena
+     * @param propertyMap  the property map
+     * @param arenaManager the arena manager
+     * @param owner        the owner of the arena
+     * @return the created arena
+     */
     Arena create(String name, PropertyMap propertyMap, ArenaManager arenaManager, UUID owner);
 }

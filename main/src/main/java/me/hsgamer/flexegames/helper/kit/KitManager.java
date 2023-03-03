@@ -15,8 +15,14 @@ import net.minestom.server.item.Material;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * The {@link Kit} manager
+ */
 public class KitManager {
-    private static final Kit EMPTY_KIT = new Kit() {
+    /**
+     * The empty kit
+     */
+    public static final Kit EMPTY_KIT = new Kit() {
         @Override
         public Component getDisplayName() {
             return Component.text("Empty Kit").decorate(TextDecoration.BOLD);
@@ -34,10 +40,19 @@ public class KitManager {
     };
     private final Map<String, Kit> kitMap;
 
+    /**
+     * Create a new {@link KitManager}
+     */
     public KitManager() {
         this.kitMap = new CaseInsensitiveStringLinkedMap<>();
     }
 
+    /**
+     * Load the kits from the config
+     *
+     * @param config the config
+     * @param setup  whether to set up the config or not
+     */
     public void loadFromConfig(Config config, boolean setup) {
         if (setup) {
             config.setup();
@@ -45,27 +60,63 @@ public class KitManager {
         config.getNormalizedValues(false).forEach((key, value) -> {
             if (value instanceof Map<?, ?> rawMap) {
                 Map<String, Object> map = new CaseInsensitiveStringMap<>(MapUtil.toStringObjectMap(rawMap));
-                kitMap.put(key, new SimpleKit(map));
+                add(key, new SimpleKit(map));
             }
         });
     }
 
-    public void addKit(String name, Kit kit) {
+    /**
+     * Add a kit
+     *
+     * @param name the name of the kit
+     * @param kit  the kit
+     */
+    public void add(String name, Kit kit) {
         kitMap.put(name, kit);
     }
 
+    /**
+     * Remove a kit
+     *
+     * @param name the name of the kit
+     */
+    public void remove(String name) {
+        kitMap.remove(name);
+    }
+
+    /**
+     * Clear all kits
+     */
     public void clear() {
         kitMap.clear();
     }
 
+    /**
+     * Get the kit map
+     *
+     * @return the kit map
+     */
     public Map<String, Kit> getKitMap() {
-        return kitMap;
+        return Collections.unmodifiableMap(kitMap);
     }
 
+    /**
+     * Get the kit
+     *
+     * @param name the name of the kit
+     * @return the kit
+     */
     public Kit getKit(String name) {
         return kitMap.getOrDefault(name, EMPTY_KIT);
     }
 
+    /**
+     * Create a new {@link KitFeature}
+     *
+     * @param arena       the arena
+     * @param kitProperty the kit property
+     * @return the kit feature
+     */
     public KitFeature createFeature(Arena arena, PropertyKeyValue<String> kitProperty) {
         return new KitFeature(arena, this, kitProperty);
     }

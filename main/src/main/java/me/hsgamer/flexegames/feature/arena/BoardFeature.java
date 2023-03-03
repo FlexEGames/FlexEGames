@@ -19,20 +19,50 @@ import net.minestom.server.timer.TaskSchedule;
 
 import java.util.List;
 
+/**
+ * The feature to show the {@link Board} for all players in the {@link Instance}.
+ * It would replace the placeholders in the title and lines, and update the board every tick.
+ * The placeholders are took from the {@link DescriptionFeature} of the {@link Arena}.
+ */
 public abstract class BoardFeature implements Feature {
+    /**
+     * The arena
+     */
     protected final Arena arena;
     private Board board;
     private Task task;
     private EventNode<InstanceEvent> boardEventNode;
 
+    /**
+     * Create a new feature
+     *
+     * @param arena the arena
+     */
     protected BoardFeature(Arena arena) {
         this.arena = arena;
     }
 
+    /**
+     * Get the instance
+     *
+     * @return the instance
+     */
     protected abstract Instance getInstance();
 
+    /**
+     * Get the title
+     *
+     * @param player the player
+     * @return the title
+     */
     protected abstract Component getTitle(Player player);
 
+    /**
+     * Get the lines
+     *
+     * @param player the player
+     * @return the lines
+     */
     protected abstract List<Component> getLines(Player player);
 
     @Override

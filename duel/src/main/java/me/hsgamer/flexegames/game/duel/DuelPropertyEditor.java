@@ -3,7 +3,7 @@ package me.hsgamer.flexegames.game.duel;
 import me.hsgamer.flexegames.builder.ItemBuilder;
 import me.hsgamer.flexegames.helper.property.PropertyButton;
 import me.hsgamer.flexegames.helper.property.button.BooleanPropertyButton;
-import me.hsgamer.flexegames.helper.property.button.ListPropertyButton;
+import me.hsgamer.flexegames.helper.property.button.ListSwitchPropertyButton;
 import me.hsgamer.flexegames.helper.property.editor.SinglePropertyEditor;
 import me.hsgamer.flexegames.util.ItemUtil;
 import net.kyori.adventure.text.Component;
@@ -28,13 +28,13 @@ public class DuelPropertyEditor extends SinglePropertyEditor {
 
     @Override
     protected List<PropertyButton<?>> getPropertyButtons() {
-        var worldEdit = new ListPropertyButton<>(this, DuelProperties.WORLD, new ArrayList<>(duelExtension.getDuelWorldManager().getDuelWorldMap().keySet())) {
+        var worldEdit = new ListSwitchPropertyButton<>(this, DuelProperties.WORLD, new ArrayList<>(duelExtension.getDuelWorldManager().getDuelWorldMap().keySet())) {
             @Override
             protected ItemStack display(String value) {
                 return duelExtension.getDuelWorldManager().getDuelWorld(value).getDisplayItem();
             }
         };
-        var kitEdit = new ListPropertyButton<>(this, DuelProperties.KIT, new ArrayList<>(duelExtension.getKitManager().getKitMap().keySet())) {
+        var kitEdit = new ListSwitchPropertyButton<>(this, DuelProperties.KIT, new ArrayList<>(duelExtension.getKitManager().getKitMap().keySet())) {
             @Override
             protected ItemStack display(String value) {
                 return duelExtension.getKitManager().getKit(value).getDisplayItem();

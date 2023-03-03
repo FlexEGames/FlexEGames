@@ -9,6 +9,9 @@ import me.hsgamer.hscore.minecraft.gui.mask.impl.ButtonMapMask;
 import me.hsgamer.hscore.minecraft.gui.mask.impl.StaticButtonPaginatedMask;
 import net.minestom.server.item.ItemStack;
 
+/**
+ * The {@link me.hsgamer.flexegames.helper.property.PropertyEditor} with pagination
+ */
 public abstract class PaginatedPropertyEditor extends SimplePropertyEditor {
     @Override
     protected ButtonMapMask getActionMask(StaticButtonPaginatedMask valueMask) {
@@ -29,7 +32,17 @@ public abstract class PaginatedPropertyEditor extends SimplePropertyEditor {
                 .addButton(completeButton, 26);
     }
 
+    /**
+     * Get the display item for the next page
+     *
+     * @return the display item
+     */
     protected abstract ItemStack getNextPageItem();
 
+    /**
+     * Get the display item for the previous page
+     *
+     * @return the display item
+     */
     protected abstract ItemStack getPreviousPageItem();
 }

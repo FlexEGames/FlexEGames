@@ -12,20 +12,39 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+/**
+ * A {@link MinestomGUIHolder} for editing {@link PropertyMap}
+ */
 public abstract class PropertyEditor extends MinestomGUIHolder {
     private final Map<UUID, PropertyMapFuture> propertyMapFutureMap = new ConcurrentHashMap<>();
     private final List<Consumer<UUID>> onOpenListeners = new ArrayList<>();
 
+    /**
+     * Add a listener when the editor is opened
+     *
+     * @param listener the listener
+     */
     public void addOnOpenListener(Consumer<UUID> listener) {
         onOpenListeners.add(listener);
     }
 
+    /**
+     * Get the {@link PropertyMap} from the {@link UUID}
+     *
+     * @param uuid the {@link UUID}
+     * @return the {@link PropertyMap} or {@code null} if not found
+     */
     protected PropertyMap getPropertyMap(UUID uuid) {
         return Optional.ofNullable(propertyMapFutureMap.get(uuid))
                 .map(PropertyMapFuture::current)
                 .orElse(null);
     }
 
+    /**
+     * Complete the {@link PropertyMap} from the {@link UUID}
+     *
+     * @param uuid the {@link UUID}
+     */
     protected void complete(UUID uuid) {
         Optional.ofNullable(propertyMapFutureMap.get(uuid))
                 .ifPresent(PropertyMapFuture::complete);
@@ -50,6 +69,13 @@ public abstract class PropertyEditor extends MinestomGUIHolder {
         propertyMapFutureMap.clear();
     }
 
+    /**
+     * Open the editor for the {@link Player}
+     *
+     * @param player      the {@link Player}
+     * @param propertyMap the {@link PropertyMap}
+     * @return the future to get the edited {@link PropertyMap}
+     */
     public CompletableFuture<PropertyMap> open(Player player, PropertyMap propertyMap) {
         PropertyMap clonedPropertyMap = propertyMap.clone();
         CompletableFuture<PropertyMap> future = new CompletableFuture<>();

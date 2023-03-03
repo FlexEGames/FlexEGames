@@ -1,7 +1,7 @@
 package me.hsgamer.flexegames.util;
 
 import me.hsgamer.flexegames.GameServer;
-import me.hsgamer.flexegames.config.proxy.VelocityConfig;
+import me.hsgamer.hscore.config.annotation.ConfigPath;
 import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.extras.bungee.BungeeCordProxy;
 import net.minestom.server.extras.velocity.VelocityProxy;
@@ -24,7 +24,7 @@ public enum ProxyType {
      * The Velocity proxy
      */
     VELOCITY(() -> {
-        String secret = ConfigGeneratorUtil.generate(VelocityConfig.class, ConfigGeneratorUtil.getConfigFile("velocity")).getSecret();
+        String secret = ConfigUtil.generate(VelocityConfig.class, ConfigUtil.getConfigFile("velocity")).getSecret();
         if (secret.isEmpty()) {
             throw new IllegalStateException("Velocity secret is empty");
         }
@@ -56,5 +56,12 @@ public enum ProxyType {
      */
     public void execute(GameServer gameServer) {
         proxyExecutor.accept(gameServer);
+    }
+
+    private interface VelocityConfig {
+        @ConfigPath("secret")
+        default String getSecret() {
+            return "";
+        }
     }
 }
