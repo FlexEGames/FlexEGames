@@ -1,6 +1,6 @@
 package me.hsgamer.flexegames.game.duel.world;
 
-import me.hsgamer.flexegames.config.converter.ComponentConverter;
+import me.hsgamer.flexegames.util.ComponentUtil;
 import me.hsgamer.flexegames.util.FullBrightDimension;
 import me.hsgamer.flexegames.util.ItemUtil;
 import me.hsgamer.minigamecore.base.Arena;
@@ -25,7 +25,7 @@ public abstract class AbstractDuelWorld implements DuelWorld {
     }
 
     protected AbstractDuelWorld(Map<String, Object> map) {
-        this(ComponentConverter.fromString(String.valueOf(map.get("display-name"))), ItemUtil.getItemOrStone(map.get("display-item")), getBorderDiameter(map));
+        this(ComponentUtil.fromString(String.valueOf(map.get("display-name"))), ItemUtil.getItemOrStone(map.get("display-item")), getBorderDiameter(map));
     }
 
     private static double getBorderDiameter(Map<String, Object> map) {

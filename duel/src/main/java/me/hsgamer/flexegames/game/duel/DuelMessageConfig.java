@@ -1,6 +1,6 @@
 package me.hsgamer.flexegames.game.duel;
 
-import me.hsgamer.flexegames.config.converter.ComponentConverter;
+import me.hsgamer.flexegames.util.ComponentUtil;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -69,10 +69,10 @@ public interface DuelMessageConfig {
                 "material", Material.WOODEN_SWORD.name(),
                 "name", "%game%",
                 "lore", List.of(
-                        ComponentConverter.toString(Component.text("Owner: ").color(NamedTextColor.BLUE).append(Component.text("%owner%").color(NamedTextColor.WHITE))),
-                        ComponentConverter.toString(Component.text("Player: ").color(NamedTextColor.BLUE).append(Component.text("%players%/%max-players%").color(NamedTextColor.WHITE))),
-                        ComponentConverter.toString(Component.text("Time: ").color(NamedTextColor.BLUE).append(Component.text("%time%").color(NamedTextColor.WHITE))),
-                        ComponentConverter.toString(Component.text("Status: ").color(NamedTextColor.BLUE).append(Component.text("%state%").color(NamedTextColor.WHITE)))
+                        ComponentUtil.toString(Component.text("Owner: ").color(NamedTextColor.BLUE).append(Component.text("%owner%").color(NamedTextColor.WHITE))),
+                        ComponentUtil.toString(Component.text("Player: ").color(NamedTextColor.BLUE).append(Component.text("%players%/%max-players%").color(NamedTextColor.WHITE))),
+                        ComponentUtil.toString(Component.text("Time: ").color(NamedTextColor.BLUE).append(Component.text("%time%").color(NamedTextColor.WHITE))),
+                        ComponentUtil.toString(Component.text("Status: ").color(NamedTextColor.BLUE).append(Component.text("%state%").color(NamedTextColor.WHITE)))
                 ),
                 "hide", "all"
         );
@@ -136,7 +136,7 @@ public interface DuelMessageConfig {
     default Map<String, Object> getEditorComplete() {
         return Map.of(
                 "material", Material.EMERALD.name(),
-                "name", ComponentConverter.toString(Component.text("Complete").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                "name", ComponentUtil.toString(Component.text("Complete").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
         );
     }
 
@@ -145,11 +145,11 @@ public interface DuelMessageConfig {
         return Map.of(
                 "material", Material.IRON_SWORD.name(),
                 "hide", "all",
-                "name", ComponentConverter.toString(Component.text("Legacy PVP").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD)),
+                "name", ComponentUtil.toString(Component.text("Legacy PVP").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD)),
                 "lore", List.of(
-                        ComponentConverter.toString(Component.text("Enable this to use 1.8 PVP mechanics").color(NamedTextColor.WHITE)),
+                        ComponentUtil.toString(Component.text("Enable this to use 1.8 PVP mechanics").color(NamedTextColor.WHITE)),
                         "",
-                        ComponentConverter.toString(Component.text("Current: ").color(NamedTextColor.WHITE).append(Component.text("%value%").color(NamedTextColor.GREEN)))
+                        ComponentUtil.toString(Component.text("Current: ").color(NamedTextColor.WHITE).append(Component.text("%value%").color(NamedTextColor.GREEN)))
                 )
         );
     }

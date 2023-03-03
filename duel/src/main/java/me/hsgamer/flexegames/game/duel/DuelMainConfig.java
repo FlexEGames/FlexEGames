@@ -1,6 +1,6 @@
 package me.hsgamer.flexegames.game.duel;
 
-import me.hsgamer.flexegames.config.converter.ComponentConverter;
+import me.hsgamer.flexegames.util.ComponentUtil;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -23,10 +23,10 @@ public interface DuelMainConfig {
     default Map<String, Object> getDefaultKit() {
         Component displayName = Component.text("Empty Kit").decorate(TextDecoration.BOLD);
         return Map.of(
-                "display-name", ComponentConverter.toString(displayName),
+                "display-name", ComponentUtil.toString(displayName),
                 "display-item", Map.of(
                         "material", Material.STONE.name(),
-                        "display-name", ComponentConverter.toString(displayName)
+                        "display-name", ComponentUtil.toString(displayName)
                 )
         );
     }

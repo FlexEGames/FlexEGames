@@ -1,6 +1,6 @@
 package me.hsgamer.flexegames.config;
 
-import me.hsgamer.flexegames.config.converter.ComponentConverter;
+import me.hsgamer.flexegames.util.ComponentUtil;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -79,7 +79,7 @@ public interface LobbyConfig {
     default Map<String, Object> getGameInventoryNextPage() {
         return Map.of(
                 "material", Material.GREEN_STAINED_GLASS_PANE.name(),
-                "name", ComponentConverter.toString(Component.text("Next page").color(NamedTextColor.GREEN))
+                "name", ComponentUtil.toString(Component.text("Next page").color(NamedTextColor.GREEN))
         );
     }
 
@@ -87,7 +87,7 @@ public interface LobbyConfig {
     default Map<String, Object> getGameInventoryPreviousPage() {
         return Map.of(
                 "material", Material.RED_STAINED_GLASS_PANE.name(),
-                "name", ComponentConverter.toString(Component.text("Previous page").color(NamedTextColor.RED))
+                "name", ComponentUtil.toString(Component.text("Previous page").color(NamedTextColor.RED))
         );
     }
 
@@ -95,7 +95,7 @@ public interface LobbyConfig {
     default Map<String, Object> getGameInventoryArena() {
         return Map.of(
                 "material", Material.CHEST.name(),
-                "name", ComponentConverter.toString(Component.text("Play Arena").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD))
+                "name", ComponentUtil.toString(Component.text("Play Arena").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD))
         );
     }
 
@@ -108,7 +108,7 @@ public interface LobbyConfig {
     default Map<String, Object> getArenaInventoryNextPage() {
         return Map.of(
                 "material", Material.GREEN_STAINED_GLASS_PANE.name(),
-                "name", ComponentConverter.toString(Component.text("Next page").color(NamedTextColor.GREEN))
+                "name", ComponentUtil.toString(Component.text("Next page").color(NamedTextColor.GREEN))
         );
     }
 
@@ -116,7 +116,7 @@ public interface LobbyConfig {
     default Map<String, Object> getArenaInventoryPreviousPage() {
         return Map.of(
                 "material", Material.RED_STAINED_GLASS_PANE.name(),
-                "name", ComponentConverter.toString(Component.text("Previous page").color(NamedTextColor.RED))
+                "name", ComponentUtil.toString(Component.text("Previous page").color(NamedTextColor.RED))
         );
     }
 
@@ -124,7 +124,7 @@ public interface LobbyConfig {
     default Map<String, Object> getArenaInventoryGame() {
         return Map.of(
                 "material", Material.SPRUCE_SIGN.name(),
-                "name", ComponentConverter.toString(Component.text("Create Game").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                "name", ComponentUtil.toString(Component.text("Create Game").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
         );
     }
 
@@ -132,7 +132,7 @@ public interface LobbyConfig {
     default Map<String, Object> getArenaInventoryGlobalArena() {
         return Map.of(
                 "material", Material.CHEST.name(),
-                "name", ComponentConverter.toString(Component.text("Global Arena").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD))
+                "name", ComponentUtil.toString(Component.text("Global Arena").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD))
         );
     }
 
@@ -140,7 +140,7 @@ public interface LobbyConfig {
     default Map<String, Object> getArenaInventoryMyArena() {
         return Map.of(
                 "material", Material.ENDER_CHEST.name(),
-                "name", ComponentConverter.toString(Component.text("My Arena").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD))
+                "name", ComponentUtil.toString(Component.text("My Arena").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD))
         );
     }
 
@@ -148,7 +148,7 @@ public interface LobbyConfig {
     default Map<String, Object> getGameHotbar() {
         return Map.of(
                 "material", Material.ACACIA_SIGN.name(),
-                "name", ComponentConverter.toString(Component.text("Game").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD)),
+                "name", ComponentUtil.toString(Component.text("Game").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD)),
                 "slot", 2
         );
     }
@@ -157,7 +157,7 @@ public interface LobbyConfig {
     default Map<String, Object> getArenaHotbar() {
         return Map.of(
                 "material", Material.COMPASS.name(),
-                "name", ComponentConverter.toString(Component.text("Arena").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD)),
+                "name", ComponentUtil.toString(Component.text("Arena").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD)),
                 "slot", 4
         );
     }
@@ -166,7 +166,7 @@ public interface LobbyConfig {
     default Map<String, Object> getTogglePlayerHotbar() {
         return Map.of(
                 "material", Material.ENDER_EYE.name(),
-                "name", ComponentConverter.toString(Component.text("Toggle Player").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD)),
+                "name", ComponentUtil.toString(Component.text("Toggle Player").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD)),
                 "slot", 6
         );
     }
@@ -176,7 +176,7 @@ public interface LobbyConfig {
         return Map.of(
                 "enable", false,
                 "material", Material.REDSTONE_BLOCK.name(),
-                "name", ComponentConverter.toString(Component.text("Server Hub").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD)),
+                "name", ComponentUtil.toString(Component.text("Server Hub").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD)),
                 "slot", 8,
                 "server", "hub"
         );

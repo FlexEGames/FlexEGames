@@ -1,6 +1,6 @@
 package me.hsgamer.flexegames.helper.kit;
 
-import me.hsgamer.flexegames.config.converter.ComponentConverter;
+import me.hsgamer.flexegames.util.ComponentUtil;
 import me.hsgamer.flexegames.util.ItemUtil;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.item.ItemStack;
@@ -42,7 +42,7 @@ public class SimpleKit implements Kit {
      * @param map the map
      */
     public SimpleKit(Map<String, Object> map) {
-        this.displayName = ComponentConverter.fromString(String.valueOf(map.get("display-name")));
+        this.displayName = ComponentUtil.fromString(String.valueOf(map.get("display-name")));
         this.displayItem = ItemUtil.getItemOrStone(map.get("display-item"));
 
         Object itemsObject = map.get("items");
