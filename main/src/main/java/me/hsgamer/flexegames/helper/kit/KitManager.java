@@ -19,10 +19,8 @@ import java.util.Map;
  * The {@link Kit} manager
  */
 public class KitManager {
-    /**
-     * The empty kit
-     */
-    public static final Kit EMPTY_KIT = new Kit() {
+    private final Map<String, Kit> kitMap;
+    private Kit defaultKit = new Kit() {
         @Override
         public Component getDisplayName() {
             return Component.text("Empty Kit").decorate(TextDecoration.BOLD);
@@ -38,7 +36,6 @@ public class KitManager {
             return Collections.emptyMap();
         }
     };
-    private final Map<String, Kit> kitMap;
 
     /**
      * Create a new {@link KitManager}
@@ -107,7 +104,25 @@ public class KitManager {
      * @return the kit
      */
     public Kit getKit(String name) {
-        return kitMap.getOrDefault(name, EMPTY_KIT);
+        return kitMap.getOrDefault(name, defaultKit);
+    }
+
+    /**
+     * Get the default kit
+     *
+     * @return the default kit
+     */
+    public Kit getDefaultKit() {
+        return defaultKit;
+    }
+
+    /**
+     * Set the default kit
+     *
+     * @param defaultKit the default kit
+     */
+    public void setDefaultKit(Kit defaultKit) {
+        this.defaultKit = defaultKit;
     }
 
     /**
