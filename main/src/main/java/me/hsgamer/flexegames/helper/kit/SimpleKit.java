@@ -1,5 +1,6 @@
 package me.hsgamer.flexegames.helper.kit;
 
+import me.hsgamer.flexegames.config.converter.NumberObjectMapConverter;
 import me.hsgamer.flexegames.util.ComponentUtil;
 import me.hsgamer.flexegames.util.ItemUtil;
 import net.kyori.adventure.text.Component;
@@ -46,11 +47,12 @@ public class SimpleKit implements Kit {
         this.displayItem = ItemUtil.getItemOrStone(map.get("display-item"));
 
         Object itemsObject = map.get("items");
-        if (itemsObject instanceof Map<?, ?> rawMap) {
+        Map<Number, Map<String, Object>> rawItemStackMap = new NumberObjectMapConverter().convert(itemsObject);
+        if (rawItemStackMap != null) {
             Map<Integer, ItemStack> itemStackMap = new HashMap<>();
-            rawMap.forEach((key, value) -> {
+            rawItemStackMap.forEach((key, value) -> {
                 try {
-                    itemStackMap.put(Integer.parseInt(String.valueOf(key)), ItemUtil.getItemOrStone(value));
+                    itemStackMap.put(key.intValue(), ItemUtil.getItemOrStone(value));
                 } catch (Exception e) {
                     // IGNORED
                 }

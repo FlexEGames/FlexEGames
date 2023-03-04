@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public abstract class StringObjectMapToObjectConverter<T> implements Converter {
     @Override
-    public Object convert(Object o) {
+    public T convert(Object o) {
         if (o instanceof Map<?, ?> map) {
             Map<String, Object> newMap = new HashMap<>();
             map.forEach((key, value) -> newMap.put(Objects.toString(key), value));
