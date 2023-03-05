@@ -58,7 +58,7 @@ public enum ProxyType {
         proxyExecutor.accept(gameServer);
     }
 
-    private interface VelocityConfig {
+    public interface VelocityConfig {
         @ConfigPath("secret")
         default String getSecret() {
             return "";
