@@ -7,7 +7,6 @@ import me.hsgamer.flexegames.config.LobbyConfig;
 import me.hsgamer.flexegames.config.MainConfig;
 import me.hsgamer.flexegames.config.MessageConfig;
 import me.hsgamer.flexegames.hook.LoginLogHook;
-import me.hsgamer.flexegames.hook.PerInstanceInstanceViewHook;
 import me.hsgamer.flexegames.hook.UpdateViewHook;
 import me.hsgamer.flexegames.lobby.Lobby;
 import me.hsgamer.flexegames.manager.GameArenaManager;
@@ -114,7 +113,6 @@ public class GameServer {
         Board.hook(globalNode);
         LoginLogHook.hook(globalNode);
         UpdateViewHook.hook(globalNode);
-        PerInstanceInstanceViewHook.hook(globalNode);
         PvpExtension.init();
 
         // Player
