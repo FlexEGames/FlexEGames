@@ -5,7 +5,7 @@ plugins {
 
 ext {
     core = "4.2.19"
-    minigameCore = "2.2.0"
+    minigameCore = "2.2.1"
 }
 
 java {
