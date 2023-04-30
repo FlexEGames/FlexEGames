@@ -14,27 +14,27 @@ import java.util.*;
  * The {@link me.hsgamer.flexegames.lobby.Lobby} config
  */
 public interface LobbyConfig {
-    @ConfigPath("world.id")
+    @ConfigPath({"world", "id"})
     default UUID getWorldId() {
         return UUID.randomUUID();
     }
 
-    @ConfigPath(value = "world.type")
+    @ConfigPath({"world", "type"})
     default String getWorldType() {
         return "anvil";
     }
 
-    @ConfigPath("world.name")
+    @ConfigPath({"world", "name"})
     default String getWorldName() {
         return "lobby";
     }
 
-    @ConfigPath("world.spawn-pos")
+    @ConfigPath({"world", "spawn-pos"})
     default Pos getWorldSpawnPos() {
         return new Pos(0, 0, 0);
     }
 
-    @ConfigPath("world.modifiers")
+    @ConfigPath({"world", "modifiers"})
     default List<Map<String, Object>> getWorldModifiers() {
         return Collections.emptyList();
     }
@@ -47,12 +47,12 @@ public interface LobbyConfig {
                 .append(Component.text("%message%").color(NamedTextColor.GOLD));
     }
 
-    @ConfigPath("board.title")
+    @ConfigPath({"board", "title"})
     default Component getBoardTitle() {
         return Component.text("Lobby").decorate(TextDecoration.BOLD).color(NamedTextColor.YELLOW);
     }
 
-    @ConfigPath("board.lines")
+    @ConfigPath({"board", "lines"})
     default List<Component> getBoardLines() {
         return Arrays.asList(
                 Component.text("Welcome to the lobby!").color(NamedTextColor.WHITE),
@@ -60,22 +60,22 @@ public interface LobbyConfig {
         );
     }
 
-    @ConfigPath("board.update-interval")
+    @ConfigPath({"board", "update-interval"})
     default int getBoardUpdateInterval() {
         return 20;
     }
 
-    @ConfigPath("board.async")
+    @ConfigPath({"board", "async"})
     default boolean isBoardAsync() {
         return true;
     }
 
-    @ConfigPath("inventory.game.title")
+    @ConfigPath({"inventory", "game", "title"})
     default Component getGameInventoryTitle() {
         return Component.text("Game").decorate(TextDecoration.BOLD).color(NamedTextColor.DARK_RED);
     }
 
-    @ConfigPath("inventory.game.next-page")
+    @ConfigPath({"inventory", "game", "next-page"})
     default Map<String, Object> getGameInventoryNextPage() {
         return Map.of(
                 "material", Material.GREEN_STAINED_GLASS_PANE.name(),
@@ -83,7 +83,7 @@ public interface LobbyConfig {
         );
     }
 
-    @ConfigPath("inventory.game.previous-page")
+    @ConfigPath({"inventory", "game", "previous-page"})
     default Map<String, Object> getGameInventoryPreviousPage() {
         return Map.of(
                 "material", Material.RED_STAINED_GLASS_PANE.name(),
@@ -91,7 +91,7 @@ public interface LobbyConfig {
         );
     }
 
-    @ConfigPath("inventory.game.arena")
+    @ConfigPath({"inventory", "game", "arena"})
     default Map<String, Object> getGameInventoryArena() {
         return Map.of(
                 "material", Material.CHEST.name(),
@@ -99,12 +99,12 @@ public interface LobbyConfig {
         );
     }
 
-    @ConfigPath("inventory.arena.title")
+    @ConfigPath({"inventory", "arena", "title"})
     default Component getArenaInventoryTitle() {
         return Component.text("Arena").decorate(TextDecoration.BOLD).color(NamedTextColor.DARK_RED);
     }
 
-    @ConfigPath("inventory.arena.next-page")
+    @ConfigPath({"inventory", "arena", "next-page"})
     default Map<String, Object> getArenaInventoryNextPage() {
         return Map.of(
                 "material", Material.GREEN_STAINED_GLASS_PANE.name(),
@@ -112,7 +112,7 @@ public interface LobbyConfig {
         );
     }
 
-    @ConfigPath("inventory.arena.previous-page")
+    @ConfigPath({"inventory", "arena", "previous-page"})
     default Map<String, Object> getArenaInventoryPreviousPage() {
         return Map.of(
                 "material", Material.RED_STAINED_GLASS_PANE.name(),
@@ -120,7 +120,7 @@ public interface LobbyConfig {
         );
     }
 
-    @ConfigPath("inventory.arena.game")
+    @ConfigPath({"inventory", "arena", "game"})
     default Map<String, Object> getArenaInventoryGame() {
         return Map.of(
                 "material", Material.SPRUCE_SIGN.name(),
@@ -128,7 +128,7 @@ public interface LobbyConfig {
         );
     }
 
-    @ConfigPath("inventory.arena.global-arena")
+    @ConfigPath({"inventory", "arena", "global-arena"})
     default Map<String, Object> getArenaInventoryGlobalArena() {
         return Map.of(
                 "material", Material.CHEST.name(),
@@ -136,7 +136,7 @@ public interface LobbyConfig {
         );
     }
 
-    @ConfigPath("inventory.arena.my-arena")
+    @ConfigPath({"inventory", "arena", "my-arena"})
     default Map<String, Object> getArenaInventoryMyArena() {
         return Map.of(
                 "material", Material.ENDER_CHEST.name(),
@@ -144,7 +144,7 @@ public interface LobbyConfig {
         );
     }
 
-    @ConfigPath("hotbar.game")
+    @ConfigPath({"hotbar", "game"})
     default Map<String, Object> getGameHotbar() {
         return Map.of(
                 "material", Material.ACACIA_SIGN.name(),
@@ -153,7 +153,7 @@ public interface LobbyConfig {
         );
     }
 
-    @ConfigPath("hotbar.arena")
+    @ConfigPath({"hotbar", "arena"})
     default Map<String, Object> getArenaHotbar() {
         return Map.of(
                 "material", Material.COMPASS.name(),
@@ -162,7 +162,7 @@ public interface LobbyConfig {
         );
     }
 
-    @ConfigPath("hotbar.toggle-player")
+    @ConfigPath({"hotbar", "toggle-player"})
     default Map<String, Object> getTogglePlayerHotbar() {
         return Map.of(
                 "material", Material.ENDER_EYE.name(),
@@ -171,7 +171,7 @@ public interface LobbyConfig {
         );
     }
 
-    @ConfigPath("hotbar.server-hub")
+    @ConfigPath({"hotbar", "server-hub"})
     default Map<String, Object> getServerHubHotbar() {
         return Map.of(
                 "enable", false,

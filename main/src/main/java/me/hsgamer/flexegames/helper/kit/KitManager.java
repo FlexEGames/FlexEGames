@@ -6,6 +6,7 @@ import me.hsgamer.flexegames.util.MapUtil;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringLinkedMap;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringMap;
 import me.hsgamer.hscore.config.Config;
+import me.hsgamer.hscore.config.PathString;
 import me.hsgamer.minigamecore.base.Arena;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -57,7 +58,7 @@ public class KitManager {
         config.getNormalizedValues(false).forEach((key, value) -> {
             if (value instanceof Map<?, ?> rawMap) {
                 Map<String, Object> map = new CaseInsensitiveStringMap<>(MapUtil.toStringObjectMap(rawMap));
-                add(key, new SimpleKit(map));
+                add(PathString.toPath(".", key), new SimpleKit(map));
             }
         });
     }

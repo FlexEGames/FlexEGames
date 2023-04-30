@@ -272,7 +272,6 @@ public class Lobby extends InstanceContainer {
         buttonMap.addMask(actionMask);
         gameGUIHolder.setTitle(gameServer.getLobbyConfig().getGameInventoryTitle());
         gameGUIHolder.setInventoryType(InventoryType.CHEST_3_ROW);
-        gameGUIHolder.setRemoveDisplayOnClose(true);
         gameGUIHolder.setButtonMap(buttonMap);
         gameGUIHolder.init();
     }
@@ -362,7 +361,6 @@ public class Lobby extends InstanceContainer {
         arenaGUIHolder.setButtonMap(buttonMap);
         arenaGUIHolder.setTitle(gameServer.getLobbyConfig().getArenaInventoryTitle());
         arenaGUIHolder.setInventoryType(InventoryType.CHEST_3_ROW);
-        arenaGUIHolder.setRemoveDisplayOnClose(true);
         arenaGUIHolder.init();
     }
 

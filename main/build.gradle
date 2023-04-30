@@ -4,8 +4,8 @@ plugins {
 }
 
 ext {
-    core = "4.2.19"
-    minigameCore = "2.2.1"
+    core = "4.3.0"
+    minigameCore = "2.2.2"
 }
 
 java {
@@ -58,9 +58,8 @@ publishing {
 }
 
 dependencies {
-    api "me.hsgamer:hscore-config-configurate:$core"
+    api "me.hsgamer:hscore-config-gson:$core"
     api "me.hsgamer:hscore-config-proxy:$core"
-    api 'org.spongepowered:configurate-yaml:4.1.2'
 
     api "me.hsgamer:hscore-builder:$core"
     api "me.hsgamer:hscore-common:$core"

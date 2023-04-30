@@ -14,42 +14,42 @@ import java.util.*;
  * The main config
  */
 public interface MainConfig {
-    @ConfigPath("server.ip")
+    @ConfigPath({"server", "ip"})
     default String getServerIp() {
         return "0.0.0.0";
     }
 
-    @ConfigPath("server.port")
+    @ConfigPath({"server", "port"})
     default int getServerPort() {
         return 25565;
     }
 
-    @ConfigPath("server.proxy-type")
+    @ConfigPath({"server", "proxy-type"})
     default ProxyType getProxyType() {
         return ProxyType.NONE;
     }
 
-    @ConfigPath("server.lan")
+    @ConfigPath({"server", "lan"})
     default boolean isLANsupported() {
         return false;
     }
 
-    @ConfigPath("server.brand")
+    @ConfigPath({"server", "brand"})
     default String getServerBrand() {
         return FlexEGames.class.getSimpleName();
     }
 
-    @ConfigPath("server.compression-threshold")
+    @ConfigPath({"server", "compression-threshold"})
     default int getCompressionThreshold() {
         return 0;
     }
 
-    @ConfigPath("server.show-players")
+    @ConfigPath({"server", "max-players"})
     default boolean isShowPlayers() {
         return true;
     }
 
-    @ConfigPath("server.motd")
+    @ConfigPath({"server", "motd"})
     default List<Component> getServerMOTD() {
         return Arrays.asList(
                 Component.text("FlexEGames").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD),
@@ -57,17 +57,17 @@ public interface MainConfig {
         );
     }
 
-    @ConfigPath("server.favicon")
+    @ConfigPath({"server", "favicon"})
     default String getServerFavicon() {
         return "";
     }
 
-    @ConfigPath("arena.period")
+    @ConfigPath({"arena", "period"})
     default int getArenaPeriod() {
         return 0;
     }
 
-    @ConfigPath("arena.async")
+    @ConfigPath({"arena", "async"})
     default boolean isArenaAsync() {
         return false;
     }
@@ -80,17 +80,17 @@ public interface MainConfig {
         );
     }
 
-    @ConfigPath("permission.console")
+    @ConfigPath({"permission", "console"})
     default List<Permission> getConsolePermissions() {
         return Collections.emptyList();
     }
 
-    @ConfigPath("permission.player-default")
+    @ConfigPath({"permission", "player-default"})
     default List<Permission> getPlayerDefaultPermissions() {
         return Collections.emptyList();
     }
 
-    @ConfigPath("permission.player")
+    @ConfigPath({"permission", "player"})
     default Map<String, List<Permission>> getPlayerPermissions() {
         return Collections.emptyMap();
     }

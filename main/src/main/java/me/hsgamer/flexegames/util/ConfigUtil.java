@@ -2,11 +2,8 @@ package me.hsgamer.flexegames.util;
 
 import lombok.experimental.UtilityClass;
 import me.hsgamer.hscore.config.Config;
-import me.hsgamer.hscore.config.configurate.ConfigurateConfig;
+import me.hsgamer.hscore.config.gson.GsonConfig;
 import me.hsgamer.hscore.config.proxy.ConfigGenerator;
-import org.spongepowered.configurate.loader.HeaderMode;
-import org.spongepowered.configurate.yaml.NodeStyle;
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 
@@ -22,7 +19,7 @@ public class ConfigUtil {
      * @return true if it is a config file
      */
     public static boolean isConfigFile(File file) {
-        return file.getName().endsWith(".yml") || file.getName().endsWith(".yaml");
+        return file.getName().endsWith(".json");
     }
 
     /**
@@ -33,10 +30,10 @@ public class ConfigUtil {
      * @return the config file
      */
     public static File getConfigFile(File parent, String name) {
-        if (name.endsWith(".yml") || name.endsWith(".yaml")) {
+        if (name.endsWith(".json")) {
             return new File(parent, name);
         }
-        return new File(parent, name + ".yml");
+        return new File(parent, name + ".json");
     }
 
     /**
@@ -59,11 +56,7 @@ public class ConfigUtil {
         if (!isConfigFile(file)) {
             throw new IllegalArgumentException("The file is not a config file");
         }
-        return new ConfigurateConfig(file, YamlConfigurationLoader.builder()
-                .nodeStyle(NodeStyle.BLOCK)
-                .headerMode(HeaderMode.PRESERVE)
-                .indent(2)
-        );
+        return new GsonConfig(file);
     }
 
     /**

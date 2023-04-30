@@ -26,22 +26,22 @@ public interface PveMessageConfig {
         return Component.text("Not enough players to start the game").color(NamedTextColor.RED);
     }
 
-    @ConfigPath("state.waiting")
+    @ConfigPath({"state", "waiting"})
     default Component getStateWaiting() {
         return Component.text("Waiting");
     }
 
-    @ConfigPath("state.resting")
+    @ConfigPath({"state", "resting"})
     default Component getStateResting() {
         return Component.text("Resting");
     }
 
-    @ConfigPath("state.fighting")
+    @ConfigPath({"state", "fighting"})
     default Component getStateFighting() {
         return Component.text("Fighting");
     }
 
-    @ConfigPath("state.ending")
+    @ConfigPath({"state", "ending"})
     default Component getStateEnding() {
         return Component.text("Ending");
     }
@@ -83,12 +83,12 @@ public interface PveMessageConfig {
         );
     }
 
-    @ConfigPath("board.title")
+    @ConfigPath({"board", "title"})
     default Component getBoardTitle() {
         return Component.text("PvE").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD);
     }
 
-    @ConfigPath("board.lines.waiting")
+    @ConfigPath({"board", "lines", "waiting"})
     default List<Component> getBoardLinesWaiting() {
         return List.of(
                 Component.text("Waiting for players").color(NamedTextColor.YELLOW),
@@ -97,7 +97,7 @@ public interface PveMessageConfig {
         );
     }
 
-    @ConfigPath("board.lines.resting")
+    @ConfigPath({"board", "lines", "resting"})
     default List<Component> getBoardLinesResting() {
         return List.of(
                 Component.text("Resting...").color(NamedTextColor.YELLOW),
@@ -107,7 +107,7 @@ public interface PveMessageConfig {
         );
     }
 
-    @ConfigPath("board.lines.fighting")
+    @ConfigPath({"board", "lines", "fighting"})
     default List<Component> getBoardLinesFighting() {
         return List.of(
                 Component.text("Fighting...").color(NamedTextColor.YELLOW),
@@ -118,7 +118,7 @@ public interface PveMessageConfig {
         );
     }
 
-    @ConfigPath("board.lines.ending")
+    @ConfigPath({"board", "lines", "ending"})
     default List<Component> getBoardLinesEnding() {
         return List.of(
                 Component.text("Game Over").color(NamedTextColor.YELLOW),
@@ -155,12 +155,12 @@ public interface PveMessageConfig {
         return Component.text("The game has ended!").color(NamedTextColor.GREEN);
     }
 
-    @ConfigPath("editor.title")
+    @ConfigPath({"editor", "title"})
     default Component getEditorTitle() {
         return Component.text("PvE Editor").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD);
     }
 
-    @ConfigPath("editor.complete")
+    @ConfigPath({"editor", "complete"})
     default Map<String, Object> getEditorComplete() {
         return Map.of(
                 "material", Material.EMERALD.name(),
@@ -168,7 +168,7 @@ public interface PveMessageConfig {
         );
     }
 
-    @ConfigPath("editor.legacy-pvp")
+    @ConfigPath({"editor", "legacy-pvp"})
     default Map<String, Object> getEditorLegacyPvp() {
         return Map.of(
                 "material", Material.IRON_SWORD.name(),
@@ -182,7 +182,7 @@ public interface PveMessageConfig {
         );
     }
 
-    @ConfigPath("editor.tough-mob")
+    @ConfigPath({"editor", "tough-mob"})
     default Map<String, Object> getEditorToughMob() {
         return Map.of(
                 "material", Material.ZOMBIE_HEAD.name(),
@@ -195,7 +195,7 @@ public interface PveMessageConfig {
         );
     }
 
-    @ConfigPath("editor.heal-on-rest")
+    @ConfigPath({"editor", "heal-on-rest"})
     default Map<String, Object> getEditorHealOnRest() {
         return Map.of(
                 "material", Material.GOLDEN_APPLE.name(),

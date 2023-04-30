@@ -20,7 +20,6 @@ public abstract class SimplePropertyEditor extends PropertyEditor {
     @Override
     public void init() {
         setInventoryType(InventoryType.CHEST_3_ROW);
-        setRemoveDisplayOnClose(true);
 
         AdvancedButtonMap buttonMap = new AdvancedButtonMap();
         setButtonMap(buttonMap);

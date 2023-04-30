@@ -26,17 +26,17 @@ public interface DuelMessageConfig {
         return Component.text("Not enough players to start the game").color(NamedTextColor.RED);
     }
 
-    @ConfigPath("state.waiting")
+    @ConfigPath({"state", "waiting"})
     default Component getStateWaiting() {
         return Component.text("Waiting");
     }
 
-    @ConfigPath("state.ingame")
+    @ConfigPath({"state", "ingame"})
     default Component getStateInGame() {
         return Component.text("In Game");
     }
 
-    @ConfigPath("state.ending")
+    @ConfigPath({"state", "ending"})
     default Component getStateEnding() {
         return Component.text("Ending");
     }
@@ -78,12 +78,12 @@ public interface DuelMessageConfig {
         );
     }
 
-    @ConfigPath("board.title")
+    @ConfigPath({"board", "title"})
     default Component getBoardTitle() {
         return Component.text("Duel").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD);
     }
 
-    @ConfigPath("board.lines.waiting")
+    @ConfigPath({"board", "lines", "waiting"})
     default List<Component> getBoardLinesWaiting() {
         return List.of(
                 Component.text("Waiting for players").color(NamedTextColor.YELLOW),
@@ -92,14 +92,14 @@ public interface DuelMessageConfig {
         );
     }
 
-    @ConfigPath("board.lines.ingame")
+    @ConfigPath({"board", "lines", "ingame"})
     default List<Component> getBoardLinesIngame() {
         return List.of(
                 Component.text("Alive: ").color(NamedTextColor.YELLOW).append(Component.text("%alive%").color(NamedTextColor.WHITE))
         );
     }
 
-    @ConfigPath("board.lines.ending")
+    @ConfigPath({"board", "lines", "ending"})
     default List<Component> getBoardLinesEnding() {
         return List.of(
                 Component.text("Ending in: ").color(NamedTextColor.YELLOW).append(Component.text("%time%").color(NamedTextColor.WHITE)),
@@ -127,12 +127,12 @@ public interface DuelMessageConfig {
                 .append(Component.text("%message%").color(NamedTextColor.GOLD));
     }
 
-    @ConfigPath("editor.title")
+    @ConfigPath({"editor", "title"})
     default Component getEditorTitle() {
         return Component.text("Duel Editor").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD);
     }
 
-    @ConfigPath("editor.complete")
+    @ConfigPath({"editor", "complete"})
     default Map<String, Object> getEditorComplete() {
         return Map.of(
                 "material", Material.EMERALD.name(),
@@ -140,7 +140,7 @@ public interface DuelMessageConfig {
         );
     }
 
-    @ConfigPath("editor.legacy-pvp")
+    @ConfigPath({"editor", "legacy-pvp"})
     default Map<String, Object> getEditorLegacyPvp() {
         return Map.of(
                 "material", Material.IRON_SWORD.name(),

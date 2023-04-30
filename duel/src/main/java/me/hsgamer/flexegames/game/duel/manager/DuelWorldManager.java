@@ -9,6 +9,7 @@ import me.hsgamer.flexegames.util.MapUtil;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringLinkedMap;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringMap;
 import me.hsgamer.hscore.config.Config;
+import me.hsgamer.hscore.config.PathString;
 import net.minestom.server.MinecraftServer;
 
 import java.util.Map;
@@ -31,13 +32,13 @@ public class DuelWorldManager {
                 String type = String.valueOf(map.getOrDefault("type", "default"));
                 try {
                     if (type.equalsIgnoreCase("world")) {
-                        duelWorldMap.put(key, new AssetDuelWorld(map));
+                        duelWorldMap.put(PathString.toPath(".", key), new AssetDuelWorld(map));
                         return;
                     }
                 } catch (Exception e) {
                     MinecraftServer.LOGGER.error("Failed to load world " + key, e);
                 }
-                duelWorldMap.put(key, new DefaultDuelWorld(map));
+                duelWorldMap.put(PathString.toPath(".", key), new DefaultDuelWorld(map));
             }
         });
     }

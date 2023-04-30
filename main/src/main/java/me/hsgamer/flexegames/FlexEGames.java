@@ -1,6 +1,6 @@
 package me.hsgamer.flexegames;
 
-import io.leangen.geantyref.TypeToken;
+import com.google.gson.reflect.TypeToken;
 import lombok.Getter;
 import me.hsgamer.flexegames.config.converter.*;
 import me.hsgamer.flexegames.util.ProxyType;
