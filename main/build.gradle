@@ -4,7 +4,7 @@ plugins {
 }
 
 ext {
-    core = "4.3.2"
+    core = "4.3.10"
     minigameCore = "2.2.2"
 }
 
